@@ -1974,35 +1974,72 @@ footer {
   </div>
 </footer>
 
-<!-- Free Starter Welcome Modal -->
+<!-- Free Starter Signup Modal -->
 <div class="payment-modal" id="freeModal">
   <div class="payment-card">
     <button class="legal-close" onclick="closeFreeModal()" style="float:right;margin-bottom:12px;">&times;</button>
-    <div style="text-align:center;margin-bottom:24px;">
-      <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#10003;</div>
-      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin-bottom:8px;">Welcome to Buildr AI!</h3>
-      <p style="color:var(--text-muted);font-size:0.95rem;">Your free Starter plan is ready. Here's what you get:</p>
-    </div>
 
-    <div style="background:var(--surface);border-radius:var(--radius-sm);padding:24px;margin-bottom:24px;border:1px solid var(--border);">
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:14px;">
-        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;font-size:1.1rem;">&#10003;</span> 3 AI-generated projects</li>
-        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;font-size:1.1rem;">&#10003;</span> Basic templates</li>
-        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;font-size:1.1rem;">&#10003;</span> Community support</li>
-        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;font-size:1.1rem;">&#10003;</span> AI agent (limited)</li>
-        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;color:var(--text-muted);"><span style="color:var(--text-muted);font-weight:700;font-size:1.1rem;">&#8226;</span> Buildr AI watermark on projects</li>
-      </ul>
-    </div>
+    <!-- Step 1: Email signup -->
+    <div id="freeStep1">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#9889;</div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin-bottom:8px;">Start Building for Free</h3>
+        <p style="color:var(--text-muted);font-size:0.95rem;">Enter your email to create your free Starter account.</p>
+      </div>
 
-    <a href="#" onclick="activateFreePlan();return false;" class="btn-primary" style="display:block;text-align:center;width:100%;padding:16px;font-size:1rem;margin-bottom:16px;">Start Building for Free</a>
+      <form id="freeSignupForm" onsubmit="submitFreeSignup(event)" style="margin-bottom:24px;">
+        <div style="margin-bottom:12px;">
+          <input type="text" id="freeName" placeholder="Your name" required style="width:100%;padding:14px 18px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Inter',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div style="margin-bottom:16px;">
+          <input type="email" id="freeEmail" placeholder="you@email.com" required style="width:100%;padding:14px 18px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Inter',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div id="freeError" style="color:#EF4444;font-size:0.85rem;margin-bottom:12px;display:none;"></div>
+        <button type="submit" class="btn-primary" style="display:block;width:100%;padding:16px;font-size:1rem;border:none;cursor:pointer;">Create Free Account</button>
+      </form>
 
-    <div style="text-align:center;">
-      <p style="color:var(--text-muted);font-size:0.8rem;margin-bottom:12px;">Want more power? Upgrade anytime.</p>
-      <div style="display:flex;gap:12px;justify-content:center;">
-        <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" style="color:var(--accent);font-size:0.85rem;text-decoration:none;font-weight:600;">Pro — $29/mo &#8594;</a>
-        <a href="https://buy.stripe.com/28E00j8o28jafoo5VVeIw01" style="color:var(--accent2);font-size:0.85rem;text-decoration:none;font-weight:600;">Business — $99/mo &#8594;</a>
+      <div style="background:var(--surface);border-radius:var(--radius-sm);padding:20px;margin-bottom:20px;border:1px solid var(--border);">
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Your Starter plan includes:</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.9rem;"><span style="color:var(--accent3);font-weight:700;">&#10003;</span> 3 AI-generated projects</li>
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.9rem;"><span style="color:var(--accent3);font-weight:700;">&#10003;</span> Basic templates</li>
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.9rem;"><span style="color:var(--accent3);font-weight:700;">&#10003;</span> Community support</li>
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.9rem;"><span style="color:var(--accent3);font-weight:700;">&#10003;</span> AI agent (limited)</li>
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.9rem;color:var(--text-muted);"><span style="color:var(--text-muted);font-weight:700;">&#8226;</span> Buildr AI watermark</li>
+        </ul>
+      </div>
+
+      <div style="text-align:center;">
+        <p style="color:var(--text-muted);font-size:0.8rem;margin-bottom:8px;">Want more power? Go Pro instead.</p>
+        <div style="display:flex;gap:12px;justify-content:center;">
+          <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" style="color:var(--accent);font-size:0.85rem;text-decoration:none;font-weight:600;">Pro $29/mo &#8594;</a>
+          <a href="https://buy.stripe.com/28E00j8o28jafoo5VVeIw01" style="color:var(--accent2);font-size:0.85rem;text-decoration:none;font-weight:600;">Business $99/mo &#8594;</a>
+        </div>
       </div>
     </div>
+
+    <!-- Step 2: Confirmation -->
+    <div id="freeStep2" style="display:none;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 20px;">&#10003;</div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin-bottom:8px;">You're in!</h3>
+        <p style="color:var(--text-muted);font-size:0.95rem;">Welcome to Buildr AI, <span id="freeUserName" style="color:var(--accent);font-weight:600;"></span></p>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-top:8px;">We've sent a confirmation to <span id="freeUserEmail" style="color:var(--text);font-weight:500;"></span></p>
+      </div>
+
+      <div style="background:var(--surface);border-radius:var(--radius-sm);padding:24px;margin-bottom:24px;border:1px solid var(--accent3);border-left:4px solid var(--accent3);">
+        <p style="font-weight:600;margin-bottom:12px;">What's next?</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;">
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9rem;"><span style="color:var(--accent);font-weight:700;min-width:20px;">1.</span> Check your email for your login details</li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9rem;"><span style="color:var(--accent);font-weight:700;min-width:20px;">2.</span> Describe your first project in plain English</li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:0.9rem;"><span style="color:var(--accent);font-weight:700;min-width:20px;">3.</span> Watch AI build it for you in minutes</li>
+        </ul>
+      </div>
+
+      <a href="#" onclick="closeFreeModal();return false;" class="btn-primary" style="display:block;text-align:center;width:100%;padding:16px;font-size:1rem;margin-bottom:12px;">Got it — Let's Go!</a>
+      <p style="text-align:center;color:var(--text-muted);font-size:0.75rem;">Upgrade to Pro anytime for unlimited projects and app store publishing.</p>
+    </div>
+
   </div>
 </div>
 
@@ -2358,6 +2395,11 @@ function openPayment(plan) {
 function closeFreeModal() {
   document.getElementById('freeModal').classList.remove('active');
   document.body.style.overflow = '';
+  // Reset to step 1 after closing
+  setTimeout(function() {
+    document.getElementById('freeStep1').style.display = '';
+    document.getElementById('freeStep2').style.display = 'none';
+  }, 300);
 }
 
 function closePayment() {
@@ -2365,19 +2407,47 @@ function closePayment() {
   document.body.style.overflow = '';
 }
 
-function activateFreePlan() {
-  closeFreeModal();
-  // Show activation toast
-  const toast = document.createElement('div');
-  toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#10B981,#00D4FF);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;box-shadow:0 8px 40px rgba(16,185,129,0.4);animation:slideDown 0.5s ease;';
-  toast.textContent = 'Welcome to Buildr AI Starter! Your free account is ready.';
-  document.body.appendChild(toast);
-  setTimeout(function() {
-    toast.style.transition = 'opacity 0.5s, transform 0.5s';
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(-50%) translateY(-20px)';
-    setTimeout(function() { toast.remove(); }, 500);
-  }, 5000);
+function submitFreeSignup(e) {
+  e.preventDefault();
+  var name = document.getElementById('freeName').value.trim();
+  var email = document.getElementById('freeEmail').value.trim();
+  var errorEl = document.getElementById('freeError');
+
+  if (!name || !email) {
+    errorEl.textContent = 'Please fill in all fields.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errorEl.textContent = 'Please enter a valid email address.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+
+  // Store signup locally
+  var signups = JSON.parse(window.localStorage ? localStorage.getItem('buildr_signups') || '[]' : '[]');
+  signups.push({ name: name, email: email, plan: 'starter', date: new Date().toISOString() });
+  try { localStorage.setItem('buildr_signups', JSON.stringify(signups)); } catch(err) {}
+
+  // Send signup notification via Formspree (free form backend)
+  fetch('https://formspree.io/f/xeooqbkn', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      _subject: 'New Buildr AI Free Signup!',
+      name: name,
+      email: email,
+      plan: 'Starter (Free)',
+      signed_up: new Date().toISOString()
+    })
+  }).catch(function() {});
+
+  // Show confirmation step
+  document.getElementById('freeUserName').textContent = name.split(' ')[0];
+  document.getElementById('freeUserEmail').textContent = email;
+  document.getElementById('freeStep1').style.display = 'none';
+  document.getElementById('freeStep2').style.display = '';
 }
 
 // ── Legal Modals ──
