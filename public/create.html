@@ -233,6 +233,26 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     </button>
   </div>
 
+  <!-- AI Suggestion Step -->
+  <div class="describe-section" id="suggestionSection" style="display:none;">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--secondary));display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:12px;">&#129302;</div>
+      <h2 style="margin:0 0 6px;">Here's what I'll build for you</h2>
+      <p style="color:var(--text-muted);font-size:0.95rem;margin:0;">Based on your description, I've planned the following. Review and confirm, or edit your description.</p>
+    </div>
+    <div id="suggestionContent" style="text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;">
+      <!-- Populated dynamically -->
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="build-btn" onclick="confirmBuild()" style="margin:0;">
+        <span>&#9889;</span> Looks Great — Build It
+      </button>
+      <button class="result-btn result-btn-outline" onclick="editDescription()" style="padding:14px 28px;border-radius:12px;font-size:1rem;cursor:pointer;">
+        &#9998; Edit Description
+      </button>
+    </div>
+  </div>
+
   <!-- Result -->
   <div class="result-section" id="resultSection">
     <div class="result-icon">&#10003;</div>
@@ -516,6 +536,125 @@ function updateBuildBtn() {
 function startBuilding() {
   if (projectsUsed >= projectLimit) { showLimitReached(); return; }
 
+  // Show the suggestion step first
+  var desc = document.getElementById('projectDescription').value.trim();
+  var dl = desc.toLowerCase();
+  var titleWords = desc.split(/[.,!?\n]/)[0].substring(0, 60);
+  var ai = analyzeDescription(dl, desc, titleWords);
+
+  // Build suggestion content
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content' };
+  var typeLabel = labels[selectedType] || 'Project';
+
+  var html = '';
+  html += '<div style="margin-bottom:16px;"><span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:600;">Project Type</span>';
+  html += '<p style="margin:4px 0 0;font-size:1.1rem;color:var(--text);">' + ai.icon + ' ' + typeLabel + ' — ' + ai.projectName + '</p></div>';
+
+  // Detected theme
+  html += '<div style="margin-bottom:16px;"><span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:600;">Detected Theme</span>';
+  html += '<p style="margin:4px 0 0;color:var(--text);">' + (ai.theme.charAt(0).toUpperCase() + ai.theme.slice(1)) + '</p></div>';
+
+  // Visual style
+  html += '<div style="margin-bottom:16px;"><span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:600;">Visual Style</span>';
+  var styleName = ai.style.name === 'default' ? 'K-Tech Dark (default)' : ai.style.name.charAt(0).toUpperCase() + ai.style.name.slice(1);
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-top:6px;">';
+  html += '<div style="display:flex;gap:4px;">';
+  var sc = ai.style.colors;
+  [sc.primary, sc.secondary, sc.accent, sc.bg, sc.surface].forEach(function(c) {
+    html += '<div style="width:22px;height:22px;border-radius:6px;background:' + c + ';border:1px solid var(--border);"></div>';
+  });
+  html += '</div>';
+  html += '<span style="color:var(--text);">' + styleName + ' · ' + ai.style.font + '</span></div></div>';
+
+  // Pages / sidebar
+  html += '<div style="margin-bottom:16px;"><span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:600;">Pages Included</span>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">';
+  ai.sidebarItems.forEach(function(item) {
+    html += '<span style="padding:6px 14px;background:var(--card);border:1px solid var(--border);border-radius:20px;font-size:0.85rem;color:var(--text);">' + item + '</span>';
+  });
+  html += '</div></div>';
+
+  // Features
+  html += '<div style="margin-bottom:16px;"><span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:600;">Suggested Features</span>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">';
+  ai.features.forEach(function(f) {
+    html += '<span style="padding:6px 14px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:20px;font-size:0.85rem;color:var(--accent);">' + f + '</span>';
+  });
+  html += '</div></div>';
+
+  // UI features detected
+  var detectedUI = [];
+  if (ai.uiFeatures.addButtons) detectedUI.push('Add/Edit Buttons');
+  if (ai.uiFeatures.graphs) detectedUI.push('Visual Charts & Graphs');
+  if (ai.uiFeatures.calendar) detectedUI.push('Calendar View');
+  if (ai.uiFeatures.search) detectedUI.push('Search & Filter');
+  if (ai.uiFeatures.notifications) detectedUI.push('Notifications');
+  if (ai.uiFeatures.darkMode) detectedUI.push('Dark Mode Toggle');
+  if (ai.uiFeatures.profile) detectedUI.push('User Profile');
+  if (ai.uiFeatures.progress) detectedUI.push('Progress Tracking');
+  if (ai.uiFeatures.forms) detectedUI.push('Input Forms');
+  if (ai.uiFeatures.gallery) detectedUI.push('Image Gallery');
+  if (ai.uiFeatures.pricing) detectedUI.push('Pricing Section');
+  if (ai.uiFeatures.timeline) detectedUI.push('Activity Timeline');
+  if (ai.uiFeatures.map) detectedUI.push('Map / Locations');
+  if (detectedUI.length > 0) {
+    html += '<div><span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:600;">Requested UI Elements</span>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">';
+    detectedUI.forEach(function(u) {
+      html += '<span style="padding:6px 14px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:20px;font-size:0.85rem;color:#10B981;">&#10003; ' + u + '</span>';
+    });
+    html += '</div></div>';
+  }
+
+  // 3D Fluid gradient preview
+  if (ai.style.fluid) {
+    html += '<div style="margin-top:16px;"><span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:600;">3D Fluid Theme Preview</span>';
+    html += '<div style="margin-top:8px;height:48px;border-radius:12px;background:' + ai.style.fluid.gradient + ';position:relative;overflow:hidden;border:1px solid var(--border);">';
+    html += '<div style="position:absolute;inset:0;background:' + ai.style.fluid.blob + ';opacity:0.6;"></div>';
+    html += '<div style="position:absolute;inset:0;backdrop-filter:blur(1px);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.3);font-weight:600;letter-spacing:0.5px;">' + (ai.style.name.charAt(0).toUpperCase() + ai.style.name.slice(1)) + ' — 3D Fluid</div>';
+    html += '</div></div>';
+  }
+
+  // Recommendation note for dashboards
+  if (selectedType === 'dashboard') {
+    html += '<div style="margin-top:16px;padding:14px 16px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:12px;font-size:0.85rem;color:var(--text-muted);">';
+    html += '<strong style="color:var(--accent);">&#128161; Tip:</strong> Try adding details like "in aurora style with visual graphs and add entry buttons" to customise the look, feel, and functionality of your dashboard.';
+    html += '</div>';
+  }
+
+  // Available themes showcase
+  html += '<div style="margin-top:16px;"><span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:600;">Available 3D Fluid Themes</span>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">';
+  var themeNames = ['Korean','Cute','Minimal','Retro','Luxury','Nature','Aurora','Sakura','Midnight','Citrus','Ocean'];
+  var themeGrads = ['linear-gradient(135deg,#E8A0BF,#B68ECE)','linear-gradient(135deg,#FF9ECD,#B8A9E8)','linear-gradient(135deg,#888,#EEE)','linear-gradient(135deg,#FF6EC7,#7B68EE)','linear-gradient(135deg,#D4AF37,#8B7355)','linear-gradient(135deg,#4A7C59,#8DB48E)','linear-gradient(135deg,#A855F7,#06B6D4)','linear-gradient(135deg,#F9A8D4,#C4B5FD)','linear-gradient(135deg,#F59E0B,#3B82F6)','linear-gradient(135deg,#F97316,#EAB308)','linear-gradient(135deg,#0EA5E9,#2DD4BF)'];
+  themeNames.forEach(function(n,i) {
+    var isActive = ai.style.name === n.toLowerCase();
+    html += '<span style="padding:5px 12px;border-radius:16px;font-size:0.78rem;display:inline-flex;align-items:center;gap:6px;' + (isActive ? 'border:2px solid var(--accent);' : 'border:1px solid var(--border);opacity:0.7;') + 'color:var(--text);background:var(--card);">';
+    html += '<span style="width:14px;height:14px;border-radius:50%;background:' + themeGrads[i] + ';display:inline-block;flex-shrink:0;"></span>' + n;
+    if (isActive) html += ' &#10003;';
+    html += '</span>';
+  });
+  html += '</div></div>';
+
+  // Canva design link
+  html += '<div style="margin-top:16px;padding:14px 16px;background:rgba(0,212,255,0.04);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:12px;">';
+  html += '<span style="font-size:1.5rem;">&#127912;</span>';
+  html += '<div style="flex:1;"><span style="font-size:0.85rem;color:var(--text);">Want to customise further?</span><br>';
+  html += '<span style="font-size:0.78rem;color:var(--text-muted);">Create your own colour palettes and brand kit on Canva, then describe your style in the prompt.</span></div>';
+  html += '<a href="https://www.canva.com/signup" target="_blank" rel="noopener" style="padding:8px 16px;background:linear-gradient(135deg,#7B2FF2,#00C4CC);color:#fff;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;">Sign up for Canva</a>';
+  html += '</div>';
+
+  document.getElementById('suggestionContent').innerHTML = html;
+
+  // Show suggestion, hide describe
+  document.getElementById('describeSection').classList.remove('active');
+  document.getElementById('suggestionSection').style.display = 'block';
+}
+
+function confirmBuild() {
+  // Hide suggestion, run actual build
+  document.getElementById('suggestionSection').style.display = 'none';
+
   var overlay = document.getElementById('buildingOverlay');
   var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content' };
   document.getElementById('buildingType').textContent = labels[selectedType] || 'project';
@@ -539,6 +678,13 @@ function startBuilding() {
     }
   }
   advanceStep();
+}
+
+function editDescription() {
+  // Go back to the describe step
+  document.getElementById('suggestionSection').style.display = 'none';
+  document.getElementById('describeSection').classList.add('active');
+  document.getElementById('projectDescription').focus();
 }
 
 function showResult() {
@@ -673,14 +819,19 @@ function analyzeDescription(dl, desc, title) {
   result.icon = t.icon;
   result.theme = bestTheme;
 
-  // ── Visual Style Detection ──
+  // ── Visual Style Detection (with 3D Fluid Themes from Canva) ──
   var styles = {
-    korean: { kw: ['korean','korea','seoul','kpop','k-pop','hangul','hanbok','aesthetic','kdrama','soju','bibimbap','kimchi','hallyu','oppa','unnie'], colors: { primary:'#E8A0BF', secondary:'#B68ECE', accent:'#7EB8DA', bg:'#FFF5F7', surface:'#FFF0F3', card:'#FFFFFF', text:'#2D2B3D', muted:'#8E8BA7', border:'#F0D9E5' }, font:'Quicksand', fontUrl:'https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap', borderRadius:'20px' },
-    cute: { kw: ['cute','kawaii','adorable','playful','bubbly','pastel','soft','sweet','lovely','dreamy','cozy','fluffy'], colors: { primary:'#FF9ECD', secondary:'#B8A9E8', accent:'#97E8D5', bg:'#FFF8FC', surface:'#FFF2F8', card:'#FFFFFF', text:'#4A3F5C', muted:'#9B8FB0', border:'#F5E0ED' }, font:'Nunito', fontUrl:'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap', borderRadius:'24px' },
-    minimal: { kw: ['minimal','minimalist','clean','simple','elegant','sleek','modern','zen','refined','understated'], colors: { primary:'#111111', secondary:'#555555', accent:'#888888', bg:'#FFFFFF', surface:'#FAFAFA', card:'#FFFFFF', text:'#111111', muted:'#888888', border:'#EEEEEE' }, font:'Inter', fontUrl:'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap', borderRadius:'8px' },
-    retro: { kw: ['retro','vintage','80s','90s','neon','synthwave','vaporwave','arcade','pixel','nostalgia'], colors: { primary:'#FF6EC7', secondary:'#7B68EE', accent:'#00FFFF', bg:'#1A0533', surface:'#250848', card:'#2D0A5C', text:'#FFFFFF', muted:'#C4A8FF', border:'#4A1A7A' }, font:'Space Grotesk', fontUrl:'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap', borderRadius:'12px' },
-    luxury: { kw: ['luxury','premium','gold','royal','exclusive','elite','high-end','classy','sophisticated','upscale'], colors: { primary:'#D4AF37', secondary:'#8B7355', accent:'#C9A96E', bg:'#0A0A0A', surface:'#141414', card:'#1C1C1C', text:'#F5F0E8', muted:'#A09880', border:'#2A2520' }, font:'Playfair Display', fontUrl:'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap', borderRadius:'4px' },
-    nature: { kw: ['nature','garden','plant','forest','earth','organic','green','eco','botanical','outdoor','farm','sustainable'], colors: { primary:'#4A7C59', secondary:'#8DB48E', accent:'#D4A574', bg:'#F5F0EB', surface:'#EDE7E0', card:'#FFFFFF', text:'#2C3E2D', muted:'#7A8B7B', border:'#D5CFCA' }, font:'DM Sans', fontUrl:'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap', borderRadius:'16px' }
+    korean: { kw: ['korean','korea','seoul','kpop','k-pop','hangul','hanbok','aesthetic','kdrama','soju','bibimbap','kimchi','hallyu','oppa','unnie'], colors: { primary:'#E8A0BF', secondary:'#B68ECE', accent:'#7EB8DA', bg:'#FFF5F7', surface:'#FFF0F3', card:'#FFFFFF', text:'#2D2B3D', muted:'#8E8BA7', border:'#F0D9E5' }, font:'Quicksand', fontUrl:'https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap', borderRadius:'20px', fluid:{ gradient:'linear-gradient(135deg,#E8A0BF,#B68ECE,#7EB8DA)', blob:'radial-gradient(ellipse at 30% 20%,rgba(232,160,191,0.4),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(182,142,206,0.3),transparent 60%)' } },
+    cute: { kw: ['cute','kawaii','adorable','playful','bubbly','pastel','soft','sweet','lovely','dreamy','cozy','fluffy'], colors: { primary:'#FF9ECD', secondary:'#B8A9E8', accent:'#97E8D5', bg:'#FFF8FC', surface:'#FFF2F8', card:'#FFFFFF', text:'#4A3F5C', muted:'#9B8FB0', border:'#F5E0ED' }, font:'Nunito', fontUrl:'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap', borderRadius:'24px', fluid:{ gradient:'linear-gradient(135deg,#FF9ECD,#B8A9E8,#97E8D5)', blob:'radial-gradient(ellipse at 25% 25%,rgba(255,158,205,0.35),transparent 55%),radial-gradient(ellipse at 75% 75%,rgba(151,232,213,0.3),transparent 55%)' } },
+    minimal: { kw: ['minimal','minimalist','clean','simple','elegant','sleek','modern','zen','refined','understated'], colors: { primary:'#111111', secondary:'#555555', accent:'#888888', bg:'#FFFFFF', surface:'#FAFAFA', card:'#FFFFFF', text:'#111111', muted:'#888888', border:'#EEEEEE' }, font:'Inter', fontUrl:'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap', borderRadius:'8px', fluid:{ gradient:'linear-gradient(135deg,#E0E0E0,#F5F5F5,#FFFFFF)', blob:'radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0.03),transparent 70%)' } },
+    retro: { kw: ['retro','vintage','80s','90s','neon','synthwave','vaporwave','arcade','pixel','nostalgia'], colors: { primary:'#FF6EC7', secondary:'#7B68EE', accent:'#00FFFF', bg:'#1A0533', surface:'#250848', card:'#2D0A5C', text:'#FFFFFF', muted:'#C4A8FF', border:'#4A1A7A' }, font:'Space Grotesk', fontUrl:'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap', borderRadius:'12px', fluid:{ gradient:'linear-gradient(135deg,#FF6EC7,#7B68EE,#00FFFF)', blob:'radial-gradient(ellipse at 20% 30%,rgba(255,110,199,0.4),transparent 50%),radial-gradient(ellipse at 80% 70%,rgba(0,255,255,0.3),transparent 50%)' } },
+    luxury: { kw: ['luxury','premium','gold','royal','exclusive','elite','high-end','classy','sophisticated','upscale'], colors: { primary:'#D4AF37', secondary:'#8B7355', accent:'#C9A96E', bg:'#0A0A0A', surface:'#141414', card:'#1C1C1C', text:'#F5F0E8', muted:'#A09880', border:'#2A2520' }, font:'Playfair Display', fontUrl:'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap', borderRadius:'4px', fluid:{ gradient:'linear-gradient(135deg,#D4AF37,#8B7355,#C9A96E)', blob:'radial-gradient(ellipse at 40% 20%,rgba(212,175,55,0.2),transparent 60%),radial-gradient(ellipse at 60% 80%,rgba(201,169,110,0.15),transparent 60%)' } },
+    nature: { kw: ['nature','garden','plant','forest','earth','organic','green','eco','botanical','outdoor','farm','sustainable'], colors: { primary:'#4A7C59', secondary:'#8DB48E', accent:'#D4A574', bg:'#F5F0EB', surface:'#EDE7E0', card:'#FFFFFF', text:'#2C3E2D', muted:'#7A8B7B', border:'#D5CFCA' }, font:'DM Sans', fontUrl:'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap', borderRadius:'16px', fluid:{ gradient:'linear-gradient(135deg,#4A7C59,#8DB48E,#D4A574)', blob:'radial-gradient(ellipse at 30% 70%,rgba(74,124,89,0.25),transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(141,180,142,0.2),transparent 60%)' } },
+    aurora: { kw: ['aurora','holographic','iridescent','cosmic','galaxy','space','nebula','astral','celestial','mystical','dreamy purple','teal'], colors: { primary:'#A855F7', secondary:'#06B6D4', accent:'#EC4899', bg:'#0F0720', surface:'#1A0E35', card:'#221548', text:'#F0E6FF', muted:'#A78BDB', border:'#2D1B5E' }, font:'Space Grotesk', fontUrl:'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap', borderRadius:'16px', fluid:{ gradient:'linear-gradient(135deg,#A855F7,#06B6D4,#EC4899)', blob:'radial-gradient(ellipse at 20% 20%,rgba(168,85,247,0.45),transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(6,182,212,0.35),transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(236,72,153,0.2),transparent 60%)' } },
+    sakura: { kw: ['sakura','blossom','cherry','spring','japanese','japan','kyoto','tokyo','zen garden','matcha','hanami'], colors: { primary:'#F9A8D4', secondary:'#C4B5FD', accent:'#FDE68A', bg:'#FFF7FB', surface:'#FFF0F6', card:'#FFFFFF', text:'#4A2040', muted:'#B08CA0', border:'#F5D5E8' }, font:'Quicksand', fontUrl:'https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap', borderRadius:'22px', fluid:{ gradient:'linear-gradient(135deg,#F9A8D4,#C4B5FD,#FDE68A)', blob:'radial-gradient(ellipse at 25% 30%,rgba(249,168,212,0.35),transparent 55%),radial-gradient(ellipse at 75% 70%,rgba(196,181,253,0.3),transparent 55%)' } },
+    midnight: { kw: ['midnight','dark luxury','navy','deep blue','dark blue','dark gold','noir','moody','dramatic','dark elegant'], colors: { primary:'#F59E0B', secondary:'#3B82F6', accent:'#EAB308', bg:'#050A18', surface:'#0A1628', card:'#0F1D36', text:'#F1F5F9', muted:'#7B92B0', border:'#1A2D4A' }, font:'Playfair Display', fontUrl:'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap', borderRadius:'10px', fluid:{ gradient:'linear-gradient(135deg,#F59E0B,#3B82F6,#EAB308)', blob:'radial-gradient(ellipse at 35% 25%,rgba(245,158,11,0.2),transparent 55%),radial-gradient(ellipse at 65% 75%,rgba(59,130,246,0.25),transparent 55%)' } },
+    citrus: { kw: ['citrus','orange','vibrant','energetic','bright','sunny','warm','tropical','summer','bold','dynamic','lively'], colors: { primary:'#F97316', secondary:'#EAB308', accent:'#EF4444', bg:'#FFFBF0', surface:'#FFF7E6', card:'#FFFFFF', text:'#3D2200', muted:'#B08840', border:'#F5E0B8' }, font:'DM Sans', fontUrl:'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap', borderRadius:'14px', fluid:{ gradient:'linear-gradient(135deg,#F97316,#EAB308,#EF4444)', blob:'radial-gradient(ellipse at 30% 30%,rgba(249,115,22,0.35),transparent 55%),radial-gradient(ellipse at 70% 70%,rgba(234,179,8,0.3),transparent 55%)' } },
+    ocean: { kw: ['ocean','sea','water','aqua','marine','wave','beach','coastal','blue','calm','serene','tranquil','lagoon','reef'], colors: { primary:'#0EA5E9', secondary:'#06B6D4', accent:'#2DD4BF', bg:'#F0FAFF', surface:'#E6F7FF', card:'#FFFFFF', text:'#0C2D48', muted:'#5B8FA8', border:'#C8E6F5' }, font:'Inter', fontUrl:'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap', borderRadius:'16px', fluid:{ gradient:'linear-gradient(135deg,#0EA5E9,#06B6D4,#2DD4BF)', blob:'radial-gradient(ellipse at 25% 40%,rgba(14,165,233,0.3),transparent 55%),radial-gradient(ellipse at 75% 60%,rgba(45,212,191,0.25),transparent 55%)' } }
   };
 
   var bestStyle = null; var bestStyleScore = 0;
@@ -768,6 +919,18 @@ function generatePreview(type, desc, title) {
   // Helper: replace default hardcoded colors with style colors in generated HTML
   function applyStyle(html) {
     if (ai.style.name === 'default') return html + upgradeOverlay;
+    // 3D Fluid blob decoration CSS
+    var fluidCSS = '';
+    if (ai.style.fluid) {
+      fluidCSS = '<style>' +
+        '.fluid-blob{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:' + ai.style.fluid.blob + ';}' +
+        '.fluid-accent{position:absolute;border-radius:50%;filter:blur(60px);opacity:0.5;animation:floatBlob 8s ease-in-out infinite alternate;}' +
+        '.fluid-accent-1{width:300px;height:300px;top:-50px;right:-50px;background:' + ai.style.fluid.gradient + ';}' +
+        '.fluid-accent-2{width:200px;height:200px;bottom:10%;left:-30px;background:' + ai.style.fluid.gradient + ';animation-delay:-4s;}' +
+        '@keyframes floatBlob{0%{transform:translate(0,0) scale(1);}100%{transform:translate(20px,-20px) scale(1.1);}}' +
+        '</style>';
+    }
+    var fluidBlobs = ai.style.fluid ? '<div class="fluid-blob"></div><div class="fluid-accent fluid-accent-1"></div><div class="fluid-accent fluid-accent-2"></div>' : '';
     return html
       .replace(/#00D4FF/g, colors.primary)
       .replace(/#6366F1/g, colors.secondary)
@@ -781,6 +944,8 @@ function generatePreview(type, desc, title) {
       .replace(/border-radius:16px/g, 'border-radius:' + stRadius)
       .replace(/border-radius:12px/g, 'border-radius:' + stRadius)
       .replace(/Space Grotesk/g, stFont)
+      .replace('</head>', fluidCSS + '</head>')
+      .replace(/<body([^>]*)>/, '<body$1 style="position:relative;overflow-x:hidden;">' + fluidBlobs)
       + upgradeOverlay;
   }
 
@@ -896,48 +1061,179 @@ function generatePreview(type, desc, title) {
     trHtml.replace(/<\/tr>/g, '<td class="row-actions"><button class="row-btn edit-btn" onclick="editRow(this)" title="Edit">&#9998;</button><button class="row-btn" onclick="deleteRow(this)" title="Delete">&#128465;</button></td></tr>') +
     '</tbody></table></div></div>' +
 
-    // ── Other sidebar pages (with content, add buttons, graphs) ──
+    // ── Context-aware sidebar pages ──
     ai.sidebarItems.slice(1).map(function(s, idx) {
       var cleanName = s.replace(/&#\d+;/g,'').replace(/[^\w\s]/g,'').trim();
+      var cl = cleanName.toLowerCase();
       var pageIcon = s.match(/&#\d+;/) ? s.match(/&#\d+;/)[0] : '&#128203;';
       var pageContent = '';
 
-      // Add entry button for every sidebar page
-      pageContent += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">' +
-        '<div style="color:#A1A1AA;font-size:0.85rem;">Manage your ' + cleanName.toLowerCase() + '</div>' +
-        '<button class="btn-add" onclick="openAddModal()">+ Add ' + cleanName + '</button></div>';
-
-      // Mini stat cards for the page
-      var pageStat1 = ai.stats[idx % ai.stats.length] || ai.stats[0];
-      var pageStat2 = ai.stats[(idx + 1) % ai.stats.length] || ai.stats[0];
-      pageContent += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">' +
-        '<div class="stat-card"><div class="stat-label">' + pageStat1.l + '</div><div class="stat-value" style="font-size:1.4rem;">' + pageStat1.v + '</div><div class="stat-change up">' + pageStat1.c + '</div></div>' +
-        '<div class="stat-card"><div class="stat-label">' + pageStat2.l + '</div><div class="stat-value" style="font-size:1.4rem;">' + pageStat2.v + '</div><div class="stat-change up">' + pageStat2.c + '</div></div></div>';
-
-      // Mini chart (pie-style or progress bars)
-      if (ai.uiFeatures.graphs || idx === 0) {
-        var progressItems = '';
-        ai.tableRows.forEach(function(r) {
-          var pct = 20 + Math.floor(Math.random() * 70);
-          progressItems += '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:4px;"><span>' + r[0] + '</span><span style="color:#A1A1AA;">' + pct + '%</span></div>' +
-            '<div style="height:8px;background:#27272A;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,#00D4FF,#6366F1);border-radius:4px;"></div></div></div>';
+      // ── SETTINGS page ──
+      if (cl === 'settings' || cl === 'preferences' || cl === 'config') {
+        var toggles = [
+          {label:'Dark Mode', desc:'Switch between light and dark themes', on:true},
+          {label:'Push Notifications', desc:'Receive alerts for updates and reminders', on:true},
+          {label:'Email Notifications', desc:'Get daily/weekly summary emails', on:false},
+          {label:'Auto-save', desc:'Automatically save changes as you work', on:true},
+          {label:'Sound Effects', desc:'Play sounds for actions and alerts', on:false},
+          {label:'Compact View', desc:'Show more data in less space', on:false}
+        ];
+        pageContent += '<div class="chart-area" style="padding:0;overflow:hidden;">' +
+          '<div style="padding:20px 24px;border-bottom:1px solid #27272A;"><h3 style="font-family:Space Grotesk,sans-serif;font-size:1rem;">General Settings</h3></div>';
+        toggles.forEach(function(t) {
+          pageContent += '<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #27272A;">' +
+            '<div><div style="font-size:0.9rem;font-weight:500;">' + t.label + '</div><div style="font-size:0.75rem;color:#A1A1AA;">' + t.desc + '</div></div>' +
+            '<div onclick="this.classList.toggle(\'on\')" class="toggle-sw' + (t.on ? ' on' : '') + '" style="width:44px;height:24px;border-radius:12px;background:' + (t.on ? '#00D4FF' : '#27272A') + ';cursor:pointer;position:relative;transition:background 0.2s;">' +
+            '<div style="width:20px;height:20px;border-radius:50%;background:#FAFAFA;position:absolute;top:2px;' + (t.on ? 'right:2px;' : 'left:2px;') + 'transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div></div></div>';
         });
-        pageContent += '<div class="chart-area"><div class="chart-head"><h3>' + cleanName + ' Overview</h3></div>' + progressItems + '</div>';
-      }
+        pageContent += '</div>';
+        // Profile section
+        pageContent += '<div class="chart-area" style="margin-top:24px;padding:0;overflow:hidden;">' +
+          '<div style="padding:20px 24px;border-bottom:1px solid #27272A;"><h3 style="font-family:Space Grotesk,sans-serif;font-size:1rem;">Profile</h3></div>' +
+          '<div style="padding:24px;display:flex;align-items:center;gap:20px;border-bottom:1px solid #27272A;">' +
+          '<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#00D4FF,#6366F1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#09090B;">U</div>' +
+          '<div><div style="font-size:1rem;font-weight:600;">Your Name</div><div style="font-size:0.8rem;color:#A1A1AA;">user@example.com</div>' +
+          '<button class="btn-add" style="margin-top:8px;padding:6px 14px;font-size:0.7rem;">Edit Profile</button></div></div>' +
+          '<div style="padding:16px 24px;"><div style="font-size:0.85rem;color:#A1A1AA;">Account created: April 2026</div></div></div>';
+        // Danger zone
+        pageContent += '<div class="chart-area" style="margin-top:24px;border-color:rgba(239,68,68,0.2);">' +
+          '<h3 style="font-family:Space Grotesk,sans-serif;font-size:1rem;color:#EF4444;margin-bottom:16px;">Danger Zone</h3>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+          '<div><div style="font-size:0.9rem;">Delete all data</div><div style="font-size:0.75rem;color:#A1A1AA;">This action cannot be undone</div></div>' +
+          '<button style="padding:8px 16px;border-radius:8px;border:1px solid #EF4444;background:transparent;color:#EF4444;font-size:0.8rem;cursor:pointer;">Delete</button></div></div>';
 
-      // Data list with action buttons
-      pageContent += '<div class="table-area"><div class="table-head"><h3>' + cleanName + ' Items</h3></div>';
-      ai.tableRows.forEach(function(r, ri) {
-        var badges2 = ['badge-green','badge-blue','badge-yellow','badge-green'];
-        pageContent += '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #27272A;">' +
-          '<div style="display:flex;align-items:center;gap:14px;">' +
-          '<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,212,255,0.08);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">' + pageIcon + '</div>' +
-          '<div><div style="font-size:0.9rem;font-weight:500;">' + r[0] + '</div><div style="font-size:0.75rem;color:#A1A1AA;">' + r[1] + ' &middot; <span class="badge ' + badges2[ri%4] + '">' + r[2] + '</span></div></div></div>' +
-          '<div style="display:flex;gap:6px;">' +
-          '<button class="row-btn edit-btn" onclick="openAddModal()" title="Edit">&#9998;</button>' +
-          '<button class="row-btn" title="Delete">&#128465;</button></div></div>';
-      });
-      pageContent += '</div>';
+      // ── CALENDAR / SCHEDULE page ──
+      } else if (cl === 'calendar' || cl === 'schedule' || cl === 'agenda' || cl === 'timeline') {
+        var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        var now = new Date();
+        pageContent += '<div class="chart-area">' +
+          '<div class="chart-head"><h3>' + months[now.getMonth()] + ' ' + now.getFullYear() + '</h3>' +
+          '<div style="display:flex;gap:8px;"><button class="chart-tab">&#9664;</button><button class="chart-tab active">Today</button><button class="chart-tab">&#9654;</button></div></div>' +
+          '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">';
+        days.forEach(function(d) { pageContent += '<div style="font-size:0.7rem;color:#A1A1AA;padding:8px 0;">' + d + '</div>'; });
+        var startDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
+        var daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+        for (var blank = 0; blank < (startDay === 0 ? 6 : startDay - 1); blank++) {
+          pageContent += '<div style="padding:10px;"></div>';
+        }
+        for (var d = 1; d <= daysInMonth; d++) {
+          var isToday = d === now.getDate();
+          var hasEvent = d === 12 || d === 15 || d === 22 || d === now.getDate() + 3;
+          pageContent += '<div style="padding:10px;border-radius:8px;font-size:0.85rem;cursor:pointer;position:relative;' +
+            (isToday ? 'background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;font-weight:700;' : 'color:#FAFAFA;') +
+            (hasEvent && !isToday ? 'background:rgba(0,212,255,0.08);' : '') + '">' + d +
+            (hasEvent ? '<div style="width:4px;height:4px;border-radius:50%;background:' + (isToday?'#09090B':'#00D4FF') + ';margin:2px auto 0;"></div>' : '') + '</div>';
+        }
+        pageContent += '</div></div>';
+        // Upcoming events
+        pageContent += '<div class="table-area"><div class="table-head"><h3>Upcoming</h3><button class="btn-add" onclick="openAddModal()">+ Add Event</button></div>';
+        ai.tableRows.forEach(function(r, ri) {
+          var eventColors = ['#00D4FF','#6366F1','#10B981','#F59E0B'];
+          pageContent += '<div style="display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid #27272A;">' +
+            '<div style="width:4px;height:40px;border-radius:2px;background:' + eventColors[ri%4] + ';flex-shrink:0;margin-top:2px;"></div>' +
+            '<div style="flex:1;"><div style="font-size:0.9rem;font-weight:500;">' + r[0] + '</div><div style="font-size:0.75rem;color:#A1A1AA;">' + r[1] + '</div></div>' +
+            '<div style="font-size:0.75rem;color:#A1A1AA;">' + r[2] + '</div></div>';
+        });
+        pageContent += '</div>';
+
+      // ── BUDGET / FINANCE page ──
+      } else if (cl === 'budget' || cl === 'finance' || cl === 'spending' || cl === 'money' || cl === 'expenses') {
+        // Spending breakdown
+        var categories = [{name:'Accommodation',pct:35,color:'#00D4FF'},{name:'Transport',pct:25,color:'#6366F1'},{name:'Food & Dining',pct:20,color:'#10B981'},{name:'Activities',pct:12,color:'#F59E0B'},{name:'Shopping',pct:8,color:'#EF4444'}];
+        pageContent += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">' +
+          '<div class="stat-card"><div class="stat-label">Total Budget</div><div class="stat-value" style="font-size:1.4rem;">$4,280</div><div class="stat-change up">On track</div></div>' +
+          '<div class="stat-card"><div class="stat-label">Spent So Far</div><div class="stat-value" style="font-size:1.4rem;">$2,180</div><div class="stat-change down">51% used</div></div></div>';
+        pageContent += '<div class="chart-area"><div class="chart-head"><h3>Spending Breakdown</h3><button class="btn-add" onclick="openAddModal()" style="padding:6px 14px;font-size:0.75rem;">+ Add Expense</button></div>';
+        categories.forEach(function(c) {
+          pageContent += '<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px;"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + c.color + ';margin-right:8px;"></span>' + c.name + '</span><span style="color:#A1A1AA;">' + c.pct + '%</span></div>' +
+            '<div style="height:10px;background:#27272A;border-radius:5px;overflow:hidden;"><div style="height:100%;width:' + c.pct + '%;background:' + c.color + ';border-radius:5px;transition:width 0.5s;"></div></div></div>';
+        });
+        pageContent += '</div>';
+        // Transaction list
+        pageContent += '<div class="table-area"><div class="table-head"><h3>Recent Transactions</h3></div>';
+        var transactions = [{n:'Hotel Booking',a:'-$420',c:'#EF4444'},{n:'Flight Ticket',a:'-$680',c:'#EF4444'},{n:'Budget Added',a:'+$2,000',c:'#10B981'},{n:'Restaurant',a:'-$45',c:'#EF4444'}];
+        transactions.forEach(function(t) {
+          pageContent += '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #27272A;">' +
+            '<div style="font-size:0.9rem;">' + t.n + '</div><div style="font-size:0.9rem;font-weight:600;color:' + t.c + ';">' + t.a + '</div></div>';
+        });
+        pageContent += '</div>';
+
+      // ── EXPLORE / DISCOVER page ──
+      } else if (cl === 'explore' || cl === 'discover' || cl === 'browse' || cl === 'search') {
+        pageContent += '<div class="search-bar" style="margin-bottom:24px;"><span>&#128269;</span><input type="text" placeholder="Explore ' + ai.projectName + '..." style="flex:1;background:none;border:none;color:#FAFAFA;outline:none;font-size:0.9rem;"></div>';
+        pageContent += '<h3 style="font-family:Space Grotesk,sans-serif;font-size:1rem;margin-bottom:16px;">Popular</h3>';
+        pageContent += '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px;">';
+        ai.tableRows.forEach(function(r, ri) {
+          var cardColors = ['linear-gradient(135deg,rgba(0,212,255,0.15),rgba(99,102,241,0.15))','linear-gradient(135deg,rgba(16,185,129,0.15),rgba(0,212,255,0.15))','linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.15))','linear-gradient(135deg,rgba(245,158,11,0.15),rgba(239,68,68,0.15))'];
+          pageContent += '<div style="background:' + cardColors[ri%4] + ';border:1px solid #27272A;border-radius:12px;padding:20px;cursor:pointer;" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'\'">' +
+            '<div style="font-size:1.5rem;margin-bottom:10px;">' + pageIcon + '</div>' +
+            '<div style="font-size:0.95rem;font-weight:600;margin-bottom:4px;">' + r[0] + '</div>' +
+            '<div style="font-size:0.75rem;color:#A1A1AA;">' + r[1] + '</div></div>';
+        });
+        pageContent += '</div>';
+        pageContent += '<h3 style="font-family:Space Grotesk,sans-serif;font-size:1rem;margin-bottom:16px;">Suggested for You</h3>' +
+          '<div class="chart-area"><p style="color:#A1A1AA;font-size:0.85rem;">Based on your activity, we think you might like these. Add more data to get better suggestions.</p></div>';
+
+      // ── PACKING / CHECKLIST page ──
+      } else if (cl === 'packing' || cl === 'checklist' || cl === 'tasks' || cl === 'todo' || cl === 'to-do') {
+        var packCategories = {
+          'Essentials': ['Passport & ID','Travel insurance','Phone charger','Cash & cards','Medications'],
+          'Clothing': ['T-shirts (4)','Pants (2)','Jacket','Underwear (5)','Comfortable shoes'],
+          'Toiletries': ['Toothbrush & paste','Sunscreen','Shampoo (travel size)','Deodorant','First aid kit']
+        };
+        pageContent += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">' +
+          '<div><span style="font-size:0.85rem;color:#A1A1AA;">8 of 15 packed</span></div>' +
+          '<button class="btn-add" onclick="openAddModal()">+ Add Item</button></div>';
+        pageContent += '<div style="height:8px;background:#27272A;border-radius:4px;overflow:hidden;margin-bottom:24px;"><div style="height:100%;width:53%;background:linear-gradient(90deg,#10B981,#00D4FF);border-radius:4px;"></div></div>';
+        Object.keys(packCategories).forEach(function(cat) {
+          pageContent += '<div class="chart-area" style="padding:0;overflow:hidden;margin-bottom:12px;">' +
+            '<div style="padding:14px 20px;border-bottom:1px solid #27272A;font-weight:600;font-size:0.9rem;">' + cat + '</div>';
+          packCategories[cat].forEach(function(item, ii) {
+            var checked = ii < 2;
+            pageContent += '<div style="display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid #27272A;cursor:pointer;" onclick="var cb=this.querySelector(\'.ck\');cb.classList.toggle(\'done\');var sp=this.querySelector(\'.itm\');sp.style.textDecoration=cb.classList.contains(\'done\')?\'line-through\':\'none\';sp.style.color=cb.classList.contains(\'done\')?\'#52525B\':\'#FAFAFA\';">' +
+              '<div class="ck' + (checked ? ' done' : '') + '" style="width:22px;height:22px;border-radius:6px;border:2px solid ' + (checked ? '#10B981' : '#27272A') + ';background:' + (checked ? 'rgba(16,185,129,0.1)' : 'transparent') + ';display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#10B981;flex-shrink:0;">' + (checked ? '&#10003;' : '') + '</div>' +
+              '<span class="itm" style="font-size:0.85rem;' + (checked ? 'text-decoration:line-through;color:#52525B;' : 'color:#FAFAFA;') + '">' + item + '</span></div>';
+          });
+          pageContent += '</div>';
+        });
+
+      // ── DATA PAGES (default: Trips, Workouts, Recipes, etc.) ──
+      } else {
+        // Header with add button
+        pageContent += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">' +
+          '<div style="color:#A1A1AA;font-size:0.85rem;">Manage your ' + cleanName.toLowerCase() + '</div>' +
+          '<button class="btn-add" onclick="openAddModal()">+ Add ' + cleanName.replace(/s$/,'') + '</button></div>';
+        // Stats
+        var pageStat1 = ai.stats[idx % ai.stats.length] || ai.stats[0];
+        var pageStat2 = ai.stats[(idx + 1) % ai.stats.length] || ai.stats[0];
+        pageContent += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">' +
+          '<div class="stat-card"><div class="stat-label">' + pageStat1.l + '</div><div class="stat-value" style="font-size:1.4rem;">' + pageStat1.v + '</div><div class="stat-change up">' + pageStat1.c + '</div></div>' +
+          '<div class="stat-card"><div class="stat-label">' + pageStat2.l + '</div><div class="stat-value" style="font-size:1.4rem;">' + pageStat2.v + '</div><div class="stat-change up">' + pageStat2.c + '</div></div></div>';
+        // Progress chart
+        if (ai.uiFeatures.graphs || true) {
+          pageContent += '<div class="chart-area"><div class="chart-head"><h3>' + cleanName + ' Progress</h3></div>';
+          ai.tableRows.forEach(function(r) {
+            var pct = 20 + Math.floor(Math.random() * 70);
+            pageContent += '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:4px;"><span>' + r[0] + '</span><span style="color:#A1A1AA;">' + pct + '%</span></div>' +
+              '<div style="height:8px;background:#27272A;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,#00D4FF,#6366F1);border-radius:4px;"></div></div></div>';
+          });
+          pageContent += '</div>';
+        }
+        // Data cards
+        pageContent += '<div class="table-area"><div class="table-head"><h3>All ' + cleanName + '</h3></div>';
+        ai.tableRows.forEach(function(r, ri) {
+          var badges2 = ['badge-green','badge-blue','badge-yellow','badge-green'];
+          pageContent += '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #27272A;">' +
+            '<div style="display:flex;align-items:center;gap:14px;">' +
+            '<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,212,255,0.08);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">' + pageIcon + '</div>' +
+            '<div><div style="font-size:0.9rem;font-weight:500;">' + r[0] + '</div><div style="font-size:0.75rem;color:#A1A1AA;">' + r[1] + ' &middot; <span class="badge ' + badges2[ri%4] + '">' + r[2] + '</span></div></div></div>' +
+            '<div style="display:flex;gap:6px;">' +
+            '<button class="row-btn edit-btn" onclick="openAddModal()" title="Edit">&#9998;</button>' +
+            '<button class="row-btn" title="Delete">&#128465;</button></div></div>';
+        });
+        pageContent += '</div>';
+      }
 
       return '<div class="page-section" id="page-' + (idx+1) + '">' +
         '<div class="dash-header"><h1>' + s + '</h1></div>' + pageContent + '</div>';
