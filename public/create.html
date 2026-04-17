@@ -248,6 +248,52 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     <p style="color:var(--text-muted);font-size:0.8rem;margin-top:20px;" id="watermarkNote">Free plan: Buildr AI watermark will appear on your project. <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" style="color:var(--accent);">Remove with Pro</a></p>
   </div>
 
+  <!-- Use Build Modal (one-time $10 per dashboard) -->
+  <div id="useBuildModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.92);z-index:400;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:500px;width:100%;position:relative;">
+      <button onclick="document.getElementById('useBuildModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>
+
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#10B981,#00D4FF);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#9889;</div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:8px;">Activate Your Live Dashboard</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">Your build is ready to use as a real, interactive tool. Unlock it for a one-time payment — no subscription needed.</p>
+      </div>
+
+      <!-- $10 One-Time Option -->
+      <a id="useBuildStripeLink" href="https://buy.stripe.com/cNi6oHawagPGfoo5VVeIw02" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;padding:22px;border-radius:var(--radius-sm);border:1px solid var(--accent3);background:rgba(16,185,129,0.04);text-decoration:none;color:var(--text);transition:all 0.2s;margin-bottom:16px;position:relative;">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#10B981,#00D4FF);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">&#9889;</div>
+        <div style="flex:1;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">Live Dashboard</div>
+          <div style="color:var(--text-muted);font-size:0.8rem;margin-top:2px;">Fully interactive &bull; Editable data &bull; Yours forever</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.4rem;color:var(--accent3);">$10</div>
+          <div style="color:var(--text-muted);font-size:0.65rem;">one-time</div>
+        </div>
+        <div style="position:absolute;top:-8px;right:12px;background:linear-gradient(135deg,#10B981,#00D4FF);color:var(--base);padding:2px 12px;border-radius:50px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Best Value</div>
+      </a>
+
+      <!-- What you get -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 22px;margin-bottom:20px;">
+        <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">What you get</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Add &amp; edit data</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Working sidebar nav</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Interactive charts</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Search &amp; filter</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Download &amp; keep</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; No watermark</div>
+        </div>
+      </div>
+
+      <!-- Or upgrade to Pro -->
+      <div style="text-align:center;padding-top:4px;border-top:1px solid var(--border);">
+        <p style="color:var(--text-muted);font-size:0.78rem;margin-top:16px;">Want unlimited live dashboards? <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" style="color:var(--accent);text-decoration:none;font-weight:600;">Upgrade to Pro — $29/mo</a></p>
+        <p style="color:#52525B;font-size:0.7rem;margin-top:8px;">Pay with Card, Apple Pay, Google Pay, or PayPal.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Upgrade Prompt Modal -->
   <div id="upgradeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.9);z-index:400;align-items:center;justify-content:center;padding:24px;">
     <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:480px;width:100%;position:relative;">
@@ -1069,29 +1115,22 @@ function useBuild() {
     var blob = new Blob([previewHTML], { type: 'text/html' });
     var url = URL.createObjectURL(blob);
     window.open(url, '_blank');
-    // Toast
     var toast = document.createElement('div');
     toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#10B981,#00D4FF);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;box-shadow:0 8px 40px rgba(16,185,129,0.4);';
     toast.textContent = 'Your build is live! Use it in the new tab.';
     document.body.appendChild(toast);
     setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 3000);
   } else {
-    // Free users: show upgrade prompt with pricing
-    document.getElementById('upgradeIcon').innerHTML = '&#9889;';
-    document.getElementById('upgradeTitle').textContent = 'Upgrade to Use Your Build';
-    document.getElementById('upgradeDesc').innerHTML = 'Free plan lets you <strong>preview</strong> your builds. To use them as fully interactive tools — edit data, add entries, and work with your dashboard in real time — upgrade to a paid plan.<br><br>' +
-      '<div style="display:flex;gap:12px;justify-content:center;margin-top:8px;">' +
-      '<div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:16px 20px;flex:1;text-align:center;">' +
-      '<div style="font-size:0.75rem;color:#A1A1AA;margin-bottom:4px;">PRO</div>' +
-      '<div style="font-family:Space Grotesk,sans-serif;font-size:1.4rem;font-weight:700;color:#00D4FF;">$29<span style="font-size:0.8rem;color:#A1A1AA;">/mo</span></div>' +
-      '<div style="font-size:0.7rem;color:#A1A1AA;margin-top:4px;">Unlimited builds<br>No watermark<br>Full interactivity</div></div>' +
-      '<div style="background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:16px 20px;flex:1;text-align:center;">' +
-      '<div style="font-size:0.75rem;color:#A1A1AA;margin-bottom:4px;">BUSINESS</div>' +
-      '<div style="font-family:Space Grotesk,sans-serif;font-size:1.4rem;font-weight:700;color:#6366F1;">$99<span style="font-size:0.8rem;color:#A1A1AA;">/mo</span></div>' +
-      '<div style="font-size:0.7rem;color:#A1A1AA;margin-top:4px;">Everything in Pro<br>Priority support<br>Custom branding</div></div></div>';
-    document.getElementById('upgradeModal').style.display = 'flex';
+    // Free users: show $10 one-time Use Build modal
+    document.getElementById('useBuildModal').style.display = 'flex';
   }
 }
+
+// Close Use Build modal on backdrop click
+document.addEventListener('click', function(e) {
+  var modal = document.getElementById('useBuildModal');
+  if (e.target === modal) { modal.style.display = 'none'; }
+});
 
 // ── Publish & Watermark Upgrade Prompts ──
 function publishProject() {
