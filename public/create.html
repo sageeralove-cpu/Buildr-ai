@@ -367,7 +367,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     </div>
   </div>
   <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;" id="previewContainer">
-    <iframe id="previewFrame" style="width:100%;height:100%;border:none;border-radius:12px;background:#fff;" sandbox="allow-scripts"></iframe>
+    <iframe id="previewFrame" style="width:100%;height:100%;border:none;border-radius:12px;background:#fff;" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe>
   </div>
 </div>
 
@@ -699,6 +699,23 @@ function analyzeDescription(dl, desc, title) {
     result.style = { name: 'default', colors: { primary:'#00D4FF', secondary:'#6366F1', accent:'#10B981', bg:'#09090B', surface:'#18181B', card:'#1E1E22', text:'#FAFAFA', muted:'#A1A1AA', border:'#27272A' }, font:'Inter', fontUrl:'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap', borderRadius:'16px' };
   }
 
+  // ── UI Feature Detection ──
+  result.uiFeatures = {
+    addButtons: dl.indexOf('add button') !== -1 || dl.indexOf('add entry') !== -1 || dl.indexOf('entry button') !== -1 || dl.indexOf('add new') !== -1 || dl.indexOf('create button') !== -1 || dl.indexOf('add item') !== -1,
+    graphs: dl.indexOf('graph') !== -1 || dl.indexOf('chart') !== -1 || dl.indexOf('visual') !== -1 || dl.indexOf('analytics') !== -1 || dl.indexOf('statistics') !== -1 || dl.indexOf('pie chart') !== -1 || dl.indexOf('bar chart') !== -1,
+    calendar: dl.indexOf('calendar') !== -1 || dl.indexOf('schedule') !== -1 || dl.indexOf('date picker') !== -1 || dl.indexOf('planner') !== -1 || dl.indexOf('agenda') !== -1,
+    search: dl.indexOf('search') !== -1 || dl.indexOf('filter') !== -1 || dl.indexOf('find') !== -1 || dl.indexOf('lookup') !== -1,
+    notifications: dl.indexOf('notification') !== -1 || dl.indexOf('alert') !== -1 || dl.indexOf('reminder') !== -1 || dl.indexOf('notify') !== -1,
+    darkMode: dl.indexOf('dark mode') !== -1 || dl.indexOf('dark theme') !== -1 || dl.indexOf('toggle theme') !== -1 || dl.indexOf('light mode') !== -1,
+    profile: dl.indexOf('profile') !== -1 || dl.indexOf('avatar') !== -1 || dl.indexOf('account') !== -1 || dl.indexOf('user') !== -1,
+    progress: dl.indexOf('progress') !== -1 || dl.indexOf('progress bar') !== -1 || dl.indexOf('tracker') !== -1 || dl.indexOf('tracking') !== -1 || dl.indexOf('completion') !== -1,
+    forms: dl.indexOf('form') !== -1 || dl.indexOf('input') !== -1 || dl.indexOf('field') !== -1 || dl.indexOf('submit') !== -1 || dl.indexOf('contact form') !== -1,
+    gallery: dl.indexOf('gallery') !== -1 || dl.indexOf('image') !== -1 || dl.indexOf('photo') !== -1 || dl.indexOf('portfolio') !== -1,
+    pricing: dl.indexOf('pricing') !== -1 || dl.indexOf('price') !== -1 || dl.indexOf('plan') !== -1 || dl.indexOf('subscription') !== -1,
+    timeline: dl.indexOf('timeline') !== -1 || dl.indexOf('history') !== -1 || dl.indexOf('activity log') !== -1 || dl.indexOf('recent') !== -1,
+    map: dl.indexOf('map') !== -1 || dl.indexOf('location') !== -1 || dl.indexOf('geo') !== -1 || dl.indexOf('places') !== -1
+  };
+
   // Generate hero content from description
   result.heroTitle = result.projectName;
   result.heroSub = desc.length > 30 ? desc.substring(0, 160) : 'A smart, AI-powered ' + bestTheme + ' tool built just for you.';
@@ -853,19 +870,77 @@ function generatePreview(type, desc, title) {
     '<div class="search-bar"><span>&#128269;</span><input type="text" placeholder="Search ' + ai.projectName + '..." id="searchInput" oninput="filterTable(this.value)"></div>' +
     '<div class="stats" id="statsGrid">' + statsHtml.replace(/<div class="stat-card">/g, '<div class="stat-card" onclick="editStat(this)"><button class="stat-edit">&#9998;</button>') + '</div>' +
     '<div class="chart-area"><div class="chart-head"><h3>' + ai.chartTitle + '</h3><div class="chart-tabs"><button class="chart-tab active" onclick="switchChart(\'bar\',this)">Bar</button><button class="chart-tab" onclick="switchChart(\'line\',this)">Line</button></div></div><div class="chart-canvas" id="chartCanvas"><div class="bar-chart" id="barChart" style="padding-bottom:28px;">' + barsHtml + '</div></div></div>' +
+    // Extra graphs section if requested
+    (ai.uiFeatures.graphs ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">' +
+      '<div class="chart-area" style="margin-bottom:0;"><div class="chart-head"><h3>Distribution</h3></div>' +
+      '<div style="display:flex;align-items:center;justify-content:center;height:160px;">' +
+      '<svg viewBox="0 0 120 120" width="140" height="140"><circle cx="60" cy="60" r="50" fill="none" stroke="#27272A" stroke-width="12"/>' +
+      '<circle cx="60" cy="60" r="50" fill="none" stroke="#00D4FF" stroke-width="12" stroke-dasharray="120 200" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>' +
+      '<circle cx="60" cy="60" r="50" fill="none" stroke="#6366F1" stroke-width="12" stroke-dasharray="80 240" stroke-dashoffset="-120" transform="rotate(-90 60 60)"/>' +
+      '<circle cx="60" cy="60" r="50" fill="none" stroke="#10B981" stroke-width="12" stroke-dasharray="60 260" stroke-dashoffset="-200" transform="rotate(-90 60 60)"/>' +
+      '<text x="60" y="56" text-anchor="middle" fill="#FAFAFA" font-size="18" font-weight="700" font-family="Space Grotesk,sans-serif">78%</text>' +
+      '<text x="60" y="72" text-anchor="middle" fill="#A1A1AA" font-size="8">Complete</text></svg></div>' +
+      '<div style="display:flex;gap:16px;justify-content:center;margin-top:8px;">' +
+      '<div style="display:flex;align-items:center;gap:6px;font-size:0.7rem;"><span style="width:8px;height:8px;border-radius:50%;background:#00D4FF;"></span><span style="color:#A1A1AA;">Active</span></div>' +
+      '<div style="display:flex;align-items:center;gap:6px;font-size:0.7rem;"><span style="width:8px;height:8px;border-radius:50%;background:#6366F1;"></span><span style="color:#A1A1AA;">Pending</span></div>' +
+      '<div style="display:flex;align-items:center;gap:6px;font-size:0.7rem;"><span style="width:8px;height:8px;border-radius:50%;background:#10B981;"></span><span style="color:#A1A1AA;">Done</span></div>' +
+      '</div></div>' +
+      '<div class="chart-area" style="margin-bottom:0;"><div class="chart-head"><h3>Progress</h3></div>' +
+      ai.tableRows.map(function(r) {
+        var pct = 20 + Math.floor(Math.random() * 70);
+        return '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:4px;"><span>' + r[0] + '</span><span style="color:#A1A1AA;">' + pct + '%</span></div>' +
+          '<div style="height:8px;background:#27272A;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,#00D4FF,#6366F1);border-radius:4px;"></div></div></div>';
+      }).join('') +
+      '</div></div>' : '') +
     '<div class="table-area"><div class="table-head"><h3>Recent Activity</h3><button class="btn-add" onclick="openAddModal()">+ Add Entry</button></div><table class="tbl" id="dataTable"><thead><tr>' + thHtml + '<th style="width:80px;">Actions</th></tr></thead><tbody id="tableBody">' +
     trHtml.replace(/<\/tr>/g, '<td class="row-actions"><button class="row-btn edit-btn" onclick="editRow(this)" title="Edit">&#9998;</button><button class="row-btn" onclick="deleteRow(this)" title="Delete">&#128465;</button></td></tr>') +
     '</tbody></table></div></div>' +
 
-    // ── Other sidebar pages (generated dynamically) ──
+    // ── Other sidebar pages (with content, add buttons, graphs) ──
     ai.sidebarItems.slice(1).map(function(s, idx) {
       var cleanName = s.replace(/&#\d+;/g,'').replace(/[^\w\s]/g,'').trim();
+      var pageIcon = s.match(/&#\d+;/) ? s.match(/&#\d+;/)[0] : '&#128203;';
+      var pageContent = '';
+
+      // Add entry button for every sidebar page
+      pageContent += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">' +
+        '<div style="color:#A1A1AA;font-size:0.85rem;">Manage your ' + cleanName.toLowerCase() + '</div>' +
+        '<button class="btn-add" onclick="openAddModal()">+ Add ' + cleanName + '</button></div>';
+
+      // Mini stat cards for the page
+      var pageStat1 = ai.stats[idx % ai.stats.length] || ai.stats[0];
+      var pageStat2 = ai.stats[(idx + 1) % ai.stats.length] || ai.stats[0];
+      pageContent += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">' +
+        '<div class="stat-card"><div class="stat-label">' + pageStat1.l + '</div><div class="stat-value" style="font-size:1.4rem;">' + pageStat1.v + '</div><div class="stat-change up">' + pageStat1.c + '</div></div>' +
+        '<div class="stat-card"><div class="stat-label">' + pageStat2.l + '</div><div class="stat-value" style="font-size:1.4rem;">' + pageStat2.v + '</div><div class="stat-change up">' + pageStat2.c + '</div></div></div>';
+
+      // Mini chart (pie-style or progress bars)
+      if (ai.uiFeatures.graphs || idx === 0) {
+        var progressItems = '';
+        ai.tableRows.forEach(function(r) {
+          var pct = 20 + Math.floor(Math.random() * 70);
+          progressItems += '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:4px;"><span>' + r[0] + '</span><span style="color:#A1A1AA;">' + pct + '%</span></div>' +
+            '<div style="height:8px;background:#27272A;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,#00D4FF,#6366F1);border-radius:4px;"></div></div></div>';
+        });
+        pageContent += '<div class="chart-area"><div class="chart-head"><h3>' + cleanName + ' Overview</h3></div>' + progressItems + '</div>';
+      }
+
+      // Data list with action buttons
+      pageContent += '<div class="table-area"><div class="table-head"><h3>' + cleanName + ' Items</h3></div>';
+      ai.tableRows.forEach(function(r, ri) {
+        var badges2 = ['badge-green','badge-blue','badge-yellow','badge-green'];
+        pageContent += '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #27272A;">' +
+          '<div style="display:flex;align-items:center;gap:14px;">' +
+          '<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,212,255,0.08);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">' + pageIcon + '</div>' +
+          '<div><div style="font-size:0.9rem;font-weight:500;">' + r[0] + '</div><div style="font-size:0.75rem;color:#A1A1AA;">' + r[1] + ' &middot; <span class="badge ' + badges2[ri%4] + '">' + r[2] + '</span></div></div></div>' +
+          '<div style="display:flex;gap:6px;">' +
+          '<button class="row-btn edit-btn" onclick="openAddModal()" title="Edit">&#9998;</button>' +
+          '<button class="row-btn" title="Delete">&#128465;</button></div></div>';
+      });
+      pageContent += '</div>';
+
       return '<div class="page-section" id="page-' + (idx+1) + '">' +
-        '<div class="dash-header"><h1>' + s + '</h1></div>' +
-        '<div class="empty-state"><span class="empty-icon">' + s.match(/&#\d+;/)?s.match(/&#\d+;/)[0]:'&#128203;' + '</span>' +
-        '<h3 style="margin-bottom:8px;color:#FAFAFA;">' + cleanName + ' Page</h3>' +
-        '<p>Your ' + cleanName.toLowerCase() + ' data will appear here as you add entries from the dashboard.</p>' +
-        '<button class="btn-add" style="margin-top:20px;" onclick="switchToPage(0)">Go to Dashboard</button></div></div>';
+        '<div class="dash-header"><h1>' + s + '</h1></div>' + pageContent + '</div>';
     }).join('') +
 
     // ── Add/Edit Modal ──
