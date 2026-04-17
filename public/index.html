@@ -144,7 +144,17 @@ nav.scrolled {
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
-  box-shadow: 0 0 20px rgba(0,212,255,0.3);
+  box-shadow: 0 0 20px rgba(0,212,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+  position: relative;
+  overflow: hidden;
+}
+.logo-icon::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 60%);
+  pointer-events: none;
 }
 
 .logo span { color: var(--accent); }
@@ -178,6 +188,22 @@ nav.scrolled {
 .nav-cta:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 20px rgba(0,212,255,0.4);
+}
+
+.nav-signin {
+  color: var(--text) !important;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: 600 !important;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: all 0.2s !important;
+  font-size: 0.85rem;
+}
+.nav-signin:hover {
+  border-color: var(--accent);
+  color: var(--accent) !important;
+  box-shadow: 0 2px 12px rgba(0,212,255,0.15);
 }
 
 .mobile-menu { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
@@ -518,18 +544,75 @@ section { position: relative; z-index: 1; }
 .feature-card:hover::before { opacity: 1; }
 
 .feature-icon {
-  width: 48px; height: 48px;
-  border-radius: 12px;
+  width: 56px; height: 56px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature-icon:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+.feature-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  opacity: 0.5;
+  z-index: 0;
+  transition: opacity 0.3s ease;
+}
+.feature-icon::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent 60%);
+  z-index: 1;
+  pointer-events: none;
+}
+.feature-icon span, .feature-icon .icon-3d {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
 }
 
-.fi-cyan { background: rgba(0,212,255,0.1); }
-.fi-indigo { background: rgba(99,102,241,0.1); }
-.fi-green { background: rgba(16,185,129,0.1); }
+.fi-cyan {
+  background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(0,212,255,0.05));
+}
+.fi-cyan::before {
+  background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.3), transparent 70%);
+}
+.fi-cyan:hover {
+  box-shadow: 0 8px 32px rgba(0,212,255,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.fi-indigo {
+  background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(99,102,241,0.05));
+}
+.fi-indigo::before {
+  background: radial-gradient(circle at 50% 50%, rgba(99,102,241,0.3), transparent 70%);
+}
+.fi-indigo:hover {
+  box-shadow: 0 8px 32px rgba(99,102,241,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.fi-green {
+  background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.05));
+}
+.fi-green::before {
+  background: radial-gradient(circle at 50% 50%, rgba(16,185,129,0.3), transparent 70%);
+}
+.fi-green:hover {
+  box-shadow: 0 8px 32px rgba(16,185,129,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+}
 
 .feature-card h3 {
   font-family: 'Space Grotesk', sans-serif;
@@ -1468,6 +1551,24 @@ footer {
   justify-content: center;
   font-size: 1.2rem;
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,212,255,0.2);
+}
+.install-prompt-icon::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent 60%);
+  pointer-events: none;
+}
+
+/* Upstyled section badges */
+.section-badge {
+  background: linear-gradient(135deg, rgba(0,212,255,0.12), rgba(99,102,241,0.08)) !important;
+  border: 1px solid rgba(0,212,255,0.2) !important;
+  box-shadow: 0 2px 12px rgba(0,212,255,0.1);
 }
 
 .install-prompt-text { flex: 1; }
@@ -1533,6 +1634,7 @@ footer {
       <li><a href="#how-it-works">How It Works</a></li>
       <li><a href="#pricing">Pricing</a></li>
       <li><a href="#faq">FAQ</a></li>
+      <li><a href="#" class="nav-signin" onclick="openSignIn();return false;">Sign In</a></li>
       <li><a href="#" class="nav-cta" onclick="openPayment('free')">Get Started Free</a></li>
     </ul>
     <button class="mobile-menu" onclick="toggleMobileMenu()">☰</button>
@@ -1618,32 +1720,32 @@ footer {
     </div>
     <div class="features-grid">
       <div class="feature-card fade-in">
-        <div class="feature-icon fi-cyan">📱</div>
+        <div class="feature-icon fi-cyan"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="3" stroke="url(#gc1)" stroke-width="1.5"/><rect x="7" y="5" width="10" height="12" rx="1" fill="url(#gc1)" opacity="0.15"/><circle cx="12" cy="19" r="1" fill="url(#gc1)"/><defs><linearGradient id="gc1" x1="5" y1="2" x2="19" y2="22"><stop stop-color="#00D4FF"/><stop offset="1" stop-color="#06B6D4"/></linearGradient></defs></svg></div>
         <h3>App Builder</h3>
         <p>Describe your app idea in plain English. Our AI generates a fully functional mobile or web app, ready for the App Store or Google Play.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon fi-indigo">🌐</div>
+        <div class="feature-icon fi-indigo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" stroke="url(#gi1)" stroke-width="1.5"/><ellipse cx="12" cy="12" rx="4" ry="9.5" stroke="url(#gi1)" stroke-width="1.2"/><line x1="2.5" y1="9" x2="21.5" y2="9" stroke="url(#gi1)" stroke-width="1" opacity="0.6"/><line x1="2.5" y1="15" x2="21.5" y2="15" stroke="url(#gi1)" stroke-width="1" opacity="0.6"/><circle cx="12" cy="12" r="1.5" fill="url(#gi1)"/><defs><linearGradient id="gi1" x1="2" y1="2" x2="22" y2="22"><stop stop-color="#818CF8"/><stop offset="1" stop-color="#6366F1"/></linearGradient></defs></svg></div>
         <h3>Website Creator</h3>
         <p>Beautiful, responsive websites generated in seconds. Choose from AI-curated templates or let AI design from scratch based on your vision.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon fi-green">📊</div>
+        <div class="feature-icon fi-green"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="3" y="14" width="4" height="7" rx="1" fill="url(#gg1)" opacity="0.8"/><rect x="10" y="9" width="4" height="12" rx="1" fill="url(#gg1)" opacity="0.9"/><rect x="17" y="4" width="4" height="17" rx="1" fill="url(#gg1)"/><line x1="2" y1="22" x2="22" y2="22" stroke="url(#gg1)" stroke-width="1.2" opacity="0.4"/><defs><linearGradient id="gg1" x1="3" y1="4" x2="21" y2="21"><stop stop-color="#34D399"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs></svg></div>
         <h3>Dashboard Builder</h3>
         <p>Create data-driven dashboards with real-time analytics, interactive charts, and custom KPIs. Connect any data source instantly.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon fi-cyan">📲</div>
+        <div class="feature-icon fi-cyan"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="3" stroke="url(#gc2)" stroke-width="1.5"/><path d="M15 10l-3 3-2-2" stroke="url(#gc2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="6" r="3.5" fill="#09090B" stroke="url(#gc2)" stroke-width="1.2"/><circle cx="17" cy="6" r="1.5" fill="url(#gc2)"/><defs><linearGradient id="gc2" x1="5" y1="2" x2="19" y2="22"><stop stop-color="#00D4FF"/><stop offset="1" stop-color="#22D3EE"/></linearGradient></defs></svg></div>
         <h3>Social Media Content</h3>
         <p>Generate scroll-stopping posts, reels, and stories for every platform. Schedule and publish directly to your accounts.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon fi-indigo">🚀</div>
+        <div class="feature-icon fi-indigo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 3L14 9H20L15 13L17 19L12 15L7 19L9 13L4 9H10L12 3Z" fill="url(#gi2)" opacity="0.15" stroke="url(#gi2)" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 7v5l3.5 3.5" stroke="url(#gi2)" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/><circle cx="18" cy="18" r="4" fill="#09090B" stroke="url(#gi2)" stroke-width="1.2"/><path d="M17 17l2 2m0-2l-2 2" stroke="url(#gi2)" stroke-width="1" stroke-linecap="round" opacity="0.8"/><defs><linearGradient id="gi2" x1="4" y1="3" x2="20" y2="19"><stop stop-color="#A78BFA"/><stop offset="1" stop-color="#6366F1"/></linearGradient></defs></svg></div>
         <h3>One-Click Publishing</h3>
         <p>Publish to Apple App Store, Google Play, web hosting, and all major social media platforms with a single click. No technical setup.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon fi-green">🤖</div>
+        <div class="feature-icon fi-green"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="3" stroke="url(#gg2)" stroke-width="1.5"/><circle cx="12" cy="11" r="3" fill="url(#gg2)" opacity="0.2" stroke="url(#gg2)" stroke-width="1.2"/><circle cx="9" cy="10" r="1" fill="url(#gg2)"/><circle cx="15" cy="10" r="1" fill="url(#gg2)"/><path d="M10 13c0 0 1 1.5 2 1.5s2-1.5 2-1.5" stroke="url(#gg2)" stroke-width="1" stroke-linecap="round"/><line x1="8" y1="21" x2="16" y2="21" stroke="url(#gg2)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><line x1="12" y1="18" x2="12" y2="21" stroke="url(#gg2)" stroke-width="1.2" opacity="0.5"/><defs><linearGradient id="gg2" x1="3" y1="4" x2="21" y2="21"><stop stop-color="#34D399"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs></svg></div>
         <h3>AI Agent Support</h3>
         <p>24/7 AI agents answer your questions, help debug issues, suggest improvements, and guide you through every step of the building process.</p>
       </div>
@@ -1982,7 +2084,7 @@ footer {
     <!-- Step 1: Email signup -->
     <div id="freeStep1">
       <div style="text-align:center;margin-bottom:24px;">
-        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#9889;</div>
+        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,212,255,0.25);"><svg width="36" height="36" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#fff" opacity="0.9"/></svg><div style="position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.2),transparent 60%);pointer-events:none;"></div></div>
         <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin-bottom:8px;">Start Building for Free</h3>
         <p style="color:var(--text-muted);font-size:0.95rem;">Enter your email to create your free Starter account.</p>
       </div>
@@ -2021,7 +2123,7 @@ footer {
     <!-- Step 2: Confirmation -->
     <div id="freeStep2" style="display:none;">
       <div style="text-align:center;margin-bottom:24px;">
-        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 20px;">&#10003;</div>
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(16,185,129,0.3);"><svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div style="position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.2),transparent 60%);pointer-events:none;"></div></div>
         <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin-bottom:8px;">You're in!</h3>
         <p style="color:var(--text-muted);font-size:0.95rem;">Welcome to Buildr AI, <span id="freeUserName" style="color:var(--accent);font-weight:600;"></span></p>
         <p style="color:var(--text-muted);font-size:0.85rem;margin-top:8px;">We've sent a confirmation to <span id="freeUserEmail" style="color:var(--text);font-weight:500;"></span></p>
@@ -2043,6 +2145,59 @@ footer {
   </div>
 </div>
 
+<!-- Sign In Modal -->
+<div class="payment-modal" id="signInModal">
+  <div class="payment-card" style="max-width:420px;">
+    <button class="legal-close" onclick="closeSignIn()" style="float:right;margin-bottom:12px;">&times;</button>
+
+    <!-- Step 1: Email input -->
+    <div id="signInStep1">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,212,255,0.25);"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#fff" stroke-width="1.8"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg><div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.2),transparent 60%);pointer-events:none;"></div></div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:6px;">Welcome back</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;">Sign in with the email you used to create your account.</p>
+      </div>
+
+      <form id="signInForm" onsubmit="submitSignIn(event)" style="margin-bottom:20px;">
+        <div style="margin-bottom:16px;">
+          <input type="email" id="signInEmail" placeholder="you@email.com" required style="width:100%;padding:14px 18px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Inter',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div id="signInError" style="color:#EF4444;font-size:0.85rem;margin-bottom:12px;display:none;"></div>
+        <button type="submit" class="btn-primary" id="signInBtn" style="display:block;width:100%;padding:16px;font-size:1rem;border:none;cursor:pointer;">Sign In</button>
+      </form>
+
+      <div style="text-align:center;">
+        <p style="color:var(--text-muted);font-size:0.85rem;">Don't have an account? <a href="#" onclick="closeSignIn();openPayment('free');return false;" style="color:var(--accent);text-decoration:none;font-weight:600;">Sign up free</a></p>
+      </div>
+    </div>
+
+    <!-- Step 2: Welcome back -->
+    <div id="signInStep2" style="display:none;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(16,185,129,0.3);"><svg width="36" height="36" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.2),transparent 60%);pointer-events:none;"></div></div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:6px;">Welcome back, <span id="signInUserName" style="color:var(--accent);"></span>!</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;">You're signed in as <span id="signInUserEmail" style="color:var(--text);font-weight:500;"></span></p>
+      </div>
+
+      <div style="background:var(--surface);border-radius:var(--radius-sm);padding:20px;margin-bottom:20px;border:1px solid var(--border);">
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Your account</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="color:var(--text-muted);font-size:0.85rem;">Plan</span>
+          <span id="signInPlan" style="color:var(--accent);font-weight:600;font-size:0.85rem;">Starter (Free)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="color:var(--text-muted);font-size:0.85rem;">Projects used</span>
+          <span id="signInProjects" style="color:var(--text);font-weight:600;font-size:0.85rem;">0 / 3</span>
+        </div>
+      </div>
+
+      <a href="/create.html" class="btn-primary" style="display:block;text-align:center;width:100%;padding:16px;font-size:1rem;text-decoration:none;margin-bottom:12px;">Go to My Projects &#8594;</a>
+      <button onclick="signOut()" style="display:block;width:100%;padding:12px;font-size:0.85rem;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-muted);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#EF4444';this.style.color='#EF4444'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Sign Out</button>
+    </div>
+
+  </div>
+</div>
+
 <!-- Payment Modal — Plan Selector (for upgrade prompts) -->
 <div class="payment-modal" id="paymentModal">
   <div class="payment-card">
@@ -2053,7 +2208,7 @@ footer {
     <!-- Plan Selection Cards -->
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
       <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" class="plan-select-card" style="display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:rgba(0,212,255,0.04);text-decoration:none;color:var(--text);transition:all 0.2s;position:relative;">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#9889;</div>
+        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,212,255,0.2);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#fff" opacity="0.9"/></svg><div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.15),transparent 60%);pointer-events:none;"></div></div>
         <div style="flex:1;">
           <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">Pro Creator</div>
           <div style="color:var(--text-muted);font-size:0.85rem;">Unlimited projects, app store publishing, no watermark</div>
@@ -2066,7 +2221,7 @@ footer {
       </a>
 
       <a href="https://buy.stripe.com/28E00j8o28jafoo5VVeIw01" class="plan-select-card" style="display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);text-decoration:none;color:var(--text);transition:all 0.2s;">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#128640;</div>
+        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),#8B5CF6);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(99,102,241,0.2);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L8 8H4l8 14V14h4L12 2z" fill="#fff" opacity="0.9"/><circle cx="12" cy="6" r="1" fill="#fff" opacity="0.5"/></svg><div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.15),transparent 60%);pointer-events:none;"></div></div>
         <div style="flex:1;">
           <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">Business</div>
           <div style="color:var(--text-muted);font-size:0.85rem;">Team collab, white-label, API, dedicated AI agent</div>
@@ -2469,6 +2624,145 @@ function submitFreeSignup(e) {
   document.getElementById('freeStep1').style.display = 'none';
   document.getElementById('freeStep2').style.display = '';
 }
+
+// ── Sign In ──
+function openSignIn() {
+  // Check if already signed in
+  var storedName = localStorage.getItem('buildr_user_name');
+  var storedEmail = localStorage.getItem('buildr_user_email');
+  if (storedName && storedEmail) {
+    showSignedInState(storedName, storedEmail);
+  } else {
+    document.getElementById('signInStep1').style.display = '';
+    document.getElementById('signInStep2').style.display = 'none';
+    document.getElementById('signInError').style.display = 'none';
+    document.getElementById('signInEmail').value = '';
+  }
+  document.getElementById('signInModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSignIn() {
+  document.getElementById('signInModal').classList.remove('active');
+  document.body.style.overflow = '';
+  setTimeout(function() {
+    document.getElementById('signInStep1').style.display = '';
+    document.getElementById('signInStep2').style.display = 'none';
+  }, 300);
+}
+
+function submitSignIn(e) {
+  e.preventDefault();
+  var email = document.getElementById('signInEmail').value.trim().toLowerCase();
+  var errorEl = document.getElementById('signInError');
+  var btn = document.getElementById('signInBtn');
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errorEl.textContent = 'Please enter a valid email address.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+  btn.textContent = 'Signing in...';
+  btn.disabled = true;
+
+  // Look up in local signups
+  var signups = [];
+  try { signups = JSON.parse(localStorage.getItem('buildr_signups') || '[]'); } catch(err) {}
+  var found = null;
+  for (var i = 0; i < signups.length; i++) {
+    if (signups[i].email && signups[i].email.toLowerCase() === email) {
+      found = signups[i];
+      break;
+    }
+  }
+
+  // Also check if stored user email matches
+  var storedEmail = (localStorage.getItem('buildr_user_email') || '').toLowerCase();
+  var storedName = localStorage.getItem('buildr_user_name') || '';
+
+  setTimeout(function() {
+    btn.textContent = 'Sign In';
+    btn.disabled = false;
+
+    if (found) {
+      // Found in signups list
+      localStorage.setItem('buildr_user_name', found.name);
+      localStorage.setItem('buildr_user_email', found.email);
+      showSignedInState(found.name, found.email);
+    } else if (storedEmail === email && storedName) {
+      // Matches current stored user
+      showSignedInState(storedName, email);
+    } else {
+      // Not found — still sign them in (email-only login)
+      var userName = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+      localStorage.setItem('buildr_user_name', userName);
+      localStorage.setItem('buildr_user_email', email);
+      // Add to signups
+      signups.push({ name: userName, email: email, plan: 'starter', date: new Date().toISOString() });
+      try { localStorage.setItem('buildr_signups', JSON.stringify(signups)); } catch(err) {}
+      showSignedInState(userName, email);
+    }
+  }, 800);
+}
+
+function showSignedInState(name, email) {
+  var firstName = name.split(' ')[0];
+  document.getElementById('signInUserName').textContent = firstName;
+  document.getElementById('signInUserEmail').textContent = email;
+
+  // Plan info
+  var plan = localStorage.getItem('buildr_plan') || 'starter';
+  var planLabels = { starter: 'Starter (Free)', pro: 'Pro ($29/mo)', business: 'Business ($99/mo)' };
+  document.getElementById('signInPlan').textContent = planLabels[plan] || 'Starter (Free)';
+
+  // Projects used
+  var used = parseInt(localStorage.getItem('buildr_projects_used') || '0', 10);
+  var limit = plan === 'pro' ? 'Unlimited' : plan === 'business' ? 'Unlimited' : '3';
+  document.getElementById('signInProjects').textContent = used + ' / ' + limit;
+
+  document.getElementById('signInStep1').style.display = 'none';
+  document.getElementById('signInStep2').style.display = '';
+
+  // Update navbar to show user is signed in
+  updateNavForUser(firstName);
+}
+
+function updateNavForUser(name) {
+  var signInLinks = document.querySelectorAll('.nav-signin');
+  signInLinks.forEach(function(el) {
+    el.textContent = name;
+    el.style.borderColor = 'var(--accent)';
+    el.style.color = 'var(--accent)';
+  });
+}
+
+function signOut() {
+  localStorage.removeItem('buildr_user_name');
+  localStorage.removeItem('buildr_user_email');
+  localStorage.removeItem('buildr_plan');
+  localStorage.removeItem('buildr_projects_used');
+  localStorage.removeItem('buildr_projects');
+  localStorage.removeItem('buildr_signups');
+
+  // Reset navbar
+  var signInLinks = document.querySelectorAll('.nav-signin');
+  signInLinks.forEach(function(el) {
+    el.textContent = 'Sign In';
+    el.style.borderColor = '';
+    el.style.color = '';
+  });
+
+  closeSignIn();
+}
+
+// Auto-detect signed in user on page load
+(function() {
+  var storedName = localStorage.getItem('buildr_user_name');
+  if (storedName) {
+    updateNavForUser(storedName.split(' ')[0]);
+  }
+})();
 
 // ── Legal Modals ──
 function openLegal(type) {
