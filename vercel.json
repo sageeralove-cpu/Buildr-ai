@@ -3,7 +3,8 @@
   "name": "buildr-ai",
   "public": true,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/create", "destination": "/create.html" },
+    { "source": "/((?!create\\.html).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

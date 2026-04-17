@@ -2036,7 +2036,7 @@ footer {
         </ul>
       </div>
 
-      <a href="#" onclick="closeFreeModal();return false;" class="btn-primary" style="display:block;text-align:center;width:100%;padding:16px;font-size:1rem;margin-bottom:12px;">Got it — Let's Go!</a>
+      <a href="/create.html" class="btn-primary" style="display:block;text-align:center;width:100%;padding:16px;font-size:1rem;margin-bottom:12px;text-decoration:none;">Create My First Project &#8594;</a>
       <p style="text-align:center;color:var(--text-muted);font-size:0.75rem;">Upgrade to Pro anytime for unlimited projects and app store publishing.</p>
     </div>
 
@@ -2431,7 +2431,7 @@ function submitFreeSignup(e) {
   try { localStorage.setItem('buildr_signups', JSON.stringify(signups)); } catch(err) {}
 
   // Send signup notification via Formsubmit (no account needed)
-  fetch('https://formsubmit.co/ajax/sage.era.love@gmail.com', {
+  fetch('https://formsubmit.co/ajax/e8516c0b1ec42a6e2aea70d1f162a90d', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify({
@@ -2443,6 +2443,13 @@ function submitFreeSignup(e) {
       signed_up: new Date().toISOString()
     })
   }).catch(function() {});
+
+  // Store user info for the project builder
+  try {
+    localStorage.setItem('buildr_user_name', name);
+    localStorage.setItem('buildr_user_email', email);
+    localStorage.setItem('buildr_projects_used', '0');
+  } catch(err) {}
 
   // Show confirmation step
   document.getElementById('freeUserName').textContent = name.split(' ')[0];
