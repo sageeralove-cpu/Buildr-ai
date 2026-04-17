@@ -450,7 +450,10 @@ function showProNeeded(type) {
 }
 
 function showLimitReached() {
-  alert('You\'ve used all 3 free projects. Upgrade to Pro for unlimited projects!');
+  document.getElementById('upgradeIcon').innerHTML = '&#128274;';
+  document.getElementById('upgradeTitle').textContent = 'Project Limit Reached';
+  document.getElementById('upgradeDesc').innerHTML = 'You\'ve used all <strong>3 free projects</strong>. Upgrade to Pro or Business for unlimited projects, no watermark, and full interactivity.';
+  document.getElementById('upgradeModal').style.display = 'flex';
 }
 
 function updateCharCount() {
@@ -465,7 +468,7 @@ function updateBuildBtn() {
 }
 
 function startBuilding() {
-  if (projectsUsed >= 3) { showLimitReached(); return; }
+  if (projectsUsed >= projectLimit) { showLimitReached(); return; }
 
   var overlay = document.getElementById('buildingOverlay');
   var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content' };
@@ -1237,6 +1240,16 @@ function downloadProject() {
   document.body.appendChild(toast);
   setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 4000);
 }
+
+// Admin reset: add ?reset=true to URL to clear project counter for testing
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('reset') === 'true') {
+    localStorage.setItem('buildr_projects_used', '0');
+    localStorage.removeItem('buildr_projects');
+    window.location.href = '/create';
+  }
+})();
 
 </script>
 </body>
