@@ -2430,12 +2430,13 @@ function submitFreeSignup(e) {
   signups.push({ name: name, email: email, plan: 'starter', date: new Date().toISOString() });
   try { localStorage.setItem('buildr_signups', JSON.stringify(signups)); } catch(err) {}
 
-  // Send signup notification via Formspree (free form backend)
-  fetch('https://formspree.io/f/xeooqbkn', {
+  // Send signup notification via Formsubmit (no account needed)
+  fetch('https://formsubmit.co/ajax/sage.era.love@gmail.com', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify({
       _subject: 'New Buildr AI Free Signup!',
+      _template: 'table',
       name: name,
       email: email,
       plan: 'Starter (Free)',
