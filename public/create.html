@@ -2531,34 +2531,86 @@ function downloadProject() {
   setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 4000);
 }
 
-// ── Social Content Pro Activation ──
-var socialProActive = localStorage.getItem('buildr_social_pro') === 'active';
+// ── Social Content Pro Subscription ──
+var SOCIAL_PRO_PERIOD = 30; // days per billing cycle
+var socialProActive = false;
+var socialProExpired = false;
 
-// Check URL for Stripe success redirect
+// Check subscription status on load
+(function checkSocialProStatus() {
+  var status = localStorage.getItem('buildr_social_pro');
+  var activatedOn = localStorage.getItem('buildr_social_pro_date');
+
+  if (status === 'active' && activatedOn) {
+    var activated = new Date(activatedOn);
+    var now = new Date();
+    var daysSince = Math.floor((now - activated) / (1000 * 60 * 60 * 24));
+
+    if (daysSince <= SOCIAL_PRO_PERIOD) {
+      // Still within billing period
+      socialProActive = true;
+      socialProExpired = false;
+    } else {
+      // Subscription period ended — lock features, keep projects
+      socialProActive = false;
+      socialProExpired = true;
+      localStorage.setItem('buildr_social_pro', 'expired');
+    }
+  } else if (status === 'expired') {
+    socialProExpired = true;
+  }
+})();
+
+// Check URL for Stripe success redirect (new payment or renewal)
 (function() {
   var params = new URLSearchParams(window.location.search);
   if (params.get('social_pro') === 'activated') {
     localStorage.setItem('buildr_social_pro', 'active');
+    localStorage.setItem('buildr_social_pro_date', new Date().toISOString());
     socialProActive = true;
+    socialProExpired = false;
     // Clean URL
     window.history.replaceState({}, '', '/create');
     // Show success toast
     var toast = document.createElement('div');
     toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#EC4899,#A855F7);color:#fff;padding:16px 32px;border-radius:50px;font-weight:700;font-size:0.9rem;box-shadow:0 8px 40px rgba(236,72,153,0.4);text-align:center;max-width:90%;';
-    toast.textContent = 'Social Content Pro activated! Daily auto-content is now unlocked.';
+    toast.textContent = socialProExpired ? 'Social Content Pro renewed! Your daily auto-content is back.' : 'Social Content Pro activated! Daily auto-content is now unlocked.';
     document.body.appendChild(toast);
     setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 5000);
   }
 })();
 
-// Hide paywall elements if social pro is active
+// Apply social pro state to UI elements
 function applySocialProState() {
+  var upsell = document.getElementById('socialProUpsell');
+  if (!upsell) return;
+
   if (socialProActive) {
-    var upsell = document.getElementById('socialProUpsell');
-    if (upsell) {
-      upsell.innerHTML = '<div style="display:flex;align-items:center;gap:12px;justify-content:center;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#EC4899,#A855F7);display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span style="font-weight:700;color:var(--text);font-size:0.95rem;">Social Content Pro Active</span><br><span style="font-size:0.8rem;color:#EC4899;">Daily auto-content is generating for your platforms</span></div></div>';
-      upsell.style.borderColor = 'rgba(236,72,153,0.3)';
-    }
+    // Active subscriber — show green active badge, calculate days remaining
+    var activatedOn = new Date(localStorage.getItem('buildr_social_pro_date'));
+    var daysLeft = SOCIAL_PRO_PERIOD - Math.floor((new Date() - activatedOn) / (1000 * 60 * 60 * 24));
+    upsell.innerHTML = '<div style="display:flex;align-items:center;gap:12px;justify-content:center;">' +
+      '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#EC4899,#A855F7);display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+      '<div><span style="font-weight:700;color:var(--text);font-size:0.95rem;">Social Content Pro Active</span><br>' +
+      '<span style="font-size:0.8rem;color:#EC4899;">Daily auto-content is generating &bull; ' + daysLeft + ' days until renewal</span></div></div>';
+    upsell.style.borderColor = 'rgba(236,72,153,0.3)';
+    upsell.style.background = 'linear-gradient(135deg,rgba(236,72,153,0.06),rgba(168,85,247,0.06))';
+  } else if (socialProExpired) {
+    // Expired — show renewal prompt, projects stay visible but features locked
+    upsell.innerHTML = '<div style="text-align:center;">' +
+      '<div style="width:40px;height:40px;border-radius:50%;background:rgba(245,158,11,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/></svg></div>' +
+      '<p style="font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:4px;">Your Social Content Pro has expired</p>' +
+      '<p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:14px;">Your existing projects are safe. Renew to unlock daily auto-content and create new social builds.</p>' +
+      '<button onclick="document.getElementById(\'socialProModal\').style.display=\'flex\'" style="padding:12px 28px;border:none;border-radius:50px;background:linear-gradient(135deg,#EC4899,#A855F7);color:#fff;font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 30px rgba(236,72,153,0.3)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">Renew — $10/mo</button></div>';
+    upsell.style.borderColor = 'rgba(245,158,11,0.3)';
+    upsell.style.background = 'linear-gradient(135deg,rgba(245,158,11,0.04),rgba(245,158,11,0.02))';
+  } else {
+    // Never subscribed — show initial upsell
+    upsell.innerHTML = '<p style="font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:4px;">Want daily auto-generated content?</p>' +
+      '<p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:14px;">AI creates fresh posts for you every day — topic scheduling, content calendar, multi-platform.</p>' +
+      '<button onclick="document.getElementById(\'socialProModal\').style.display=\'flex\'" style="padding:12px 28px;border:none;border-radius:50px;background:linear-gradient(135deg,#EC4899,#A855F7);color:#fff;font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 30px rgba(236,72,153,0.3)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">Unlock Daily Content — $10/mo</button>';
+    upsell.style.borderColor = 'rgba(236,72,153,0.2)';
+    upsell.style.background = 'linear-gradient(135deg,rgba(236,72,153,0.06),rgba(168,85,247,0.06))';
   }
 }
 
@@ -2569,6 +2621,7 @@ function applySocialProState() {
     localStorage.setItem('buildr_projects_used', '0');
     localStorage.removeItem('buildr_projects');
     localStorage.removeItem('buildr_social_pro');
+    localStorage.removeItem('buildr_social_pro_date');
     window.location.href = '/create';
   }
 })();
