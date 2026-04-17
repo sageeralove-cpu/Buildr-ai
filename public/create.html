@@ -105,6 +105,26 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
 .upgrade-btn { padding: 10px 24px; border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--accent), var(--accent2)); color: var(--base); font-weight: 700; font-size: 0.85rem; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
 .upgrade-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,212,255,0.3); }
 
+/* Project History */
+.history-section { margin-bottom: 48px; }
+.history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.history-list { display: flex; flex-direction: column; gap: 12px; }
+.history-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; display: flex; align-items: center; gap: 20px; transition: all 0.3s; cursor: pointer; }
+.history-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,212,255,0.08); }
+.history-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+.history-info { flex: 1; min-width: 0; }
+.history-info h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-meta { display: flex; align-items: center; gap: 12px; font-size: 0.8rem; color: var(--text-muted); }
+.history-type-badge { padding: 2px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: 600; background: var(--surface); border: 1px solid var(--border); }
+.history-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.history-btn { padding: 8px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; font-family: 'Inter', sans-serif; }
+.history-btn-preview { background: rgba(0,212,255,0.1); color: var(--accent); }
+.history-btn-edit { background: rgba(99,102,241,0.1); color: var(--accent2); }
+.history-btn-delete { background: rgba(239,68,68,0.1); color: #EF4444; }
+.history-btn:hover { transform: translateY(-1px); }
+.history-empty { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 0.95rem; background: var(--card); border: 1px dashed var(--border); border-radius: var(--radius); }
+.history-empty span { display: block; font-size: 2.5rem; margin-bottom: 12px; }
+
 /* Responsive */
 @media (max-width: 768px) {
   .project-grid { grid-template-columns: repeat(2, 1fr); }
@@ -112,6 +132,9 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
   .upgrade-banner { flex-direction: column; text-align: center; }
   .nav { padding: 12px 16px; }
   .main { padding: 90px 16px 40px; }
+  .history-card { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .history-actions { width: 100%; }
+  .history-btn { flex: 1; text-align: center; }
 }
 @media (max-width: 480px) {
   .project-grid { grid-template-columns: 1fr; }
@@ -147,9 +170,22 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" class="upgrade-btn">Upgrade to Pro</a>
   </div>
 
+  <!-- Project History -->
+  <div class="history-section" id="historySection">
+    <div class="history-header">
+      <div class="section-title" style="margin-bottom:0;">Your Projects</div>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="history-empty" id="historyEmpty">
+        <span>&#128193;</span>
+        No projects yet. Create your first one below!
+      </div>
+    </div>
+  </div>
+
   <!-- Project Type Selection -->
   <div id="typeSection">
-    <div class="section-title">Choose project type</div>
+    <div class="section-title">Create new project</div>
     <div class="project-grid">
       <div class="project-card" onclick="selectType(this, 'website')" data-type="website">
         <span class="project-icon">&#127760;</span>
@@ -204,9 +240,55 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     <p id="resultMessage">Your website has been generated. You can preview it, edit with AI, or start a new project.</p>
     <div class="result-actions">
       <button class="result-btn result-btn-primary" onclick="previewProject()">&#128065; Preview Project</button>
+      <button class="result-btn result-btn-outline" onclick="publishProject()">&#128640; Publish</button>
+      <button class="result-btn result-btn-outline" onclick="removeWatermark()">&#10024; Remove Watermark</button>
       <button class="result-btn result-btn-outline" onclick="resetBuilder()">+ Create Another</button>
     </div>
     <p style="color:var(--text-muted);font-size:0.8rem;margin-top:20px;" id="watermarkNote">Free plan: Buildr AI watermark will appear on your project. <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" style="color:var(--accent);">Remove with Pro</a></p>
+  </div>
+
+  <!-- Upgrade Prompt Modal -->
+  <div id="upgradeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.9);z-index:400;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:480px;width:100%;position:relative;">
+      <button onclick="closeUpgradeModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>
+      <div style="text-align:center;margin-bottom:24px;">
+        <div id="upgradeIcon" style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#128274;</div>
+        <h3 id="upgradeTitle" style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:8px;">Upgrade to Publish</h3>
+        <p id="upgradeDesc" style="color:var(--text-muted);font-size:0.95rem;"></p>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+        <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" style="display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:rgba(0,212,255,0.04);text-decoration:none;color:var(--text);transition:all 0.2s;position:relative;">
+          <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#9889;</div>
+          <div style="flex:1;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem;">Pro Creator</div>
+            <div style="color:var(--text-muted);font-size:0.8rem;">Publish to web &amp; app stores, no watermark, unlimited projects</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.2rem;color:var(--accent);">$29</div>
+            <div style="color:var(--text-muted);font-size:0.7rem;">/month</div>
+          </div>
+          <div style="position:absolute;top:-8px;right:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--base);padding:2px 12px;border-radius:50px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Recommended</div>
+        </a>
+
+        <a href="https://buy.stripe.com/28E00j8o28jafoo5VVeIw01" style="display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);text-decoration:none;color:var(--text);transition:all 0.2s;">
+          <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#128640;</div>
+          <div style="flex:1;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem;">Business</div>
+            <div style="color:var(--text-muted);font-size:0.8rem;">Everything in Pro + team collab, white-label, API access</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.2rem;color:var(--accent2);">$99</div>
+            <div style="color:var(--text-muted);font-size:0.7rem;">/month</div>
+          </div>
+        </a>
+      </div>
+
+      <div style="text-align:center;">
+        <p style="color:var(--text-muted);font-size:0.75rem;">14-day free trial included. Cancel anytime.</p>
+        <p style="color:var(--text-muted);font-size:0.75rem;margin-top:4px;">Pay with Card, PayPal, Klarna, Apple Pay, or Google Pay.</p>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -283,21 +365,68 @@ function togglePreviewSize() {
 var selectedType = '';
 var projectsUsed = parseInt(localStorage.getItem('buildr_projects_used') || '0');
 var userName = localStorage.getItem('buildr_user_name') || '';
+var userPlan = localStorage.getItem('buildr_plan') || 'starter';
+var savedProjects = JSON.parse(localStorage.getItem('buildr_projects') || '[]');
+var editingProjectId = null;
+
+// Plan limits
+var planLimits = { starter: 3, pro: 999, business: 999 };
+var planLabel = { starter: 'Starter', pro: 'Pro Creator', business: 'Business' };
+var projectLimit = planLimits[userPlan] || 3;
 
 // Init
 (function init() {
+  // Check URL params for plan
+  var params = new URLSearchParams(window.location.search);
+  var welcomePlan = params.get('plan');
+  if (welcomePlan && (welcomePlan === 'pro' || welcomePlan === 'business')) {
+    userPlan = welcomePlan;
+    localStorage.setItem('buildr_plan', welcomePlan);
+    projectLimit = planLimits[userPlan];
+  }
+
   document.getElementById('projectsUsed').textContent = projectsUsed;
+
+  // Update plan badge
+  var badge = document.querySelector('.badge-free');
+  if (badge) {
+    badge.textContent = planLabel[userPlan] || 'Starter';
+    if (userPlan === 'pro') { badge.style.color = '#00D4FF'; badge.style.borderColor = '#00D4FF'; }
+    if (userPlan === 'business') { badge.style.color = '#6366F1'; badge.style.borderColor = '#6366F1'; }
+  }
+
+  // Update counter display
+  var countEl = document.querySelector('.projects-count');
+  if (userPlan !== 'starter') {
+    countEl.innerHTML = 'Projects created: <strong>' + projectsUsed + '</strong> (unlimited)';
+  }
+
   if (userName) {
     document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
   }
-  if (projectsUsed >= 3) {
+
+  if (projectsUsed >= projectLimit) {
     document.getElementById('upgradeBanner').style.display = 'flex';
-    // Lock all free cards
     document.querySelectorAll('.project-card:not(.locked)').forEach(function(card) {
       card.classList.add('locked');
       card.onclick = function() { showLimitReached(); };
     });
   }
+
+  // Unlock pro-only cards for paid plans
+  if (userPlan === 'pro' || userPlan === 'business') {
+    document.querySelectorAll('.project-card.locked').forEach(function(card) {
+      card.classList.remove('locked');
+      var lockBadge = card.querySelector('.lock-badge');
+      if (lockBadge) lockBadge.remove();
+      var type = card.querySelector('h3').textContent.toLowerCase().replace(/\s+/g, '');
+      if (type === 'e-commercestore') type = 'ecommerce';
+      if (type === 'saasplatform') type = 'saas';
+      card.onclick = function() { selectType(card, type); };
+    });
+  }
+
+  renderHistory();
 })();
 
 function selectType(card, type) {
@@ -364,26 +493,61 @@ function startBuilding() {
 
 function showResult() {
   document.getElementById('buildingOverlay').classList.remove('active');
-  // Reset step states for next time
   for (var s = 1; s <= 5; s++) {
     var el = document.getElementById('step' + s);
     el.classList.remove('active', 'done');
     el.querySelector('.step-icon').textContent = s;
   }
 
-  // Increment projects used
-  projectsUsed++;
-  localStorage.setItem('buildr_projects_used', projectsUsed);
-  document.getElementById('projectsUsed').textContent = projectsUsed;
+  var desc = document.getElementById('projectDescription').value.trim();
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content', ecommerce: 'E-Commerce Store', saas: 'SaaS Platform' };
 
-  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content' };
-  document.getElementById('resultMessage').textContent = 'Your ' + (labels[selectedType] || 'project') + ' has been generated. You can preview it, edit with AI, or start a new project.';
+  if (editingProjectId) {
+    // Update existing project
+    for (var i = 0; i < savedProjects.length; i++) {
+      if (savedProjects[i].id === editingProjectId) {
+        savedProjects[i].description = desc;
+        savedProjects[i].type = selectedType;
+        savedProjects[i].updatedAt = new Date().toISOString();
+        break;
+      }
+    }
+    editingProjectId = null;
+  } else {
+    // Save new project
+    projectsUsed++;
+    localStorage.setItem('buildr_projects_used', projectsUsed);
+    document.getElementById('projectsUsed').textContent = projectsUsed;
+
+    var project = {
+      id: 'proj_' + Date.now(),
+      type: selectedType,
+      typeLabel: labels[selectedType] || 'Project',
+      description: desc,
+      title: desc.split(/[.,!?\n]/)[0].substring(0, 60),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    savedProjects.unshift(project);
+  }
+
+  localStorage.setItem('buildr_projects', JSON.stringify(savedProjects));
+
+  document.getElementById('resultMessage').textContent = 'Your ' + (labels[selectedType] || 'project').toLowerCase() + ' has been generated. You can preview it, edit with AI, or start a new project.';
 
   document.getElementById('typeSection').style.display = 'none';
   document.getElementById('describeSection').classList.remove('active');
+  document.getElementById('historySection').style.display = 'none';
   document.getElementById('resultSection').classList.add('active');
 
-  if (projectsUsed >= 3) {
+  // Hide watermark note and remove watermark button for paid users
+  if (userPlan === 'pro' || userPlan === 'business') {
+    document.getElementById('watermarkNote').style.display = 'none';
+    var rmBtn = document.querySelector('[onclick="removeWatermark()"]');
+    if (rmBtn) rmBtn.style.display = 'none';
+  }
+
+  if (projectsUsed >= projectLimit) {
     document.getElementById('upgradeBanner').style.display = 'flex';
   }
 }
@@ -434,14 +598,224 @@ function generatePreview(type, desc, title) {
 }
 
 function resetBuilder() {
-  if (projectsUsed >= 3) { showLimitReached(); return; }
+  if (projectsUsed >= projectLimit) { showLimitReached(); return; }
+  editingProjectId = null;
   document.getElementById('resultSection').classList.remove('active');
   document.getElementById('typeSection').style.display = '';
+  document.getElementById('historySection').style.display = '';
   document.getElementById('projectDescription').value = '';
   document.getElementById('charCount').textContent = '0';
   selectedType = '';
   document.querySelectorAll('.project-card').forEach(function(c) { c.classList.remove('selected'); });
+  renderHistory();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Project History ──
+function renderHistory() {
+  var list = document.getElementById('historyList');
+  var empty = document.getElementById('historyEmpty');
+
+  if (savedProjects.length === 0) {
+    list.innerHTML = '';
+    list.appendChild(empty);
+    empty.style.display = '';
+    return;
+  }
+
+  var typeIcons = { website: '&#127760;', app: '&#128241;', dashboard: '&#128202;', social: '&#127912;', ecommerce: '&#128722;', saas: '&#9889;' };
+  var typeColors = { website: 'rgba(0,212,255,0.15)', app: 'rgba(99,102,241,0.15)', dashboard: 'rgba(16,185,129,0.15)', social: 'rgba(245,158,11,0.15)', ecommerce: 'rgba(236,72,153,0.15)', saas: 'rgba(139,92,246,0.15)' };
+
+  var html = '';
+  savedProjects.forEach(function(proj) {
+    var date = new Date(proj.updatedAt || proj.createdAt);
+    var timeAgo = getTimeAgo(date);
+    var icon = typeIcons[proj.type] || '&#128196;';
+    var bg = typeColors[proj.type] || 'rgba(0,212,255,0.15)';
+
+    html += '<div class="history-card" onclick="previewHistoryProject(\'' + proj.id + '\')">';
+    html += '<div class="history-icon" style="background:' + bg + ';">' + icon + '</div>';
+    html += '<div class="history-info">';
+    html += '<h3>' + escapeHtml(proj.title || proj.description.substring(0, 50)) + '</h3>';
+    html += '<div class="history-meta">';
+    html += '<span class="history-type-badge">' + (proj.typeLabel || proj.type) + '</span>';
+    html += '<span>' + timeAgo + '</span>';
+    html += '</div></div>';
+    html += '<div class="history-actions">';
+    html += '<button class="history-btn history-btn-preview" onclick="event.stopPropagation();previewHistoryProject(\'' + proj.id + '\')">&#128065; Preview</button>';
+    html += '<button class="history-btn history-btn-edit" onclick="event.stopPropagation();editProject(\'' + proj.id + '\')">&#9998; Edit</button>';
+    html += '<button class="history-btn" onclick="event.stopPropagation();publishHistoryProject(\'' + proj.id + '\')" style="background:rgba(16,185,129,0.1);color:#10B981;">&#128640; Publish</button>';
+    html += '<button class="history-btn history-btn-delete" onclick="event.stopPropagation();deleteProject(\'' + proj.id + '\')">&#128465;</button>';
+    html += '</div></div>';
+  });
+
+  list.innerHTML = html;
+}
+
+function getTimeAgo(date) {
+  var now = new Date();
+  var diff = Math.floor((now - date) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+  return date.toLocaleDateString();
+}
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function previewHistoryProject(id) {
+  var proj = savedProjects.find(function(p) { return p.id === id; });
+  if (!proj) return;
+  selectedType = proj.type;
+  document.getElementById('projectDescription').value = proj.description;
+  previewProject();
+}
+
+function publishHistoryProject(id) {
+  var proj = savedProjects.find(function(p) { return p.id === id; });
+  if (!proj) return;
+  selectedType = proj.type;
+  document.getElementById('projectDescription').value = proj.description;
+  publishProject();
+}
+
+function editProject(id) {
+  var proj = savedProjects.find(function(p) { return p.id === id; });
+  if (!proj) return;
+
+  editingProjectId = id;
+  selectedType = proj.type;
+
+  // Select the right card
+  document.querySelectorAll('.project-card').forEach(function(c) { c.classList.remove('selected'); });
+  var cards = document.querySelectorAll('.project-card');
+  cards.forEach(function(card) {
+    if (card.getAttribute('data-type') === proj.type) {
+      card.classList.add('selected');
+    }
+  });
+
+  // Fill in description
+  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
+  document.getElementById('projectTypeLabel').textContent = labels[proj.type] || 'project';
+  document.getElementById('buildTypeLabel').textContent = labels[proj.type] || 'Project';
+  document.getElementById('projectDescription').value = proj.description;
+  document.getElementById('charCount').textContent = proj.description.length;
+
+  // Show describe section
+  document.getElementById('describeSection').classList.add('active');
+  document.getElementById('resultSection').classList.remove('active');
+  document.getElementById('typeSection').style.display = '';
+  document.getElementById('historySection').style.display = '';
+
+  // Update button text
+  document.getElementById('buildBtn').disabled = false;
+  document.getElementById('buildBtn').innerHTML = '<span>&#9889;</span> Rebuild My ' + (labels[proj.type] || 'Project');
+
+  document.getElementById('describeSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function deleteProject(id) {
+  if (!confirm('Delete this project? This cannot be undone.')) return;
+  savedProjects = savedProjects.filter(function(p) { return p.id !== id; });
+  localStorage.setItem('buildr_projects', JSON.stringify(savedProjects));
+  renderHistory();
+}
+
+// ── Publish & Watermark Upgrade Prompts ──
+function publishProject() {
+  if (userPlan === 'pro' || userPlan === 'business') {
+    // Pro/Business users can publish
+    showPublishFlow();
+  } else {
+    // Free users see upgrade prompt
+    document.getElementById('upgradeIcon').innerHTML = '&#128640;';
+    document.getElementById('upgradeTitle').textContent = 'Upgrade to Publish';
+    document.getElementById('upgradeDesc').textContent = 'Publishing to the web, App Store, and Google Play is available on Pro and Business plans. Upgrade now to share your project with the world.';
+    document.getElementById('upgradeModal').style.display = 'flex';
+  }
+}
+
+function removeWatermark() {
+  if (userPlan === 'pro' || userPlan === 'business') {
+    // Already no watermark
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#10B981,#00D4FF);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;box-shadow:0 8px 40px rgba(16,185,129,0.4);';
+    toast.textContent = 'Your project is watermark-free!';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 3000);
+  } else {
+    document.getElementById('upgradeIcon').innerHTML = '&#10024;';
+    document.getElementById('upgradeTitle').textContent = 'Remove Watermark';
+    document.getElementById('upgradeDesc').textContent = 'The "Built with Buildr AI" watermark is removed on Pro and Business plans. Your projects will look fully professional and branded as your own.';
+    document.getElementById('upgradeModal').style.display = 'flex';
+  }
+}
+
+function closeUpgradeModal() {
+  document.getElementById('upgradeModal').style.display = 'none';
+}
+
+// Close upgrade modal on backdrop click
+document.addEventListener('click', function(e) {
+  var modal = document.getElementById('upgradeModal');
+  if (e.target === modal) { modal.style.display = 'none'; }
+});
+
+function showPublishFlow() {
+  var type = selectedType;
+  var publishModal = document.createElement('div');
+  publishModal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.9);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;';
+  publishModal.onclick = function(e) { if(e.target === publishModal) publishModal.remove(); };
+
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content', ecommerce: 'E-Commerce', saas: 'SaaS' };
+  var typeLabel = labels[type] || 'Project';
+
+  var publishOptions = '';
+  if (type === 'website' || type === 'dashboard' || type === 'ecommerce' || type === 'saas') {
+    publishOptions += '<div onclick="selectPublishOption(this,\'web\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#127760;</span><div><div style="font-weight:600;">Publish to Web</div><div style="color:#A1A1AA;font-size:0.8rem;">Get a live URL on buildr-ai.io/your-project</div></div></div>';
+  }
+  if (type === 'app') {
+    publishOptions += '<div onclick="selectPublishOption(this,\'appstore\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#127822;</span><div><div style="font-weight:600;">Apple App Store</div><div style="color:#A1A1AA;font-size:0.8rem;">Submit to the iOS App Store</div></div></div>';
+    publishOptions += '<div onclick="selectPublishOption(this,\'playstore\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#9654;</span><div><div style="font-weight:600;">Google Play Store</div><div style="color:#A1A1AA;font-size:0.8rem;">Submit to Google Play</div></div></div>';
+  }
+  if (type === 'social') {
+    publishOptions += '<div onclick="selectPublishOption(this,\'instagram\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#128247;</span><div><div style="font-weight:600;">Instagram</div><div style="color:#A1A1AA;font-size:0.8rem;">Post to your Instagram feed</div></div></div>';
+    publishOptions += '<div onclick="selectPublishOption(this,\'tiktok\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#9835;</span><div><div style="font-weight:600;">TikTok</div><div style="color:#A1A1AA;font-size:0.8rem;">Publish to TikTok</div></div></div>';
+    publishOptions += '<div onclick="selectPublishOption(this,\'x\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#120143;</span><div><div style="font-weight:600;">X / Twitter</div><div style="color:#A1A1AA;font-size:0.8rem;">Post to X</div></div></div>';
+  }
+  // Always offer web publish
+  if (type !== 'website' && type !== 'dashboard' && type !== 'ecommerce' && type !== 'saas') {
+    publishOptions += '<div onclick="selectPublishOption(this,\'web\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#127760;</span><div><div style="font-weight:600;">Publish to Web</div><div style="color:#A1A1AA;font-size:0.8rem;">Get a shareable link</div></div></div>';
+  }
+
+  publishModal.innerHTML = '<div style="background:#1E1E22;border:1px solid #27272A;border-radius:16px;padding:32px;max-width:480px;width:100%;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;"><h3 style="font-family:Space Grotesk,sans-serif;font-size:1.3rem;">Publish ' + typeLabel + '</h3><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:none;border:none;color:#A1A1AA;font-size:1.5rem;cursor:pointer;">&times;</button></div><div style="display:flex;flex-direction:column;gap:10px;">' + publishOptions + '</div><p style="text-align:center;color:#A1A1AA;font-size:0.75rem;margin-top:20px;">Publishing typically takes 1-5 minutes. You\'ll be notified when it\'s live.</p></div>';
+  document.body.appendChild(publishModal);
+}
+
+function selectPublishOption(el, platform) {
+  // Show publishing animation
+  var parent = el.closest('div[style*="fixed"]');
+  var card = parent.querySelector('div[style*="border-radius:16px"]');
+  card.innerHTML = '<div style="text-align:center;padding:40px 0;"><div style="width:60px;height:60px;border:4px solid #27272A;border-top-color:#00D4FF;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 24px;"></div><h3 style="font-family:Space Grotesk,sans-serif;margin-bottom:8px;">Publishing...</h3><p style="color:#A1A1AA;font-size:0.9rem;">Preparing your project for ' + platform + '</p></div>';
+
+  setTimeout(function() {
+    card.innerHTML = '<div style="text-align:center;padding:40px 0;"><div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#10B981,#00D4FF);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;">&#10003;</div><h3 style="font-family:Space Grotesk,sans-serif;font-size:1.3rem;margin-bottom:8px;">Published!</h3><p style="color:#A1A1AA;font-size:0.9rem;margin-bottom:20px;">Your project is now live and ready to share.</p><div style="background:#18181B;border:1px solid #27272A;border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;"><span style="color:#00D4FF;font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">buildr-ai.io/p/' + ('proj' + Date.now()).substring(0,12) + '</span><button onclick="copyLink(this)" style="background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;border:none;padding:8px 16px;border-radius:8px;font-weight:600;font-size:0.8rem;cursor:pointer;white-space:nowrap;">Copy Link</button></div><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:none;border:1px solid #27272A;color:#FAFAFA;padding:12px 32px;border-radius:10px;font-weight:600;cursor:pointer;">Done</button></div>';
+  }, 3000);
+}
+
+function copyLink(btn) {
+  var link = btn.parentElement.querySelector('span').textContent;
+  navigator.clipboard.writeText('https://' + link).then(function() {
+    btn.textContent = 'Copied!';
+    btn.style.background = '#10B981';
+    setTimeout(function() { btn.textContent = 'Copy Link'; btn.style.background = 'linear-gradient(135deg,#00D4FF,#6366F1)'; }, 2000);
+  });
 }
 </script>
 </body>

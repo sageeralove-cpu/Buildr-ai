@@ -2267,11 +2267,23 @@ const STRIPE_LINKS = {
   const params = new URLSearchParams(window.location.search);
   const plan = params.get('welcome');
   if (plan) {
+    // Store plan upgrade
+    try {
+      localStorage.setItem('buildr_plan', plan);
+      localStorage.setItem('buildr_projects_used', '0');
+    } catch(e) {}
+
+    // Redirect paid users to the project builder
+    if (plan === 'pro' || plan === 'business') {
+      window.location.href = '/create.html?plan=' + plan;
+      return;
+    }
+
     // Show welcome toast
     const toast = document.createElement('div');
     toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;box-shadow:0 8px 40px rgba(0,212,255,0.4);animation:slideDown 0.5s ease;';
     const planName = plan === 'pro' ? 'Pro Creator' : plan === 'business' ? 'Business' : 'Buildr AI';
-    toast.textContent = '🎉 Welcome to ' + planName + '! Your account is being set up...';
+    toast.textContent = 'Welcome to ' + planName + '! Your account is being set up...';
     document.body.appendChild(toast);
 
     // Remove after 6 seconds
