@@ -240,6 +240,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     <p id="resultMessage">Your website has been generated. You can preview it, edit with AI, or start a new project.</p>
     <div class="result-actions">
       <button class="result-btn result-btn-primary" onclick="previewProject()">&#128065; Preview Project</button>
+      <button class="result-btn result-btn-primary" onclick="useBuild()" style="background:linear-gradient(135deg,#10B981,#00D4FF);">&#9889; Use Build</button>
       <button class="result-btn result-btn-outline" onclick="publishProject()">&#128640; Publish</button>
       <button class="result-btn result-btn-outline" onclick="removeWatermark()">&#10024; Remove Watermark</button>
       <button class="result-btn result-btn-outline" onclick="resetBuilder()">+ Create Another</button>
@@ -683,7 +684,237 @@ function generatePreview(type, desc, title) {
     return head + ' body{max-width:420px;margin:0 auto;min-height:100vh;} .status-bar{display:flex;justify-content:space-between;padding:12px 20px;font-size:0.75rem;color:#A1A1AA;} .app-header{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;} .app-header h1{font-family:Space Grotesk,sans-serif;font-size:1.5rem;} .app-header h1 span{color:#00D4FF;} .search-bar{margin:0 24px 24px;padding:14px 18px;border-radius:12px;background:#18181B;border:1px solid #27272A;color:#A1A1AA;font-size:0.9rem;} .quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 24px;margin-bottom:32px;} .quick-action{text-align:center;} .qa-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 8px;} .qa-label{font-size:0.7rem;color:#A1A1AA;} .section{padding:0 24px;margin-bottom:24px;} .section-head{display:flex;justify-content:space-between;margin-bottom:16px;} .section-head h2{font-family:Space Grotesk,sans-serif;font-size:1.1rem;} .section-head a{font-size:0.8rem;color:#00D4FF;} .card{background:#1E1E22;border:1px solid #27272A;border-radius:16px;padding:20px;margin-bottom:12px;display:flex;align-items:center;gap:16px;} .card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;} .card h3{font-size:0.95rem;margin-bottom:4px;} .card p{font-size:0.8rem;color:#A1A1AA;} .tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;display:flex;justify-content:space-around;padding:12px 0 28px;background:rgba(9,9,11,0.95);backdrop-filter:blur(20px);border-top:1px solid #27272A;} .tab{text-align:center;font-size:0.65rem;color:#A1A1AA;} .tab.active{color:#00D4FF;} .tab-icon{font-size:1.3rem;margin-bottom:4px;display:block;}</style></head><body><div class="status-bar"><span>9:41</span><span>&#9679;&#9679;&#9679; 100%</span></div><div class="app-header"><h1><span>' + ai.icon + '</span> ' + ai.projectName + '</h1><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#00D4FF,#6366F1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;color:#09090B;">U</div></div><div class="search-bar">&#128269; Search ' + ai.projectName + '...</div><div class="quick-actions">' + qActions + '</div><div class="section"><div class="section-head"><h2>Recent</h2><a href="#">See all</a></div>' + appCards + '</div><div class="tab-bar">' + tabHtml + '</div>' + wm + '</body></html>';
 
   } else if (type === 'dashboard') {
-    return head + ' .dash{display:grid;grid-template-columns:240px 1fr;min-height:100vh;} .sidebar{background:#18181B;border-right:1px solid #27272A;padding:24px 0;} .sidebar-logo{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:1.2rem;padding:0 24px;margin-bottom:32px;} .sidebar-logo span{color:#00D4FF;} .nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;color:#A1A1AA;font-size:0.9rem;cursor:pointer;} .nav-item:hover,.nav-item.active{color:#FAFAFA;background:rgba(0,212,255,0.05);border-right:3px solid #00D4FF;} .main-content{padding:32px;} .dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;} .dash-header h1{font-family:Space Grotesk,sans-serif;font-size:1.6rem;} .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;} .stat-card{background:#1E1E22;border:1px solid #27272A;border-radius:12px;padding:24px;} .stat-label{font-size:0.8rem;color:#A1A1AA;margin-bottom:8px;} .stat-value{font-family:Space Grotesk,sans-serif;font-size:1.8rem;font-weight:700;} .stat-change{font-size:0.8rem;margin-top:4px;} .up{color:#10B981;} .down{color:#EF4444;} .chart-area{background:#1E1E22;border:1px solid #27272A;border-radius:12px;padding:24px;margin-bottom:24px;} .chart-head{display:flex;justify-content:space-between;margin-bottom:24px;} .chart-head h3{font-family:Space Grotesk,sans-serif;} .chart-placeholder{height:200px;background:linear-gradient(180deg,rgba(0,212,255,0.1),transparent);border-radius:8px;position:relative;overflow:hidden;} .chart-line{position:absolute;bottom:0;left:0;width:100%;height:100%;} .chart-line svg{width:100%;height:100%;} .table-area{background:#1E1E22;border:1px solid #27272A;border-radius:12px;padding:24px;} .table-head h3{font-family:Space Grotesk,sans-serif;margin-bottom:16px;} .tbl{width:100%;border-collapse:collapse;} .tbl th{text-align:left;padding:12px 16px;font-size:0.8rem;color:#A1A1AA;border-bottom:1px solid #27272A;text-transform:uppercase;letter-spacing:0.5px;} .tbl td{padding:12px 16px;font-size:0.9rem;border-bottom:1px solid #27272A;} .badge{padding:4px 10px;border-radius:50px;font-size:0.7rem;font-weight:600;} .badge-green{background:rgba(16,185,129,0.1);color:#10B981;} .badge-blue{background:rgba(0,212,255,0.1);color:#00D4FF;} .badge-yellow{background:rgba(245,158,11,0.1);color:#F59E0B;} @media(max-width:768px){.dash{grid-template-columns:1fr;}.sidebar{display:none;}.stats{grid-template-columns:repeat(2,1fr);}}</style></head><body><div class="dash"><aside class="sidebar"><div class="sidebar-logo"><span>' + ai.icon + '</span> ' + ai.projectName + '</div>' + sideHtml + '</aside><main class="main-content"><div class="dash-header"><h1>' + ai.projectName + '</h1><div style="color:#A1A1AA;font-size:0.85rem;">Last 30 days</div></div><div class="stats">' + statsHtml + '</div><div class="chart-area"><div class="chart-head"><h3>' + ai.chartTitle + '</h3></div><div class="chart-placeholder"><div class="chart-line"><svg viewBox="0 0 600 200" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0,212,255,0.3)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs><path d="M0,180 C50,160 100,140 150,120 C200,100 250,130 300,90 C350,50 400,70 450,40 C500,20 550,30 600,10 L600,200 L0,200 Z" fill="url(#g)"/><path d="M0,180 C50,160 100,140 150,120 C200,100 250,130 300,90 C350,50 400,70 450,40 C500,20 550,30 600,10" fill="none" stroke="#00D4FF" stroke-width="2.5"/></svg></div></div></div><div class="table-area"><div class="table-head"><h3>Recent Activity</h3></div><table class="tbl"><thead><tr>' + thHtml + '</tr></thead><tbody>' + trHtml + '</tbody></table></div></main></div>' + wm + '</body></html>';
+    // ── Fully Interactive Dashboard ──
+    var dashData = JSON.stringify({rows: ai.tableRows, headers: ai.tableHeaders, stats: ai.stats, theme: ai.theme});
+    var dashStyles = ' *{transition:all 0.2s ease;} .dash{display:grid;grid-template-columns:240px 1fr;min-height:100vh;} .sidebar{background:#18181B;border-right:1px solid #27272A;padding:24px 0;position:fixed;width:240px;height:100vh;overflow-y:auto;} .sidebar-logo{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:1.2rem;padding:0 24px;margin-bottom:32px;} .sidebar-logo span{color:#00D4FF;} .nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;color:#A1A1AA;font-size:0.9rem;cursor:pointer;border-right:3px solid transparent;} .nav-item:hover,.nav-item.active{color:#FAFAFA;background:rgba(0,212,255,0.05);border-right:3px solid #00D4FF;} .main-content{margin-left:240px;padding:32px;} .dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;} .dash-header h1{font-family:Space Grotesk,sans-serif;font-size:1.6rem;} .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;} .stat-card{background:#1E1E22;border:1px solid #27272A;border-radius:12px;padding:24px;cursor:pointer;position:relative;} .stat-card:hover{border-color:#00D4FF;transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,212,255,0.1);} .stat-label{font-size:0.8rem;color:#A1A1AA;margin-bottom:8px;} .stat-value{font-family:Space Grotesk,sans-serif;font-size:1.8rem;font-weight:700;} .stat-change{font-size:0.8rem;margin-top:4px;} .up{color:#10B981;} .down{color:#EF4444;} .stat-edit{display:none;position:absolute;top:8px;right:8px;background:rgba(0,212,255,0.1);border:none;color:#00D4FF;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:0.8rem;} .stat-card:hover .stat-edit{display:flex;align-items:center;justify-content:center;} .chart-area{background:#1E1E22;border:1px solid #27272A;border-radius:12px;padding:24px;margin-bottom:24px;} .chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;} .chart-head h3{font-family:Space Grotesk,sans-serif;} .chart-tabs{display:flex;gap:8px;} .chart-tab{padding:6px 14px;border-radius:8px;font-size:0.75rem;border:1px solid #27272A;background:transparent;color:#A1A1AA;cursor:pointer;} .chart-tab.active{background:rgba(0,212,255,0.1);border-color:#00D4FF;color:#00D4FF;} .chart-canvas{height:200px;position:relative;border-radius:8px;overflow:hidden;} .bar-chart{display:flex;align-items:flex-end;justify-content:space-around;height:100%;padding:0 10px;gap:8px;} .bar{background:linear-gradient(180deg,#00D4FF,rgba(0,212,255,0.3));border-radius:6px 6px 0 0;min-width:30px;flex:1;max-width:60px;position:relative;cursor:pointer;transition:all 0.3s;} .bar:hover{background:linear-gradient(180deg,#6366F1,rgba(99,102,241,0.3));} .bar-label{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:0.65rem;color:#A1A1AA;white-space:nowrap;} .bar-val{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:0.7rem;color:#00D4FF;font-weight:600;opacity:0;transition:opacity 0.2s;} .bar:hover .bar-val{opacity:1;} .table-area{background:#1E1E22;border:1px solid #27272A;border-radius:12px;padding:24px;margin-bottom:24px;} .table-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;} .table-head h3{font-family:Space Grotesk,sans-serif;} .btn-add{padding:8px 18px;border-radius:8px;background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;border:none;font-weight:600;font-size:0.8rem;cursor:pointer;font-family:Space Grotesk,sans-serif;} .btn-add:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(0,212,255,0.3);} .tbl{width:100%;border-collapse:collapse;} .tbl th{text-align:left;padding:12px 16px;font-size:0.8rem;color:#A1A1AA;border-bottom:1px solid #27272A;text-transform:uppercase;letter-spacing:0.5px;} .tbl td{padding:12px 16px;font-size:0.9rem;border-bottom:1px solid #27272A;} .tbl tr:hover{background:rgba(0,212,255,0.03);} .tbl td[contenteditable]{outline:none;border-radius:4px;} .tbl td[contenteditable]:focus{background:rgba(0,212,255,0.05);box-shadow:inset 0 0 0 1px #00D4FF;} .badge{padding:4px 10px;border-radius:50px;font-size:0.7rem;font-weight:600;cursor:pointer;border:none;} .badge-green{background:rgba(16,185,129,0.1);color:#10B981;} .badge-blue{background:rgba(0,212,255,0.1);color:#00D4FF;} .badge-yellow{background:rgba(245,158,11,0.1);color:#F59E0B;} .badge-red{background:rgba(239,68,68,0.1);color:#EF4444;} .row-actions{display:flex;gap:6px;} .row-btn{width:28px;height:28px;border-radius:6px;border:1px solid #27272A;background:transparent;color:#A1A1AA;cursor:pointer;font-size:0.75rem;display:flex;align-items:center;justify-content:center;} .row-btn:hover{border-color:#EF4444;color:#EF4444;background:rgba(239,68,68,0.05);} .row-btn.edit-btn:hover{border-color:#00D4FF;color:#00D4FF;background:rgba(0,212,255,0.05);} .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.85);z-index:500;align-items:center;justify-content:center;} .modal-overlay.open{display:flex;} .modal{background:#1E1E22;border:1px solid #27272A;border-radius:16px;padding:32px;width:90%;max-width:480px;} .modal h3{font-family:Space Grotesk,sans-serif;margin-bottom:20px;font-size:1.2rem;} .form-group{margin-bottom:16px;} .form-label{display:block;font-size:0.8rem;color:#A1A1AA;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;} .form-input{width:100%;padding:12px 16px;border-radius:8px;border:1px solid #27272A;background:#18181B;color:#FAFAFA;font-size:0.9rem;outline:none;font-family:Inter,sans-serif;} .form-input:focus{border-color:#00D4FF;} .form-select{width:100%;padding:12px 16px;border-radius:8px;border:1px solid #27272A;background:#18181B;color:#FAFAFA;font-size:0.9rem;outline:none;-webkit-appearance:none;} .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;} .btn-cancel{padding:10px 20px;border-radius:8px;border:1px solid #27272A;background:transparent;color:#A1A1AA;cursor:pointer;font-size:0.85rem;} .btn-save{padding:10px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;font-weight:600;cursor:pointer;font-size:0.85rem;} .page-section{display:none;} .page-section.active{display:block;} .search-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:10px;background:#18181B;border:1px solid #27272A;margin-bottom:24px;} .search-bar input{flex:1;background:none;border:none;color:#FAFAFA;outline:none;font-size:0.9rem;} .search-bar span{color:#A1A1AA;} .empty-state{text-align:center;padding:60px 20px;color:#A1A1AA;} .empty-state .empty-icon{font-size:3rem;margin-bottom:16px;display:block;} .toast{position:fixed;top:20px;right:20px;background:linear-gradient(135deg,#10B981,#00D4FF);color:#09090B;padding:14px 24px;border-radius:10px;font-weight:600;font-size:0.85rem;z-index:999;transform:translateX(120%);transition:transform 0.3s;} .toast.show{transform:translateX(0);} @media(max-width:768px){.dash{grid-template-columns:1fr;}.sidebar{display:none;}.main-content{margin-left:0;}.stats{grid-template-columns:repeat(2,1fr);}}';
+
+    // Build bar chart data from stats
+    var barData = [];
+    ai.stats.forEach(function(s) {
+      var num = parseFloat(s.v.replace(/[^0-9.]/g,'')) || 0;
+      barData.push({label: s.l.split(' ')[0], value: num});
+    });
+    // Add more bars from table data
+    ai.tableRows.forEach(function(r) {
+      var num = parseFloat((r[3]||r[2]||'0').replace(/[^0-9.]/g,'')) || 0;
+      barData.push({label: r[0].split(',')[0].split(' ')[0], value: num});
+    });
+    var maxBar = 0; barData.forEach(function(b){if(b.value>maxBar)maxBar=b.value;});
+
+    var barsHtml = '';
+    barData.forEach(function(b){
+      var pct = maxBar > 0 ? Math.max(8, (b.value/maxBar)*100) : 20;
+      barsHtml += '<div class="bar" style="height:'+pct+'%;"><span class="bar-val">'+b.value+'</span><span class="bar-label">'+b.label+'</span></div>';
+    });
+
+    // Build status options for the form
+    var statusOpts = '<option value="Active" selected>Active</option><option value="Planned">Planned</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option><option value="On Hold">On Hold</option>';
+
+    // Build sidebar page sections
+    var pages = {};
+    ai.sidebarItems.forEach(function(s, i) {
+      var cleanName = s.replace(/&#\d+;/g,'').replace(/[^\w\s]/g,'').trim().toLowerCase().replace(/\s+/g,'-');
+      pages[cleanName] = i;
+    });
+
+    // Generate form fields from table headers
+    var formFieldsHtml = '';
+    ai.tableHeaders.forEach(function(h, i) {
+      if (h.toLowerCase() === 'status' || h.toLowerCase() === 'priority') {
+        formFieldsHtml += '<div class="form-group"><label class="form-label">' + h + '</label><select class="form-select" id="field-' + i + '">' + statusOpts + '</select></div>';
+      } else {
+        formFieldsHtml += '<div class="form-group"><label class="form-label">' + h + '</label><input class="form-input" id="field-' + i + '" placeholder="Enter ' + h.toLowerCase() + '"></div>';
+      }
+    });
+
+    return head + dashStyles + '</style></head><body>' +
+    '<div class="toast" id="toast"></div>' +
+    '<div class="dash"><aside class="sidebar"><div class="sidebar-logo"><span>' + ai.icon + '</span> ' + ai.projectName + '</div>' + sideHtml + '</aside>' +
+    '<main class="main-content">' +
+
+    // ── Page: Dashboard (main) ──
+    '<div class="page-section active" id="page-0">' +
+    '<div class="dash-header"><h1>' + ai.projectName + '</h1><div style="display:flex;align-items:center;gap:12px;"><div style="color:#A1A1AA;font-size:0.85rem;" id="dateDisplay"></div></div></div>' +
+    '<div class="search-bar"><span>&#128269;</span><input type="text" placeholder="Search ' + ai.projectName + '..." id="searchInput" oninput="filterTable(this.value)"></div>' +
+    '<div class="stats" id="statsGrid">' + statsHtml.replace(/<div class="stat-card">/g, '<div class="stat-card" onclick="editStat(this)"><button class="stat-edit">&#9998;</button>') + '</div>' +
+    '<div class="chart-area"><div class="chart-head"><h3>' + ai.chartTitle + '</h3><div class="chart-tabs"><button class="chart-tab active" onclick="switchChart(\'bar\',this)">Bar</button><button class="chart-tab" onclick="switchChart(\'line\',this)">Line</button></div></div><div class="chart-canvas" id="chartCanvas"><div class="bar-chart" id="barChart" style="padding-bottom:28px;">' + barsHtml + '</div></div></div>' +
+    '<div class="table-area"><div class="table-head"><h3>Recent Activity</h3><button class="btn-add" onclick="openAddModal()">+ Add Entry</button></div><table class="tbl" id="dataTable"><thead><tr>' + thHtml + '<th style="width:80px;">Actions</th></tr></thead><tbody id="tableBody">' +
+    trHtml.replace(/<\/tr>/g, '<td class="row-actions"><button class="row-btn edit-btn" onclick="editRow(this)" title="Edit">&#9998;</button><button class="row-btn" onclick="deleteRow(this)" title="Delete">&#128465;</button></td></tr>') +
+    '</tbody></table></div></div>' +
+
+    // ── Other sidebar pages (generated dynamically) ──
+    ai.sidebarItems.slice(1).map(function(s, idx) {
+      var cleanName = s.replace(/&#\d+;/g,'').replace(/[^\w\s]/g,'').trim();
+      return '<div class="page-section" id="page-' + (idx+1) + '">' +
+        '<div class="dash-header"><h1>' + s + '</h1></div>' +
+        '<div class="empty-state"><span class="empty-icon">' + s.match(/&#\d+;/)?s.match(/&#\d+;/)[0]:'&#128203;' + '</span>' +
+        '<h3 style="margin-bottom:8px;color:#FAFAFA;">' + cleanName + ' Page</h3>' +
+        '<p>Your ' + cleanName.toLowerCase() + ' data will appear here as you add entries from the dashboard.</p>' +
+        '<button class="btn-add" style="margin-top:20px;" onclick="switchToPage(0)">Go to Dashboard</button></div></div>';
+    }).join('') +
+
+    // ── Add/Edit Modal ──
+    '<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeModal()">' +
+    '<div class="modal"><h3 id="modalTitle">Add New Entry</h3>' + formFieldsHtml +
+    '<div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveEntry()">Save Entry</button></div></div></div>' +
+
+    // ── Stat Edit Modal ──
+    '<div class="modal-overlay" id="statModal" onclick="if(event.target===this)closeStatModal()">' +
+    '<div class="modal"><h3>Edit Stat</h3>' +
+    '<div class="form-group"><label class="form-label">Value</label><input class="form-input" id="statValueInput" placeholder="Enter value"></div>' +
+    '<div class="modal-actions"><button class="btn-cancel" onclick="closeStatModal()">Cancel</button><button class="btn-save" onclick="saveStat()">Update</button></div></div></div>' +
+
+    '</main></div>' + wm +
+
+    // ── Interactive JavaScript ──
+    '<script>' +
+    'var dashState = ' + dashData + ';' +
+    'var editingRow = null;' +
+    'var editingStatEl = null;' +
+
+    // Date display
+    'document.getElementById("dateDisplay").textContent = new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});' +
+
+    // Sidebar navigation
+    'document.querySelectorAll(".nav-item").forEach(function(item,i){' +
+    '  item.addEventListener("click",function(){switchToPage(i);});' +
+    '});' +
+
+    'function switchToPage(idx){' +
+    '  document.querySelectorAll(".nav-item").forEach(function(n,i){n.classList.toggle("active",i===idx);});' +
+    '  document.querySelectorAll(".page-section").forEach(function(p,i){p.classList.toggle("active",i===idx);});' +
+    '}' +
+
+    // Search / filter
+    'function filterTable(q){' +
+    '  q=q.toLowerCase();' +
+    '  document.querySelectorAll("#tableBody tr").forEach(function(row){' +
+    '    var text=row.textContent.toLowerCase();' +
+    '    row.style.display=text.indexOf(q)!==-1?"":"none";' +
+    '  });' +
+    '}' +
+
+    // Add entry modal
+    'function openAddModal(){' +
+    '  editingRow=null;' +
+    '  document.getElementById("modalTitle").textContent="Add New Entry";' +
+    '  dashState.headers.forEach(function(h,i){' +
+    '    var el=document.getElementById("field-"+i);if(el){el.value="";}' +
+    '  });' +
+    '  document.getElementById("addModal").classList.add("open");' +
+    '}' +
+
+    'function closeModal(){document.getElementById("addModal").classList.remove("open");}' +
+
+    // Save entry (add or edit)
+    'function saveEntry(){' +
+    '  var vals=[];var empty=true;' +
+    '  dashState.headers.forEach(function(h,i){' +
+    '    var el=document.getElementById("field-"+i);' +
+    '    var v=el?el.value.trim():"";vals.push(v);' +
+    '    if(v)empty=false;' +
+    '  });' +
+    '  if(empty){showToast("Please fill in at least one field");return;}' +
+    '  if(editingRow){' +
+    '    var cells=editingRow.querySelectorAll("td:not(.row-actions)");' +
+    '    vals.forEach(function(v,i){if(cells[i])cells[i].textContent=v;});' +
+    '    showToast("Entry updated!");' +
+    '  } else {' +
+    '    var tbody=document.getElementById("tableBody");' +
+    '    var tr=document.createElement("tr");' +
+    '    var badges=["badge-green","badge-blue","badge-yellow","badge-red"];' +
+    '    vals.forEach(function(v,i){' +
+    '      var td=document.createElement("td");' +
+    '      if(i===2){td.innerHTML=\'<span class="badge \'+badges[Math.floor(Math.random()*4)]+\'">\'+v+\'</span>\';}' +
+    '      else{td.textContent=v;td.setAttribute("contenteditable","true");}' +
+    '      tr.appendChild(td);' +
+    '    });' +
+    '    var actTd=document.createElement("td");actTd.className="row-actions";' +
+    '    actTd.innerHTML=\'<button class="row-btn edit-btn" onclick="editRow(this)" title="Edit">&#9998;</button><button class="row-btn" onclick="deleteRow(this)" title="Delete">&#128465;</button>\';' +
+    '    tr.appendChild(actTd);' +
+    '    tbody.insertBefore(tr,tbody.firstChild);' +
+    '    updateStats(1);' +
+    '    showToast("New entry added!");' +
+    '  }' +
+    '  closeModal();' +
+    '}' +
+
+    // Edit existing row
+    'function editRow(btn){' +
+    '  var row=btn.closest("tr");editingRow=row;' +
+    '  document.getElementById("modalTitle").textContent="Edit Entry";' +
+    '  var cells=row.querySelectorAll("td:not(.row-actions)");' +
+    '  dashState.headers.forEach(function(h,i){' +
+    '    var el=document.getElementById("field-"+i);' +
+    '    if(el&&cells[i]){el.value=cells[i].textContent.trim();}' +
+    '  });' +
+    '  document.getElementById("addModal").classList.add("open");' +
+    '}' +
+
+    // Delete row
+    'function deleteRow(btn){' +
+    '  if(!confirm("Delete this entry?"))return;' +
+    '  var row=btn.closest("tr");' +
+    '  row.style.opacity="0";row.style.transform="translateX(20px)";' +
+    '  setTimeout(function(){row.remove();updateStats(-1);showToast("Entry deleted");},200);' +
+    '}' +
+
+    // Edit stat card
+    'function editStat(card){' +
+    '  editingStatEl=card.querySelector(".stat-value");' +
+    '  document.getElementById("statValueInput").value=editingStatEl.textContent;' +
+    '  document.getElementById("statModal").classList.add("open");' +
+    '}' +
+    'function closeStatModal(){document.getElementById("statModal").classList.remove("open");}' +
+    'function saveStat(){' +
+    '  if(editingStatEl){editingStatEl.textContent=document.getElementById("statValueInput").value;}' +
+    '  closeStatModal();showToast("Stat updated!");' +
+    '}' +
+
+    // Update stat count after add/delete
+    'function updateStats(delta){' +
+    '  var firstStat=document.querySelector(".stat-value");' +
+    '  if(firstStat){' +
+    '    var num=parseInt(firstStat.textContent.replace(/[^0-9]/g,""))||0;' +
+    '    num+=delta;if(num<0)num=0;' +
+    '    var prefix=firstStat.textContent.match(/^[^0-9]*/)||[""];' +
+    '    firstStat.textContent=prefix[0]+num;' +
+    '  }' +
+    '}' +
+
+    // Chart switching
+    'function switchChart(mode,btn){' +
+    '  document.querySelectorAll(".chart-tab").forEach(function(t){t.classList.remove("active");});' +
+    '  btn.classList.add("active");' +
+    '  var canvas=document.getElementById("chartCanvas");' +
+    '  if(mode==="line"){' +
+    '    canvas.innerHTML=\'<svg viewBox="0 0 600 200" preserveAspectRatio="none" style="width:100%;height:100%;"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(0,212,255,0.3)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs><path d="M0,180 C50,160 100,140 150,120 C200,100 250,130 300,90 C350,50 400,70 450,40 C500,20 550,30 600,10 L600,200 L0,200 Z" fill="url(#lg)"/><path d="M0,180 C50,160 100,140 150,120 C200,100 250,130 300,90 C350,50 400,70 450,40 C500,20 550,30 600,10" fill="none" stroke="#00D4FF" stroke-width="2.5"/><circle cx="150" cy="120" r="4" fill="#00D4FF"/><circle cx="300" cy="90" r="4" fill="#00D4FF"/><circle cx="450" cy="40" r="4" fill="#00D4FF"/></svg>\';' +
+    '  } else {' +
+    '    canvas.innerHTML=document.getElementById("barChartBackup")?document.getElementById("barChartBackup").innerHTML:\'<div class="bar-chart" style="padding-bottom:28px;">' + barsHtml.replace(/'/g,"\\'") + '</div>\';' +
+    '  }' +
+    '}' +
+
+    // Toast
+    'function showToast(msg){' +
+    '  var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");' +
+    '  setTimeout(function(){t.classList.remove("show");},2500);' +
+    '}' +
+
+    // Make existing table cells editable
+    'document.querySelectorAll("#tableBody td:not(.row-actions)").forEach(function(td){' +
+    '  if(!td.querySelector(".badge")&&!td.querySelector("button")){td.setAttribute("contenteditable","true");}' +
+    '});' +
+
+    // Store bar chart HTML for toggling
+    'var bkp=document.createElement("div");bkp.id="barChartBackup";bkp.style.display="none";bkp.innerHTML=document.getElementById("chartCanvas").innerHTML;document.body.appendChild(bkp);' +
+
+    // Keyboard shortcuts
+    'document.addEventListener("keydown",function(e){' +
+    '  if(e.key==="Escape"){closeModal();closeStatModal();}' +
+    '  if(e.key==="n"&&e.ctrlKey){e.preventDefault();openAddModal();}' +
+    '});' +
+
+    '</script></body></html>';
 
   } else {
     // Social content
@@ -822,6 +1053,41 @@ function deleteProject(id) {
   savedProjects = savedProjects.filter(function(p) { return p.id !== id; });
   localStorage.setItem('buildr_projects', JSON.stringify(savedProjects));
   renderHistory();
+}
+
+// ── Use Build (interactive mode) ──
+function useBuild() {
+  if (userPlan === 'pro' || userPlan === 'business') {
+    // Pro/Business: open the full interactive build in a new tab
+    var desc = document.getElementById('projectDescription').value.trim();
+    var type = selectedType;
+    var titleWords = desc.split(/[.,!?\n]/)[0].substring(0, 60);
+    var previewHTML = generatePreview(type, desc, titleWords);
+    var blob = new Blob([previewHTML], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    // Toast
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#10B981,#00D4FF);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;box-shadow:0 8px 40px rgba(16,185,129,0.4);';
+    toast.textContent = 'Your build is live! Use it in the new tab.';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 3000);
+  } else {
+    // Free users: show upgrade prompt with pricing
+    document.getElementById('upgradeIcon').innerHTML = '&#9889;';
+    document.getElementById('upgradeTitle').textContent = 'Upgrade to Use Your Build';
+    document.getElementById('upgradeDesc').innerHTML = 'Free plan lets you <strong>preview</strong> your builds. To use them as fully interactive tools — edit data, add entries, and work with your dashboard in real time — upgrade to a paid plan.<br><br>' +
+      '<div style="display:flex;gap:12px;justify-content:center;margin-top:8px;">' +
+      '<div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:16px 20px;flex:1;text-align:center;">' +
+      '<div style="font-size:0.75rem;color:#A1A1AA;margin-bottom:4px;">PRO</div>' +
+      '<div style="font-family:Space Grotesk,sans-serif;font-size:1.4rem;font-weight:700;color:#00D4FF;">$29<span style="font-size:0.8rem;color:#A1A1AA;">/mo</span></div>' +
+      '<div style="font-size:0.7rem;color:#A1A1AA;margin-top:4px;">Unlimited builds<br>No watermark<br>Full interactivity</div></div>' +
+      '<div style="background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:16px 20px;flex:1;text-align:center;">' +
+      '<div style="font-size:0.75rem;color:#A1A1AA;margin-bottom:4px;">BUSINESS</div>' +
+      '<div style="font-family:Space Grotesk,sans-serif;font-size:1.4rem;font-weight:700;color:#6366F1;">$99<span style="font-size:0.8rem;color:#A1A1AA;">/mo</span></div>' +
+      '<div style="font-size:0.7rem;color:#A1A1AA;margin-top:4px;">Everything in Pro<br>Priority support<br>Custom branding</div></div></div>';
+    document.getElementById('upgradeModal').style.display = 'flex';
+  }
 }
 
 // ── Publish & Watermark Upgrade Prompts ──
