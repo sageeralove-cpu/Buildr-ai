@@ -146,6 +146,9 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
 @keyframes wizFadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
 .wiz-wm-pos { transition:border-color 0.2s; }
 .wiz-wm-pos:has(input:checked) { border-color:var(--accent) !important;color:var(--accent) !important; }
+.wiz-cal-day.active { border-color:#EC4899 !important;background:rgba(236,72,153,0.1) !important; }
+.wiz-cal-day.active div { color:#EC4899 !important; }
+.wiz-plat-label:has(input:checked) { border-color:var(--accent) !important;background:rgba(0,212,255,0.06) !important;color:var(--text) !important; }
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -290,6 +293,59 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
           <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(168,85,247,0.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3L4 9v12h16V9l-8-6z" stroke="#A855F7" stroke-width="1.5"/><rect x="9" y="13" width="6" height="8" stroke="#A855F7" stroke-width="1.2"/></svg></div>
           <div style="flex:1;"><div style="font-weight:600;font-size:0.95rem;">Hybrid — AI + My Input</div><div style="color:var(--text-muted);font-size:0.8rem;">AI generates a draft, then you can customise specific sections</div></div>
           <span class="wiz-check">&#10003;</span>
+        </div>
+      </div>
+
+      <!-- Social Content Strategy (visible only for social type) -->
+      <div id="wizSocialStrategy" style="display:none;margin-top:20px;padding-top:18px;border-top:1px solid var(--border);">
+        <div style="text-align:center;margin-bottom:16px;">
+          <p style="font-size:0.95rem;font-weight:600;color:var(--text);margin:0 0 4px;">Daily Content Automation</p>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0;">Set up your auto-content strategy.</p>
+        </div>
+
+        <!-- Topic / niche -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:6px;">Your topic or niche</label>
+          <input type="text" id="wizSocialTopic" placeholder="e.g. fitness motivation, Korean skincare, indie music reviews..." style="width:100%;padding:12px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+
+        <!-- Target platforms -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:8px;">Target platforms</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="wizPlatformPicks">
+            <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:50px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);transition:all 0.2s;" class="wiz-plat-label"><input type="checkbox" value="instagram" style="accent-color:#EC4899;"> Instagram</label>
+            <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:50px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);transition:all 0.2s;" class="wiz-plat-label"><input type="checkbox" value="tiktok" style="accent-color:#fff;"> TikTok</label>
+            <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:50px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);transition:all 0.2s;" class="wiz-plat-label"><input type="checkbox" value="twitter" style="accent-color:#1DA1F2;"> X / Twitter</label>
+            <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:50px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);transition:all 0.2s;" class="wiz-plat-label"><input type="checkbox" value="linkedin" style="accent-color:#0077B5;"> LinkedIn</label>
+            <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:50px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);transition:all 0.2s;" class="wiz-plat-label"><input type="checkbox" value="facebook" style="accent-color:#1877F2;"> Facebook</label>
+            <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:50px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);transition:all 0.2s;" class="wiz-plat-label"><input type="checkbox" value="pinterest" style="accent-color:#E60023;"> Pinterest</label>
+            <label style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:50px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);transition:all 0.2s;" class="wiz-plat-label"><input type="checkbox" value="threads" style="accent-color:#fff;"> Threads</label>
+          </div>
+        </div>
+
+        <!-- Content calendar -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:8px;">Weekly content calendar</label>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;" id="wizCalendarDays">
+            <div class="wiz-cal-day" onclick="toggleCalDay(this)" data-day="Mon" style="padding:10px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);text-align:center;cursor:pointer;transition:all 0.2s;"><div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;">MON</div></div>
+            <div class="wiz-cal-day" onclick="toggleCalDay(this)" data-day="Tue" style="padding:10px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);text-align:center;cursor:pointer;transition:all 0.2s;"><div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;">TUE</div></div>
+            <div class="wiz-cal-day" onclick="toggleCalDay(this)" data-day="Wed" style="padding:10px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);text-align:center;cursor:pointer;transition:all 0.2s;"><div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;">WED</div></div>
+            <div class="wiz-cal-day" onclick="toggleCalDay(this)" data-day="Thu" style="padding:10px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);text-align:center;cursor:pointer;transition:all 0.2s;"><div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;">THU</div></div>
+            <div class="wiz-cal-day" onclick="toggleCalDay(this)" data-day="Fri" style="padding:10px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);text-align:center;cursor:pointer;transition:all 0.2s;"><div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;">FRI</div></div>
+            <div class="wiz-cal-day" onclick="toggleCalDay(this)" data-day="Sat" style="padding:10px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);text-align:center;cursor:pointer;transition:all 0.2s;"><div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;">SAT</div></div>
+            <div class="wiz-cal-day" onclick="toggleCalDay(this)" data-day="Sun" style="padding:10px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);text-align:center;cursor:pointer;transition:all 0.2s;"><div style="font-size:0.65rem;color:var(--text-muted);font-weight:600;">SUN</div></div>
+          </div>
+        </div>
+
+        <!-- Smart auto-detect toggle -->
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;" onclick="toggleSmartDetect(this)">
+          <div style="width:40px;height:22px;border-radius:11px;background:var(--border);position:relative;transition:background 0.2s;flex-shrink:0;" id="wizSmartToggle">
+            <div style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left 0.2s;"></div>
+          </div>
+          <div>
+            <div style="font-size:0.85rem;font-weight:600;color:var(--text);">Smart Auto-Detect</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">AI analyses your brand/niche and generates relevant daily posts automatically</div>
+          </div>
         </div>
       </div>
     </div>
@@ -438,6 +494,27 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
       <button class="result-btn result-btn-outline" onclick="removeWatermark()">&#10024; Remove Watermark</button>
       <button class="result-btn result-btn-outline" onclick="resetBuilder()">+ Create Another</button>
     </div>
+    <!-- Share To buttons (social builds) -->
+    <div id="socialShareBtns" style="display:none;margin-top:24px;">
+      <p style="font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);font-weight:600;margin-bottom:12px;">Share to</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:50px;background:linear-gradient(135deg,#833AB4,#E1306C,#F77737);color:#fff;font-size:0.8rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Instagram</a>
+        <a href="https://www.tiktok.com/upload" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:50px;background:#000;border:1px solid #333;color:#fff;font-size:0.8rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">TikTok</a>
+        <a href="https://twitter.com/intent/tweet" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:50px;background:#0F1419;border:1px solid #333;color:#fff;font-size:0.8rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">X / Twitter</a>
+        <a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:50px;background:#0077B5;color:#fff;font-size:0.8rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">LinkedIn</a>
+        <a href="https://www.facebook.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:50px;background:#1877F2;color:#fff;font-size:0.8rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Facebook</a>
+        <a href="https://www.pinterest.com/pin-creation-tool/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:50px;background:#E60023;color:#fff;font-size:0.8rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Pinterest</a>
+        <a href="https://www.threads.net/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:50px;background:#000;border:1px solid #333;color:#fff;font-size:0.8rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Threads</a>
+      </div>
+    </div>
+
+    <!-- Social Content Pro upsell (social builds only) -->
+    <div id="socialProUpsell" style="display:none;margin-top:20px;padding:18px 24px;background:linear-gradient(135deg,rgba(236,72,153,0.06),rgba(168,85,247,0.06));border:1px solid rgba(236,72,153,0.2);border-radius:var(--radius);text-align:center;">
+      <p style="font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:4px;">Want daily auto-generated content?</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:14px;">AI creates fresh posts for you every day — topic scheduling, content calendar, multi-platform.</p>
+      <button onclick="document.getElementById('socialProModal').style.display='flex'" style="padding:12px 28px;border:none;border-radius:50px;background:linear-gradient(135deg,#EC4899,#A855F7);color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(236,72,153,0.3)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">Unlock Daily Content — $10/mo</button>
+    </div>
+
     <div style="margin-top:20px;">
       <button onclick="goToDashboard()" style="background:none;border:1px solid var(--border);color:var(--text);padding:14px 32px;border-radius:12px;font-size:0.95rem;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">&#8592; Back to Dashboard</button>
     </div>
@@ -486,6 +563,67 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
       <div style="text-align:center;padding-top:4px;border-top:1px solid var(--border);">
         <p style="color:var(--text-muted);font-size:0.78rem;margin-top:16px;">Want unlimited live dashboards? <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" style="color:var(--accent);text-decoration:none;font-weight:600;">Upgrade to Pro — $29/mo</a></p>
         <p style="color:#52525B;font-size:0.7rem;margin-top:8px;">Pay with Card, Apple Pay, Google Pay, or PayPal.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social Content Pro Modal — $10/mo daily auto-content -->
+  <div id="socialProModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.92);z-index:400;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:520px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">
+      <button onclick="document.getElementById('socialProModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>
+
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#EC4899,#A855F7,#6366F1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.3"/><circle cx="18" cy="6" r="1.5" fill="#fff"/></svg></div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:8px;">Social Content Pro</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">Unlock daily AI-generated content across all your platforms. Set it once, let AI create for you every day.</p>
+      </div>
+
+      <!-- $10/mo Option -->
+      <a href="https://buy.stripe.com/social_content_pro_10mo" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:16px;padding:22px;border-radius:var(--radius-sm);border:1px solid #EC4899;background:rgba(236,72,153,0.04);text-decoration:none;color:var(--text);transition:all 0.2s;margin-bottom:16px;position:relative;" onmouseover="this.style.background='rgba(236,72,153,0.08)'" onmouseout="this.style.background='rgba(236,72,153,0.04)'">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#EC4899,#A855F7);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.5"/></svg></div>
+        <div style="flex:1;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">Daily Auto-Content</div>
+          <div style="color:var(--text-muted);font-size:0.8rem;margin-top:2px;">AI generates fresh posts daily across all platforms</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.4rem;color:#EC4899;">$10</div>
+          <div style="color:var(--text-muted);font-size:0.65rem;">/month</div>
+        </div>
+        <div style="position:absolute;top:-8px;right:12px;background:linear-gradient(135deg,#EC4899,#A855F7);color:#fff;padding:2px 12px;border-radius:50px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Popular</div>
+      </a>
+
+      <!-- What you get -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 22px;margin-bottom:16px;">
+        <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">What's included</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Daily auto-posts</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Content calendar</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Multi-platform</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Smart captions</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Hashtag optimiser</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Brand voice AI</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Topic scheduling</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; No watermark</div>
+        </div>
+      </div>
+
+      <!-- Supported platforms -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 22px;margin-bottom:20px;">
+        <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Supported Platforms</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span style="padding:4px 12px;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.2);border-radius:50px;font-size:0.75rem;color:#EC4899;font-weight:500;">Instagram</span>
+          <span style="padding:4px 12px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:50px;font-size:0.75rem;color:var(--text);font-weight:500;">TikTok</span>
+          <span style="padding:4px 12px;background:rgba(29,161,242,0.08);border:1px solid rgba(29,161,242,0.2);border-radius:50px;font-size:0.75rem;color:#1DA1F2;font-weight:500;">X / Twitter</span>
+          <span style="padding:4px 12px;background:rgba(0,119,181,0.08);border:1px solid rgba(0,119,181,0.2);border-radius:50px;font-size:0.75rem;color:#0077B5;font-weight:500;">LinkedIn</span>
+          <span style="padding:4px 12px;background:rgba(24,119,242,0.08);border:1px solid rgba(24,119,242,0.2);border-radius:50px;font-size:0.75rem;color:#1877F2;font-weight:500;">Facebook</span>
+          <span style="padding:4px 12px;background:rgba(230,0,35,0.08);border:1px solid rgba(230,0,35,0.2);border-radius:50px;font-size:0.75rem;color:#E60023;font-weight:500;">Pinterest</span>
+          <span style="padding:4px 12px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:50px;font-size:0.75rem;color:var(--text);font-weight:500;">Threads</span>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding-top:4px;border-top:1px solid var(--border);">
+        <p style="color:var(--text-muted);font-size:0.78rem;margin-top:12px;">Or get everything with <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" style="color:var(--accent);text-decoration:none;font-weight:600;">Pro Creator — $29/mo</a></p>
+        <p style="color:#52525B;font-size:0.7rem;margin-top:6px;">Cancel anytime. Pay with Card, Apple Pay, Google Pay, or PayPal.</p>
       </div>
     </div>
   </div>
@@ -724,7 +862,7 @@ function openAIWizard() {
 
   // Reset wizard state
   wizardStep = 1;
-  wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right' };
+  wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right', socialTopic: '', socialPlatforms: [], socialCalendar: [], socialSmartDetect: false };
 
   // Update type labels in wizard
   var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content' };
@@ -741,6 +879,22 @@ function openAIWizard() {
   var uploadPreview = document.getElementById('wizUploadPreview');
   uploadPreview.innerHTML = '';
   uploadPreview.style.display = 'none';
+
+  // Show/hide social strategy section
+  var socialStrategy = document.getElementById('wizSocialStrategy');
+  if (selectedType === 'social') {
+    socialStrategy.style.display = 'block';
+    // Reset social fields
+    document.getElementById('wizSocialTopic').value = '';
+    document.querySelectorAll('#wizPlatformPicks input').forEach(function(cb) { cb.checked = false; });
+    document.querySelectorAll('.wiz-cal-day').forEach(function(d) { d.classList.remove('active'); });
+    var smartToggle = document.getElementById('wizSmartToggle');
+    smartToggle.style.background = 'var(--border)';
+    smartToggle.querySelector('div').style.left = '2px';
+    wizardData.socialSmartDetect = false;
+  } else {
+    socialStrategy.style.display = 'none';
+  }
 
   // Show step 1, hide others
   for (var s = 1; s <= 5; s++) {
@@ -900,6 +1054,27 @@ function buildWizReview() {
     html += '<div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">Uploaded: ' + wizardData.uploadedFiles.join(', ') + '</div>';
   }
 
+  // Social content strategy summary
+  if (selectedType === 'social') {
+    collectSocialData();
+    html += '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">';
+    html += '<span style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#EC4899;font-weight:600;">Daily Content Strategy</span>';
+
+    if (wizardData.socialTopic) {
+      html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;"><span style="font-size:1.1rem;">&#127919;</span><div><span style="font-size:0.75rem;color:var(--text-muted);">TOPIC / NICHE</span><p style="margin:2px 0 0;font-size:0.95rem;color:var(--text);font-weight:500;">' + wizardData.socialTopic + '</p></div></div>';
+    }
+    if (wizardData.socialPlatforms.length > 0) {
+      html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;"><span style="font-size:1.1rem;">&#128241;</span><div><span style="font-size:0.75rem;color:var(--text-muted);">PLATFORMS</span><p style="margin:2px 0 0;font-size:0.95rem;color:var(--text);font-weight:500;">' + wizardData.socialPlatforms.map(function(p){ return p.charAt(0).toUpperCase()+p.slice(1); }).join(', ') + '</p></div></div>';
+    }
+    if (wizardData.socialCalendar.length > 0) {
+      html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;"><span style="font-size:1.1rem;">&#128197;</span><div><span style="font-size:0.75rem;color:var(--text-muted);">POST DAYS</span><p style="margin:2px 0 0;font-size:0.95rem;color:var(--text);font-weight:500;">' + wizardData.socialCalendar.join(', ') + '</p></div></div>';
+    }
+    if (wizardData.socialSmartDetect) {
+      html += '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;"><span style="font-size:1.1rem;">&#129302;</span><div><span style="font-size:0.75rem;color:var(--text-muted);">SMART AUTO-DETECT</span><p style="margin:2px 0 0;font-size:0.95rem;color:#EC4899;font-weight:500;">Enabled — AI will auto-generate daily</p></div></div>';
+    }
+    html += '</div>';
+  }
+
   document.getElementById('wizReviewContent').innerHTML = html;
 }
 
@@ -966,8 +1141,47 @@ document.getElementById('wizCustomTheme').addEventListener('input', function() {
   }
 });
 
+// ── Social Content Strategy Functions ──
+wizardData.socialTopic = '';
+wizardData.socialPlatforms = [];
+wizardData.socialCalendar = [];
+wizardData.socialSmartDetect = false;
+
+function toggleCalDay(el) {
+  el.classList.toggle('active');
+  wizardData.socialCalendar = [];
+  document.querySelectorAll('.wiz-cal-day.active').forEach(function(d) {
+    wizardData.socialCalendar.push(d.getAttribute('data-day'));
+  });
+}
+
+function toggleSmartDetect(el) {
+  wizardData.socialSmartDetect = !wizardData.socialSmartDetect;
+  var toggle = document.getElementById('wizSmartToggle');
+  var knob = toggle.querySelector('div');
+  if (wizardData.socialSmartDetect) {
+    toggle.style.background = 'linear-gradient(135deg,#EC4899,#A855F7)';
+    knob.style.left = '20px';
+  } else {
+    toggle.style.background = 'var(--border)';
+    knob.style.left = '2px';
+  }
+}
+
+// Collect social strategy data before advancing
+function collectSocialData() {
+  wizardData.socialTopic = document.getElementById('wizSocialTopic').value.trim();
+  wizardData.socialPlatforms = [];
+  document.querySelectorAll('#wizPlatformPicks input:checked').forEach(function(cb) {
+    wizardData.socialPlatforms.push(cb.value);
+  });
+}
+
 function startBuilding() {
   if (projectsUsed >= projectLimit) { showLimitReached(); return; }
+
+  // Collect social data if applicable
+  if (selectedType === 'social') { collectSocialData(); }
 
   // Show the suggestion step first
   var desc = document.getElementById('projectDescription').value.trim();
@@ -1180,6 +1394,11 @@ function showResult() {
   if (projectsUsed >= projectLimit) {
     document.getElementById('upgradeBanner').style.display = 'flex';
   }
+
+  // Show social-specific share buttons & upsell
+  var isSocial = selectedType === 'social';
+  document.getElementById('socialShareBtns').style.display = isSocial ? 'block' : 'none';
+  document.getElementById('socialProUpsell').style.display = isSocial ? 'block' : 'none';
 }
 
 function previewProject() {
