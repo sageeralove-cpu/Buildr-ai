@@ -1549,7 +1549,7 @@ footer {
       <h1>Build Your<br>Dream App<br><span class="gradient-text">In Minutes.</span></h1>
       <p>Buildr AI turns your ideas into fully functional apps, websites, dashboards, and social media content — no coding needed. Publish directly to app stores and social media.</p>
       <div class="hero-buttons">
-        <a href="#pricing" class="btn-primary">Start Building Free →</a>
+        <a href="#" class="btn-primary" onclick="openPayment('free');return false;">Start Building Free →</a>
         <a href="#how-it-works" class="btn-secondary">▶ See How It Works</a>
       </div>
     </div>
@@ -1923,7 +1923,7 @@ footer {
     <h2>Ready to Build<br><span class="gradient-text">Something Amazing?</span></h2>
     <p>Join 50,000+ creators who are already building the future with Buildr AI. Start free — no credit card required.</p>
     <div class="hero-buttons" style="justify-content:center;">
-      <a href="#pricing" class="btn-primary">Start Building Free →</a>
+      <a href="#" class="btn-primary" onclick="openPayment('free');return false;">Start Building Free →</a>
     </div>
   </div>
 </section>
@@ -1974,17 +1974,49 @@ footer {
   </div>
 </footer>
 
-<!-- Payment Modal — Plan Selector -->
+<!-- Free Starter Welcome Modal -->
+<div class="payment-modal" id="freeModal">
+  <div class="payment-card">
+    <button class="legal-close" onclick="closeFreeModal()" style="float:right;margin-bottom:12px;">&times;</button>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent3),var(--accent));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#10003;</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin-bottom:8px;">Welcome to Buildr AI!</h3>
+      <p style="color:var(--text-muted);font-size:0.95rem;">Your free Starter plan is ready. Here's what you get:</p>
+    </div>
+
+    <div style="background:var(--surface);border-radius:var(--radius-sm);padding:24px;margin-bottom:24px;border:1px solid var(--border);">
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:14px;">
+        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;font-size:1.1rem;">&#10003;</span> 3 AI-generated projects</li>
+        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;font-size:1.1rem;">&#10003;</span> Basic templates</li>
+        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;font-size:1.1rem;">&#10003;</span> Community support</li>
+        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;font-size:1.1rem;">&#10003;</span> AI agent (limited)</li>
+        <li style="display:flex;align-items:center;gap:12px;font-size:0.95rem;color:var(--text-muted);"><span style="color:var(--text-muted);font-weight:700;font-size:1.1rem;">&#8226;</span> Buildr AI watermark on projects</li>
+      </ul>
+    </div>
+
+    <a href="#" onclick="activateFreePlan();return false;" class="btn-primary" style="display:block;text-align:center;width:100%;padding:16px;font-size:1rem;margin-bottom:16px;">Start Building for Free</a>
+
+    <div style="text-align:center;">
+      <p style="color:var(--text-muted);font-size:0.8rem;margin-bottom:12px;">Want more power? Upgrade anytime.</p>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" style="color:var(--accent);font-size:0.85rem;text-decoration:none;font-weight:600;">Pro — $29/mo &#8594;</a>
+        <a href="https://buy.stripe.com/28E00j8o28jafoo5VVeIw01" style="color:var(--accent2);font-size:0.85rem;text-decoration:none;font-weight:600;">Business — $99/mo &#8594;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal — Plan Selector (for upgrade prompts) -->
 <div class="payment-modal" id="paymentModal">
   <div class="payment-card">
     <button class="legal-close" onclick="closePayment()" style="float:right;margin-bottom:12px;">&times;</button>
-    <h3>Choose Your Plan</h3>
+    <h3>Upgrade Your Plan</h3>
     <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;">You'll be taken to our secure Stripe checkout where you can pay with Card, PayPal, Klarna, Apple Pay, or Google Pay.</p>
 
     <!-- Plan Selection Cards -->
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
       <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" class="plan-select-card" style="display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:rgba(0,212,255,0.04);text-decoration:none;color:var(--text);transition:all 0.2s;position:relative;">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">⚡</div>
+        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#9889;</div>
         <div style="flex:1;">
           <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">Pro Creator</div>
           <div style="color:var(--text-muted);font-size:0.85rem;">Unlimited projects, app store publishing, no watermark</div>
@@ -1997,7 +2029,7 @@ footer {
       </a>
 
       <a href="https://buy.stripe.com/28E00j8o28jafoo5VVeIw01" class="plan-select-card" style="display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);text-decoration:none;color:var(--text);transition:all 0.2s;">
-        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🚀</div>
+        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#128640;</div>
         <div style="flex:1;">
           <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">Business</div>
           <div style="color:var(--text-muted);font-size:0.85rem;">Team collab, white-label, API, dedicated AI agent</div>
@@ -2308,14 +2340,7 @@ const counterObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
 
-// ── Payment Modal ──
-const plans = {
-  free: { name: 'Starter — Free', price: '$0/mo' },
-  starter: { name: 'Starter — Free', price: '$0/mo' },
-  pro: { name: 'Pro Creator — 14 Day Free Trial', price: '$29/mo after trial' },
-  business: { name: 'Business — 14 Day Free Trial', price: '$99/mo after trial' }
-};
-
+// ── Payment / Plan Selection ──
 function openPayment(plan) {
   if (plan === 'pro') {
     window.location.href = STRIPE_LINKS.pro;
@@ -2325,9 +2350,14 @@ function openPayment(plan) {
     window.location.href = STRIPE_LINKS.business;
     return;
   }
-  // Free/starter plan — show modal with upsell options
-  document.getElementById('paymentModal').classList.add('active');
+  // Free/starter plan — show welcome modal with features
+  document.getElementById('freeModal').classList.add('active');
   document.body.style.overflow = 'hidden';
+}
+
+function closeFreeModal() {
+  document.getElementById('freeModal').classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 function closePayment() {
@@ -2335,9 +2365,20 @@ function closePayment() {
   document.body.style.overflow = '';
 }
 
-// ── Direct Stripe Checkout ──
-// Pro and Business buttons link directly to Stripe Payment Links
-// Starter plan opens the modal for upsell
+function activateFreePlan() {
+  closeFreeModal();
+  // Show activation toast
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#10B981,#00D4FF);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;box-shadow:0 8px 40px rgba(16,185,129,0.4);animation:slideDown 0.5s ease;';
+  toast.textContent = 'Welcome to Buildr AI Starter! Your free account is ready.';
+  document.body.appendChild(toast);
+  setTimeout(function() {
+    toast.style.transition = 'opacity 0.5s, transform 0.5s';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(-20px)';
+    setTimeout(function() { toast.remove(); }, 500);
+  }, 5000);
+}
 
 // ── Legal Modals ──
 function openLegal(type) {
@@ -2353,8 +2394,8 @@ function closeLegal(type) {
 }
 
 // Close modals on backdrop click
-document.querySelectorAll('.legal-modal, .payment-modal').forEach(modal => {
-  modal.addEventListener('click', (e) => {
+document.querySelectorAll('.legal-modal, .payment-modal').forEach(function(modal) {
+  modal.addEventListener('click', function(e) {
     if (e.target === modal) {
       modal.classList.remove('active');
       document.body.style.overflow = '';
