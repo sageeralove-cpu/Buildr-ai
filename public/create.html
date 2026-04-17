@@ -776,47 +776,105 @@ function showPublishFlow() {
   var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content', ecommerce: 'E-Commerce', saas: 'SaaS' };
   var typeLabel = labels[type] || 'Project';
 
-  var publishOptions = '';
+  // Platform configs with real links, instructions, costs
+  var platforms = {
+    web: { icon: '&#127760;', name: 'Publish to Web', desc: 'Download your project files and deploy to any hosting provider', link: 'https://vercel.com/new', linkLabel: 'Deploy on Vercel (Free)', instructions: 'Download your project, push to GitHub, then import into Vercel for free hosting with a custom domain.' },
+    appstore: { icon: '&#127822;', name: 'Apple App Store', desc: 'Requires Apple Developer account ($99/year)', link: 'https://developer.apple.com/programs/enroll/', linkLabel: 'Enrol in Apple Developer Program', instructions: 'Sign up for an Apple Developer account. Then use a tool like Expo or Capacitor to wrap your project as a native iOS app and submit through App Store Connect.' },
+    playstore: { icon: '&#9654;', name: 'Google Play Store', desc: 'Requires Google Play Developer account ($25 one-time)', link: 'https://play.google.com/console/signup', linkLabel: 'Sign Up for Google Play Console', instructions: 'Create a Google Play Developer account. Wrap your project with Expo or Capacitor, generate an AAB file, and upload it in the Google Play Console.' },
+    instagram: { icon: '&#128247;', name: 'Instagram', desc: 'Post your content directly to Instagram', link: 'https://www.instagram.com/', linkLabel: 'Open Instagram', instructions: 'Download your generated content, then upload it as a post, story, or reel in the Instagram app. For scheduling, use Meta Business Suite (free).' },
+    tiktok: { icon: '&#9835;', name: 'TikTok', desc: 'Publish your content to TikTok', link: 'https://www.tiktok.com/creator-center', linkLabel: 'Open TikTok Creator Center', instructions: 'Download your content and upload it via the TikTok app or TikTok Creator Center on desktop. Add trending sounds and hashtags for reach.' },
+    x: { icon: '&#120143;', name: 'X / Twitter', desc: 'Post to your X timeline', link: 'https://x.com/compose/post', linkLabel: 'Create Post on X', instructions: 'Download your content image or text, then post it on X. For scheduling, use TweetDeck or X Pro (included with X Premium).' },
+    facebook: { icon: 'f', name: 'Facebook', desc: 'Share to your Facebook page or profile', link: 'https://business.facebook.com/', linkLabel: 'Open Meta Business Suite', instructions: 'Download your content and upload it via Facebook or Meta Business Suite. You can schedule posts and target specific audiences.' },
+    linkedin: { icon: 'in', name: 'LinkedIn', desc: 'Publish professional content on LinkedIn', link: 'https://www.linkedin.com/feed/', linkLabel: 'Open LinkedIn', instructions: 'Download your content and share it as a LinkedIn post, article, or carousel. Tag relevant people and use industry hashtags.' }
+  };
+
+  // Build platform options based on project type
+  var optionKeys = [];
   if (type === 'website' || type === 'dashboard' || type === 'ecommerce' || type === 'saas') {
-    publishOptions += '<div onclick="selectPublishOption(this,\'web\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#127760;</span><div><div style="font-weight:600;">Publish to Web</div><div style="color:#A1A1AA;font-size:0.8rem;">Get a live URL on buildr-ai.io/your-project</div></div></div>';
+    optionKeys.push('web');
   }
   if (type === 'app') {
-    publishOptions += '<div onclick="selectPublishOption(this,\'appstore\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#127822;</span><div><div style="font-weight:600;">Apple App Store</div><div style="color:#A1A1AA;font-size:0.8rem;">Submit to the iOS App Store</div></div></div>';
-    publishOptions += '<div onclick="selectPublishOption(this,\'playstore\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#9654;</span><div><div style="font-weight:600;">Google Play Store</div><div style="color:#A1A1AA;font-size:0.8rem;">Submit to Google Play</div></div></div>';
+    optionKeys.push('appstore', 'playstore', 'web');
   }
   if (type === 'social') {
-    publishOptions += '<div onclick="selectPublishOption(this,\'instagram\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#128247;</span><div><div style="font-weight:600;">Instagram</div><div style="color:#A1A1AA;font-size:0.8rem;">Post to your Instagram feed</div></div></div>';
-    publishOptions += '<div onclick="selectPublishOption(this,\'tiktok\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#9835;</span><div><div style="font-weight:600;">TikTok</div><div style="color:#A1A1AA;font-size:0.8rem;">Publish to TikTok</div></div></div>';
-    publishOptions += '<div onclick="selectPublishOption(this,\'x\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#120143;</span><div><div style="font-weight:600;">X / Twitter</div><div style="color:#A1A1AA;font-size:0.8rem;">Post to X</div></div></div>';
+    optionKeys.push('instagram', 'tiktok', 'x', 'facebook', 'linkedin', 'web');
   }
-  // Always offer web publish
-  if (type !== 'website' && type !== 'dashboard' && type !== 'ecommerce' && type !== 'saas') {
-    publishOptions += '<div onclick="selectPublishOption(this,\'web\')" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:10px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#00D4FF\'" onmouseout="this.style.borderColor=\'#27272A\'"><span style="font-size:1.5rem;">&#127760;</span><div><div style="font-weight:600;">Publish to Web</div><div style="color:#A1A1AA;font-size:0.8rem;">Get a shareable link</div></div></div>';
-  }
+  if (optionKeys.length === 0) optionKeys.push('web');
 
-  publishModal.innerHTML = '<div style="background:#1E1E22;border:1px solid #27272A;border-radius:16px;padding:32px;max-width:480px;width:100%;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;"><h3 style="font-family:Space Grotesk,sans-serif;font-size:1.3rem;">Publish ' + typeLabel + '</h3><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:none;border:none;color:#A1A1AA;font-size:1.5rem;cursor:pointer;">&times;</button></div><div style="display:flex;flex-direction:column;gap:10px;">' + publishOptions + '</div><p style="text-align:center;color:#A1A1AA;font-size:0.75rem;margin-top:20px;">Publishing typically takes 1-5 minutes. You\'ll be notified when it\'s live.</p></div>';
+  var publishOptions = '';
+  optionKeys.forEach(function(key) {
+    var p = platforms[key];
+    publishOptions += '<div class="pub-option" onclick="expandPublishOption(this,\'' + key + '\')" style="border-radius:12px;border:1px solid #27272A;background:#18181B;cursor:pointer;transition:all 0.2s;overflow:hidden;">';
+    publishOptions += '<div style="display:flex;align-items:center;gap:16px;padding:18px;" onmouseover="this.parentElement.style.borderColor=\'#00D4FF\'" onmouseout="this.parentElement.style.borderColor=this.parentElement.classList.contains(\'expanded\')?\'#00D4FF\':\'#27272A\'">';
+    publishOptions += '<span style="font-size:1.5rem;width:32px;text-align:center;">' + p.icon + '</span>';
+    publishOptions += '<div style="flex:1;"><div style="font-weight:600;">' + p.name + '</div><div style="color:#A1A1AA;font-size:0.8rem;">' + p.desc + '</div></div>';
+    publishOptions += '<span class="pub-arrow" style="color:#A1A1AA;font-size:1.2rem;transition:transform 0.2s;">&#9654;</span>';
+    publishOptions += '</div>';
+    publishOptions += '<div class="pub-details" style="display:none;padding:0 18px 18px;border-top:1px solid #27272A;">';
+    publishOptions += '<div style="padding-top:16px;">';
+    publishOptions += '<p style="color:#A1A1AA;font-size:0.85rem;line-height:1.6;margin-bottom:16px;">' + p.instructions + '</p>';
+    publishOptions += '<div style="display:flex;gap:10px;flex-wrap:wrap;">';
+    publishOptions += '<a href="' + p.link + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;font-weight:600;font-size:0.85rem;text-decoration:none;transition:all 0.2s;">' + p.linkLabel + ' &#8599;</a>';
+    publishOptions += '<button onclick="event.stopPropagation();downloadProject()" style="padding:10px 20px;border-radius:8px;background:none;border:1px solid #27272A;color:#FAFAFA;font-weight:600;font-size:0.85rem;cursor:pointer;">&#11015; Download Project Files</button>';
+    publishOptions += '</div></div></div></div>';
+  });
+
+  publishModal.innerHTML = '<div style="background:#1E1E22;border:1px solid #27272A;border-radius:16px;padding:32px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+    '<h3 style="font-family:Space Grotesk,sans-serif;font-size:1.3rem;">Publish ' + typeLabel + '</h3>' +
+    '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:none;border:none;color:#A1A1AA;font-size:1.5rem;cursor:pointer;">&times;</button></div>' +
+    '<p style="color:#A1A1AA;font-size:0.85rem;margin-bottom:20px;">Choose where to publish your project. Click a platform for step-by-step instructions.</p>' +
+    '<div style="display:flex;flex-direction:column;gap:10px;">' + publishOptions + '</div>' +
+    '<p style="text-align:center;color:#52525B;font-size:0.7rem;margin-top:20px;">Direct API publishing coming soon — for now, follow the instructions to publish manually.</p>' +
+    '</div>';
   document.body.appendChild(publishModal);
 }
 
-function selectPublishOption(el, platform) {
-  // Show publishing animation
-  var parent = el.closest('div[style*="fixed"]');
-  var card = parent.querySelector('div[style*="border-radius:16px"]');
-  card.innerHTML = '<div style="text-align:center;padding:40px 0;"><div style="width:60px;height:60px;border:4px solid #27272A;border-top-color:#00D4FF;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 24px;"></div><h3 style="font-family:Space Grotesk,sans-serif;margin-bottom:8px;">Publishing...</h3><p style="color:#A1A1AA;font-size:0.9rem;">Preparing your project for ' + platform + '</p></div>';
+function expandPublishOption(el, key) {
+  var details = el.querySelector('.pub-details');
+  var arrow = el.querySelector('.pub-arrow');
+  var isOpen = details.style.display !== 'none';
 
-  setTimeout(function() {
-    card.innerHTML = '<div style="text-align:center;padding:40px 0;"><div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#10B981,#00D4FF);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;">&#10003;</div><h3 style="font-family:Space Grotesk,sans-serif;font-size:1.3rem;margin-bottom:8px;">Published!</h3><p style="color:#A1A1AA;font-size:0.9rem;margin-bottom:20px;">Your project is now live and ready to share.</p><div style="background:#18181B;border:1px solid #27272A;border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;"><span style="color:#00D4FF;font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">buildr-ai.io/p/' + ('proj' + Date.now()).substring(0,12) + '</span><button onclick="copyLink(this)" style="background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;border:none;padding:8px 16px;border-radius:8px;font-weight:600;font-size:0.8rem;cursor:pointer;white-space:nowrap;">Copy Link</button></div><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:none;border:1px solid #27272A;color:#FAFAFA;padding:12px 32px;border-radius:10px;font-weight:600;cursor:pointer;">Done</button></div>';
-  }, 3000);
-}
-
-function copyLink(btn) {
-  var link = btn.parentElement.querySelector('span').textContent;
-  navigator.clipboard.writeText('https://' + link).then(function() {
-    btn.textContent = 'Copied!';
-    btn.style.background = '#10B981';
-    setTimeout(function() { btn.textContent = 'Copy Link'; btn.style.background = 'linear-gradient(135deg,#00D4FF,#6366F1)'; }, 2000);
+  // Close all others
+  document.querySelectorAll('.pub-option').forEach(function(opt) {
+    opt.querySelector('.pub-details').style.display = 'none';
+    opt.querySelector('.pub-arrow').style.transform = '';
+    opt.classList.remove('expanded');
   });
+
+  if (!isOpen) {
+    details.style.display = 'block';
+    arrow.style.transform = 'rotate(90deg)';
+    el.classList.add('expanded');
+    el.style.borderColor = '#00D4FF';
+  }
 }
+
+function downloadProject() {
+  var desc = document.getElementById('projectDescription').value.trim();
+  var type = selectedType;
+  var title = desc.split(/[.,!?\n]/)[0].substring(0, 60);
+  var previewHTML = generatePreview(type, desc, title);
+
+  // Create downloadable HTML file
+  var blob = new Blob([previewHTML], { type: 'text/html' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'buildr-project-' + type + '.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  // Show toast
+  var toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#10B981,#00D4FF);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:0.9rem;box-shadow:0 8px 40px rgba(16,185,129,0.4);z-index:500;';
+  toast.textContent = 'Project downloaded! Follow the platform instructions to publish.';
+  document.body.appendChild(toast);
+  setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 4000);
+}
+
 </script>
 </body>
 </html>
