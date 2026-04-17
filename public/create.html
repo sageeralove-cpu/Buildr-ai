@@ -1399,6 +1399,7 @@ function showResult() {
   var isSocial = selectedType === 'social';
   document.getElementById('socialShareBtns').style.display = isSocial ? 'block' : 'none';
   document.getElementById('socialProUpsell').style.display = isSocial ? 'block' : 'none';
+  if (isSocial) applySocialProState();
 }
 
 function previewProject() {
@@ -2367,8 +2368,12 @@ function useBuild() {
     document.body.appendChild(toast);
     setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 3000);
   } else {
-    // Free users: show $10 one-time Use Build modal
-    document.getElementById('useBuildModal').style.display = 'flex';
+    // Free users: show appropriate paywall modal
+    if (selectedType === 'social' && !socialProActive) {
+      document.getElementById('socialProModal').style.display = 'flex';
+    } else {
+      document.getElementById('useBuildModal').style.display = 'flex';
+    }
   }
 }
 
@@ -2526,12 +2531,44 @@ function downloadProject() {
   setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 4000);
 }
 
+// ── Social Content Pro Activation ──
+var socialProActive = localStorage.getItem('buildr_social_pro') === 'active';
+
+// Check URL for Stripe success redirect
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('social_pro') === 'activated') {
+    localStorage.setItem('buildr_social_pro', 'active');
+    socialProActive = true;
+    // Clean URL
+    window.history.replaceState({}, '', '/create');
+    // Show success toast
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#EC4899,#A855F7);color:#fff;padding:16px 32px;border-radius:50px;font-weight:700;font-size:0.9rem;box-shadow:0 8px 40px rgba(236,72,153,0.4);text-align:center;max-width:90%;';
+    toast.textContent = 'Social Content Pro activated! Daily auto-content is now unlocked.';
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 5000);
+  }
+})();
+
+// Hide paywall elements if social pro is active
+function applySocialProState() {
+  if (socialProActive) {
+    var upsell = document.getElementById('socialProUpsell');
+    if (upsell) {
+      upsell.innerHTML = '<div style="display:flex;align-items:center;gap:12px;justify-content:center;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#EC4899,#A855F7);display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span style="font-weight:700;color:var(--text);font-size:0.95rem;">Social Content Pro Active</span><br><span style="font-size:0.8rem;color:#EC4899;">Daily auto-content is generating for your platforms</span></div></div>';
+      upsell.style.borderColor = 'rgba(236,72,153,0.3)';
+    }
+  }
+}
+
 // Admin reset: add ?reset=true to URL to clear project counter for testing
 (function() {
   var params = new URLSearchParams(window.location.search);
   if (params.get('reset') === 'true') {
     localStorage.setItem('buildr_projects_used', '0');
     localStorage.removeItem('buildr_projects');
+    localStorage.removeItem('buildr_social_pro');
     window.location.href = '/create';
   }
 })();
