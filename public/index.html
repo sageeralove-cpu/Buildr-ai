@@ -14,6 +14,17 @@
 <meta name="twitter:title" content="Buildr AI — Build Your Dream App in Minutes">
 <meta name="twitter:description" content="AI-powered no-code platform. Build apps, websites, dashboards & social content. Publish everywhere.">
 <link rel="canonical" href="https://buildr-ai.io">
+<!-- Favicon & App Icons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png">
+<!-- PWA Manifest -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Buildr AI">
+<!-- Fonts & Payment -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Stripe Payment Links — no JS SDK needed, payments handled on Stripe's hosted checkout -->
 <style>
@@ -1384,13 +1395,106 @@ footer {
 @media (max-width: 768px) {
   .nav-links { display: none; }
   .mobile-menu { display: block; }
-  .hero h1 { font-size: 2.2rem; }
+  .hero { padding: 100px 0 60px; min-height: auto; }
+  .hero h1 { font-size: 2.2rem; letter-spacing: -0.5px; }
+  .hero p { font-size: 1rem; }
+  .hero-buttons { flex-direction: column; }
+  .hero-buttons .btn-primary,
+  .hero-buttons .btn-secondary { width: 100%; justify-content: center; text-align: center; }
+  .features, .ai-agent, .pricing, .testimonials, .cta-section { padding: 80px 0; }
+  .how-it-works, .faq { padding: 80px 0; }
   .features-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .stat-number { font-size: 2rem; }
   .steps-grid { grid-template-columns: 1fr; }
-  .section-header h2 { font-size: 2rem; }
+  .section-header h2 { font-size: 1.8rem; }
+  .section-header p { font-size: 0.95rem; }
+  .cta-section h2 { font-size: 2rem; }
+  .feature-card { padding: 24px; }
+  .price-card { padding: 28px; }
+  .chat-window { margin-top: 40px; }
   .footer-grid { grid-template-columns: 1fr; }
-  .footer-bottom { flex-direction: column; gap: 16px; }
+  .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+  .legal-modal { padding: 16px; }
+  .legal-content { padding: 24px; max-height: 90vh; }
+  .payment-modal { padding: 16px; }
+  .payment-card { padding: 24px; }
+  .container { padding: 0 16px; }
+  .nav-inner { padding: 0 16px; }
+}
+
+@media (max-width: 380px) {
+  .hero h1 { font-size: 1.8rem; }
+  .price-amount { font-size: 2.5rem; }
+  .stat-number { font-size: 1.7rem; }
+}
+
+/* ── PWA Install Prompt ── */
+.install-prompt {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: 16px 20px;
+  display: none;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.5);
+  animation: slideUp 0.4s ease;
+}
+
+.install-prompt.show { display: flex; }
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.install-prompt-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.install-prompt-text { flex: 1; }
+.install-prompt-text h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 2px; }
+.install-prompt-text p { font-size: 0.75rem; color: var(--text-muted); }
+
+.install-prompt-btn {
+  padding: 10px 20px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--base);
+  border: none;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.install-prompt-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
 }
 
 /* ── Animations ── */
@@ -2257,7 +2361,76 @@ document.querySelectorAll('.legal-modal, .payment-modal').forEach(modal => {
     }
   });
 });
+
+// ══════════════════════════════════════════════
+// PWA INSTALL PROMPT
+// ══════════════════════════════════════════════
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show custom install banner after 5 seconds
+  setTimeout(() => {
+    document.getElementById('installPrompt').classList.add('show');
+  }, 5000);
+});
+
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((result) => {
+      if (result.outcome === 'accepted') {
+        console.log('Buildr AI installed');
+      }
+      deferredPrompt = null;
+      document.getElementById('installPrompt').classList.remove('show');
+    });
+  }
+}
+
+function dismissInstall() {
+  document.getElementById('installPrompt').classList.remove('show');
+}
+
+// iOS Safari install detection
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+function isInStandaloneMode() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+}
+
+if (isIOS() && !isInStandaloneMode()) {
+  // Show iOS-specific install prompt after 8 seconds
+  setTimeout(() => {
+    const prompt = document.getElementById('installPrompt');
+    const btn = prompt.querySelector('.install-prompt-btn');
+    btn.textContent = 'Add to Home';
+    btn.onclick = function() {
+      alert('Tap the Share button (box with arrow) at the bottom of Safari, then tap "Add to Home Screen" to install Buildr AI as an app.');
+    };
+    prompt.classList.add('show');
+  }, 8000);
+}
+
+// Register service worker for PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
 </script>
+
+<!-- Install App Prompt Banner -->
+<div class="install-prompt" id="installPrompt">
+  <div class="install-prompt-icon">&#9889;</div>
+  <div class="install-prompt-text">
+    <h4>Install Buildr AI</h4>
+    <p>Add to your home screen for the best experience</p>
+  </div>
+  <button class="install-prompt-btn" onclick="installApp()">Install</button>
+  <button class="install-prompt-close" onclick="dismissInstall()">&times;</button>
+</div>
 
 </body>
 </html>
