@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buildr AI — Build Apps, Websites & Dashboards with AI</title>
+<meta name="description" content="Buildr AI lets you create apps, websites, dashboards & social media content with AI. No code needed. Publish directly to app stores and social media.">
+<meta property="og:title" content="Buildr AI — Build Apps, Websites & Dashboards with AI">
+<meta property="og:description" content="Turn your ideas into real apps, websites, and dashboards in minutes. No coding needed. Powered by AI.">
+<meta property="og:url" content="https://buildr-ai.io">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Buildr AI">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Buildr AI — Build Your Dream App in Minutes">
+<meta name="twitter:description" content="AI-powered no-code platform. Build apps, websites, dashboards & social content. Publish everywhere.">
+<link rel="canonical" href="https://buildr-ai.io">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Stripe Payment Links — no JS SDK needed, payments handled on Stripe's hosted checkout -->
+<style>
+/* ═══════════════════════════════════════════
+   BUILDR AI — K-TECH SLEEK DARK AESTHETIC
+   Color System:
+   • Base: #09090B (zinc near-black)
+   • Surface: #18181B
+   • Card: #1E1E22
+   • Accent: #00D4FF (electric cyan)
+   • Accent2: #6366F1 (indigo)
+   • Glow: rgba(0,212,255,0.15)
+   • Text: #FAFAFA / #A1A1AA
+   ═══════════════════════════════════════════ */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --base: #09090B;
+  --surface: #18181B;
+  --card: #1E1E22;
+  --border: #27272A;
+  --accent: #00D4FF;
+  --accent2: #6366F1;
+  --accent3: #10B981;
+  --text: #FAFAFA;
+  --text-muted: #A1A1AA;
+  --glow: rgba(0,212,255,0.15);
+  --glow2: rgba(99,102,241,0.15);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--base);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Animated Background Particles ── */
+.bg-particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.06;
+  animation: float-particle linear infinite;
+}
+
+@keyframes float-particle {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 0.06; }
+  90% { opacity: 0.06; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ── Glass Effect ── */
+.glass {
+  background: rgba(30,30,34,0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── Navigation ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 16px 0;
+  transition: all 0.3s;
+}
+
+nav.scrolled {
+  background: rgba(9,9,11,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 0 20px rgba(0,212,255,0.3);
+}
+
+.logo span { color: var(--accent); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--base) !important;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-weight: 600 !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0,212,255,0.4);
+}
+
+.mobile-menu { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+/* ── Sections ── */
+section { position: relative; z-index: 1; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 120px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.hero-glow-1 { top: -200px; right: -100px; background: var(--accent); }
+.hero-glow-2 { bottom: -200px; left: -100px; background: var(--accent2); }
+
+.hero .container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid rgba(0,212,255,0.2);
+  background: rgba(0,212,255,0.06);
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hero-badge::before { content: '✦'; }
+
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 24px;
+  letter-spacing: -1.5px;
+}
+
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  max-width: 500px;
+  margin-bottom: 40px;
+  line-height: 1.7;
+}
+
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--base);
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 30px rgba(0,212,255,0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(0,212,255,0.5);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px var(--glow);
+}
+
+/* Hero Mockup */
+.hero-mockup {
+  position: relative;
+  perspective: 1000px;
+}
+
+.mockup-window {
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px var(--glow);
+  animation: float-mockup 6s ease-in-out infinite;
+  transform: rotateY(-5deg) rotateX(2deg);
+}
+
+@keyframes float-mockup {
+  0%, 100% { transform: rotateY(-5deg) rotateX(2deg) translateY(0); }
+  50% { transform: rotateY(-5deg) rotateX(2deg) translateY(-10px); }
+}
+
+.mockup-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-red { background: #FF5F57; }
+.dot-yellow { background: #FEBC2E; }
+.dot-green { background: #28C840; }
+
+.mockup-body {
+  padding: 24px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mockup-prompt {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0,212,255,0.2);
+  background: rgba(0,212,255,0.04);
+}
+
+.mockup-prompt .icon { font-size: 1.2rem; }
+
+.typing-text {
+  font-family: 'Inter', monospace;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  overflow: hidden;
+  border-right: 2px solid var(--accent);
+  white-space: nowrap;
+  animation: typing 4s steps(40) infinite, blink 0.7s step-end infinite;
+  max-width: 100%;
+}
+
+@keyframes typing {
+  0%, 100% { width: 0; }
+  50%, 80% { width: 100%; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+.mockup-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.preview-card {
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.preview-card .bar {
+  height: 6px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+
+.preview-card .bar-1 { width: 70%; background: var(--accent); opacity: 0.6; }
+.preview-card .bar-2 { width: 50%; background: var(--accent2); opacity: 0.4; }
+.preview-card .bar-3 { width: 85%; background: var(--accent3); opacity: 0.5; }
+.preview-card .bar-4 { width: 40%; background: var(--text-muted); opacity: 0.2; }
+
+.mockup-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2);
+  color: var(--accent3);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* ── Stats Bar ── */
+.stats-bar {
+  padding: 60px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  text-align: center;
+}
+
+.stat-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+/* ── Features ── */
+.features { padding: 120px 0; }
+
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid rgba(0,212,255,0.2);
+  background: rgba(0,212,255,0.06);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.section-header h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.section-header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.feature-card {
+  padding: 32px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.feature-card:hover {
+  border-color: rgba(0,212,255,0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3), 0 0 30px var(--glow);
+}
+
+.feature-card:hover::before { opacity: 1; }
+
+.feature-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+}
+
+.fi-cyan { background: rgba(0,212,255,0.1); }
+.fi-indigo { background: rgba(99,102,241,0.1); }
+.fi-green { background: rgba(16,185,129,0.1); }
+
+.feature-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.feature-card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ── AI Agent Chat ── */
+.ai-agent { padding: 120px 0; }
+
+.ai-agent .container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.chat-window {
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.agent-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.agent-info h4 { font-size: 0.9rem; font-weight: 600; }
+.agent-info p { font-size: 0.75rem; color: var(--accent3); }
+
+.chat-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 300px;
+}
+
+.chat-msg {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.msg-bot {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+
+.msg-user {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--base);
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+  font-weight: 500;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.chat-input input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 10px 18px;
+  color: var(--text);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.chat-input input:focus { border-color: var(--accent); }
+
+.chat-input button {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none;
+  color: var(--base);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── How It Works ── */
+.how-it-works { padding: 120px 0; background: var(--surface); }
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 64px;
+}
+
+.step-card {
+  text-align: center;
+  padding: 32px 24px;
+  position: relative;
+}
+
+.step-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 4rem;
+  font-weight: 800;
+  background: linear-gradient(180deg, rgba(0,212,255,0.2), transparent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.step-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.step-card p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ── Pricing ── */
+.pricing { padding: 120px 0; }
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 64px;
+}
+
+.price-card {
+  padding: 36px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: all 0.3s;
+}
+
+.price-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.price-card.popular {
+  border-color: var(--accent);
+  box-shadow: 0 0 40px var(--glow), 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--base);
+  padding: 4px 20px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+
+.price-card .subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.price-amount {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.price-amount span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+
+.price-card .period {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+
+.price-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.price-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.price-features li::before {
+  content: '✓';
+  color: var(--accent3);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.btn-price {
+  display: block;
+  text-align: center;
+  padding: 14px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  font-size: 0.95rem;
+}
+
+.btn-price-outline {
+  color: var(--text);
+  border: 1px solid var(--border);
+  background: transparent;
+}
+
+.btn-price-outline:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--glow); }
+
+.btn-price-fill {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--base);
+  border: none;
+}
+
+.btn-price-fill:hover { box-shadow: 0 4px 30px rgba(0,212,255,0.4); transform: translateY(-1px); }
+
+/* ── FAQ ── */
+.faq { padding: 120px 0; background: var(--surface); }
+
+.faq-grid {
+  max-width: 800px;
+  margin: 64px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq-item {
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.faq-item.active { border-color: rgba(0,212,255,0.2); }
+
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.faq-question:hover { color: var(--accent); }
+
+.faq-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s;
+  color: var(--accent);
+}
+
+.faq-item.active .faq-icon { transform: rotate(45deg); }
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s;
+}
+
+.faq-answer-inner {
+  padding: 0 24px 20px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* ── Testimonials ── */
+.testimonials { padding: 120px 0; }
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 64px;
+}
+
+.testimonial-card {
+  padding: 28px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.stars { color: #FBC02D; font-size: 0.9rem; margin-bottom: 16px; }
+
+.testimonial-card blockquote {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--base);
+}
+
+.author-info h4 { font-size: 0.9rem; font-weight: 600; }
+.author-info p { font-size: 0.8rem; color: var(--text-muted); }
+
+/* ── CTA Section ── */
+.cta-section {
+  padding: 120px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-glow {
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  filter: blur(150px);
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.cta-glow-1 { top: -200px; left: 50%; transform: translateX(-50%); background: var(--accent); }
+
+.cta-section h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.cta-section p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 40px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Legal Pages (Modal) ── */
+.legal-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 2000;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.legal-modal.active { display: flex; }
+
+.legal-content {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 800px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 40px;
+}
+
+.legal-content h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.legal-content .legal-date {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+
+.legal-content h3 {
+  font-size: 1.1rem;
+  margin: 24px 0 8px;
+  color: var(--accent);
+}
+
+.legal-content p, .legal-content li {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.legal-content ul {
+  padding-left: 24px;
+  margin-bottom: 12px;
+}
+
+.legal-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* ── Footer ── */
+footer {
+  padding: 60px 0 30px;
+  border-top: 1px solid var(--border);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-brand p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 12px;
+  max-width: 300px;
+  line-height: 1.6;
+}
+
+.footer-col h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.footer-col a {
+  display: block;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover { color: var(--accent); }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.footer-socials {
+  display: flex;
+  gap: 12px;
+}
+
+.footer-socials a {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.footer-socials a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 15px var(--glow);
+}
+
+/* ── Payment Modal ── */
+.payment-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 2000;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.payment-modal.active { display: flex; }
+
+.payment-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 480px;
+  width: 100%;
+  padding: 40px;
+}
+
+.payment-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.payment-card .plan-selected {
+  color: var(--accent);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus { border-color: var(--accent); }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.payment-secure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+
+.payment-secure::before { content: '🔒'; }
+
+/* ── Payment Methods ── */
+.payment-methods {
+  margin-bottom: 24px;
+}
+
+.payment-methods-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.payment-method-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pm-tab {
+  flex: 1;
+  min-width: 80px;
+  padding: 12px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pm-tab:hover {
+  border-color: rgba(0,212,255,0.3);
+  color: var(--text);
+}
+
+.pm-tab.active {
+  border-color: var(--accent);
+  background: rgba(0,212,255,0.06);
+  color: var(--accent);
+  box-shadow: 0 0 15px var(--glow);
+}
+
+.pm-tab-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.pm-tab-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.3px;
+}
+
+.payment-form-section {
+  display: none;
+}
+
+.payment-form-section.active {
+  display: block;
+}
+
+/* Klarna badge */
+.klarna-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.klarna-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.klarna-option:hover {
+  border-color: rgba(0,212,255,0.3);
+}
+
+.klarna-option.selected {
+  border-color: var(--accent);
+  background: rgba(0,212,255,0.04);
+}
+
+.klarna-option input[type="radio"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+}
+
+.klarna-option-text h5 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.klarna-option-text p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.paypal-connect-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: #0070BA;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 8px;
+}
+
+.paypal-connect-btn:hover {
+  background: #005EA6;
+  box-shadow: 0 4px 20px rgba(0,112,186,0.4);
+  transform: translateY(-1px);
+}
+
+.apple-google-pay-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.wallet-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.wallet-btn:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--glow);
+}
+
+.payment-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.payment-divider::before,
+.payment-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.accepted-cards {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.card-badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .hero .container { grid-template-columns: 1fr; }
+  .hero-mockup { display: none; }
+  .hero h1 { font-size: 3rem; }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+  .ai-agent .container { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: repeat(2, 1fr); }
+  .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .mobile-menu { display: block; }
+  .hero h1 { font-size: 2.2rem; }
+  .features-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .section-header h2 { font-size: 2rem; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 16px; }
+}
+
+/* ── Animations ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--base); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+</style>
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="bg-particles" id="particles"></div>
+
+<!-- Navigation -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-icon">⚡</div>
+      Buildr<span>AI</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#" class="nav-cta" onclick="openPayment('free')">Get Started Free</a></li>
+    </ul>
+    <button class="mobile-menu" onclick="toggleMobileMenu()">☰</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+  <div class="container">
+    <div class="hero-text">
+      <div class="hero-badge">Now in Public Beta</div>
+      <h1>Build Your<br>Dream App<br><span class="gradient-text">In Minutes.</span></h1>
+      <p>Buildr AI turns your ideas into fully functional apps, websites, dashboards, and social media content — no coding needed. Publish directly to app stores and social media.</p>
+      <div class="hero-buttons">
+        <a href="#pricing" class="btn-primary">Start Building Free →</a>
+        <a href="#how-it-works" class="btn-secondary">▶ See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-mockup">
+      <div class="mockup-window">
+        <div class="mockup-bar">
+          <div class="mockup-dot dot-red"></div>
+          <div class="mockup-dot dot-yellow"></div>
+          <div class="mockup-dot dot-green"></div>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-prompt">
+            <span class="icon">✦</span>
+            <span class="typing-text">Build me a fitness tracker app with dark mode...</span>
+          </div>
+          <div class="mockup-preview">
+            <div class="preview-card">
+              <div class="bar bar-1"></div>
+              <div class="bar bar-4"></div>
+              <div class="bar bar-2"></div>
+            </div>
+            <div class="preview-card">
+              <div class="bar bar-3"></div>
+              <div class="bar bar-4"></div>
+              <div class="bar bar-1"></div>
+            </div>
+          </div>
+          <div class="mockup-status">✓ App generated — Ready to publish to App Store</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-number" data-target="10000">0</div>
+        <div class="stat-label">Apps Built</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" data-target="50000">0</div>
+        <div class="stat-label">Active Creators</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" data-target="99">0</div>
+        <div class="stat-label">% Uptime</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" data-target="30">0</div>
+        <div class="stat-label">Sec Avg Build</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-badge">✦ Capabilities</div>
+      <h2>Everything You Need to Build & Launch</h2>
+      <p>From idea to live product in minutes. Buildr AI handles the complexity so you can focus on creating.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon fi-cyan">📱</div>
+        <h3>App Builder</h3>
+        <p>Describe your app idea in plain English. Our AI generates a fully functional mobile or web app, ready for the App Store or Google Play.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon fi-indigo">🌐</div>
+        <h3>Website Creator</h3>
+        <p>Beautiful, responsive websites generated in seconds. Choose from AI-curated templates or let AI design from scratch based on your vision.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon fi-green">📊</div>
+        <h3>Dashboard Builder</h3>
+        <p>Create data-driven dashboards with real-time analytics, interactive charts, and custom KPIs. Connect any data source instantly.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon fi-cyan">📲</div>
+        <h3>Social Media Content</h3>
+        <p>Generate scroll-stopping posts, reels, and stories for every platform. Schedule and publish directly to your accounts.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon fi-indigo">🚀</div>
+        <h3>One-Click Publishing</h3>
+        <p>Publish to Apple App Store, Google Play, web hosting, and all major social media platforms with a single click. No technical setup.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon fi-green">🤖</div>
+        <h3>AI Agent Support</h3>
+        <p>24/7 AI agents answer your questions, help debug issues, suggest improvements, and guide you through every step of the building process.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI Agent Demo -->
+<section class="ai-agent" id="ai-agent">
+  <div class="container">
+    <div>
+      <div class="section-badge">✦ AI Agents</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:2.8rem;font-weight:700;margin-bottom:16px;letter-spacing:-1px;">Your Personal<br>AI Build Team</h2>
+      <p style="color:var(--text-muted);font-size:1.1rem;max-width:500px;line-height:1.7;margin-bottom:24px;">Our AI agents are always available to help. Ask anything about building your app, troubleshoot issues, or get design recommendations — all in real time.</p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:14px;">
+        <li style="display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;">✓</span> Instant answers to any build question</li>
+        <li style="display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;">✓</span> Smart suggestions to improve your app</li>
+        <li style="display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;">✓</span> Debug and fix issues automatically</li>
+        <li style="display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:0.95rem;"><span style="color:var(--accent3);font-weight:700;">✓</span> Available 24/7, no waiting</li>
+      </ul>
+    </div>
+    <div class="chat-window fade-in">
+      <div class="chat-header">
+        <div class="agent-avatar">🤖</div>
+        <div class="agent-info">
+          <h4>Buildr AI Agent</h4>
+          <p>● Online</p>
+        </div>
+      </div>
+      <div class="chat-body">
+        <div class="chat-msg msg-user">I want to build a fitness tracking app with a dark theme</div>
+        <div class="chat-msg msg-bot">I'll create that for you! I'm building a fitness tracker with workout logging, progress charts, calorie tracking, and a sleek dark UI. Should I add social features too?</div>
+        <div class="chat-msg msg-user">Yes, add a leaderboard and friend challenges</div>
+        <div class="chat-msg msg-bot">Done! Your app now includes a real-time leaderboard, friend challenges, and achievement badges. Preview is ready — want me to publish to the App Store? 🚀</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" placeholder="Ask your AI agent anything...">
+        <button>→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works" id="how-it-works">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-badge">✦ Process</div>
+      <h2>Idea to Launch in 4 Steps</h2>
+      <p>No coding. No designers. No developers. Just describe what you want and watch it come to life.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card fade-in">
+        <div class="step-number">01</div>
+        <h3>Describe Your Idea</h3>
+        <p>Tell our AI what you want to build in plain English. Be as detailed or simple as you like.</p>
+      </div>
+      <div class="step-card fade-in">
+        <div class="step-number">02</div>
+        <h3>AI Generates It</h3>
+        <p>Watch as AI builds your app, website, or dashboard in real-time with professional-grade code and design.</p>
+      </div>
+      <div class="step-card fade-in">
+        <div class="step-number">03</div>
+        <h3>Customize & Refine</h3>
+        <p>Chat with AI to tweak designs, add features, change colours, and perfect every detail.</p>
+      </div>
+      <div class="step-card fade-in">
+        <div class="step-number">04</div>
+        <h3>Publish Everywhere</h3>
+        <p>One click to deploy to app stores, web hosting, and social media. Your product goes live instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-badge">✦ Pricing</div>
+      <h2>Simple, Transparent Pricing</h2>
+      <p>Start free, upgrade when you're ready. Cancel anytime — no hidden fees, no contracts.</p>
+    </div>
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="price-card fade-in">
+        <h3>Starter</h3>
+        <p class="subtitle">Perfect for exploring</p>
+        <div class="price-amount">$0<span>/mo</span></div>
+        <p class="period">Free forever</p>
+        <ul class="price-features">
+          <li>3 AI-generated projects</li>
+          <li>Basic templates</li>
+          <li>Community support</li>
+          <li>AI agent (limited)</li>
+          <li>Buildr AI watermark</li>
+        </ul>
+        <a href="#" class="btn-price btn-price-outline" onclick="openPayment('starter');return false;">Get Started Free</a>
+      </div>
+      <!-- Pro -->
+      <div class="price-card popular fade-in">
+        <div class="popular-badge">Most Popular</div>
+        <h3>Pro Creator</h3>
+        <p class="subtitle">For serious builders</p>
+        <div class="price-amount">$29<span>/mo</span></div>
+        <p class="period">Billed monthly</p>
+        <ul class="price-features">
+          <li>Unlimited projects</li>
+          <li>Premium templates & themes</li>
+          <li>App Store publishing</li>
+          <li>Social media auto-publish</li>
+          <li>Priority AI agent</li>
+          <li>No watermark</li>
+          <li>Custom domain</li>
+        </ul>
+        <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" class="btn-price btn-price-fill">Start Pro — 14 Day Free Trial</a>
+      </div>
+      <!-- Business -->
+      <div class="price-card fade-in">
+        <h3>Business</h3>
+        <p class="subtitle">For teams & agencies</p>
+        <div class="price-amount">$99<span>/mo</span></div>
+        <p class="period">Billed monthly</p>
+        <ul class="price-features">
+          <li>Everything in Pro</li>
+          <li>Team collaboration (5 seats)</li>
+          <li>White-label solutions</li>
+          <li>API access</li>
+          <li>Dedicated AI agent</li>
+          <li>Priority support</li>
+          <li>Analytics dashboard</li>
+          <li>Custom integrations</li>
+        </ul>
+        <a href="https://buy.stripe.com/28E00j8o28jafoo5VVeIw01" class="btn-price btn-price-outline">Start Business Trial</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-badge">✦ FAQ</div>
+      <h2>Frequently Asked Questions</h2>
+      <p>Everything you need to know about Buildr AI. Can't find what you're looking for? Chat with our AI agent.</p>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item active">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Do I need coding experience to use Buildr AI?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer" style="max-height:200px;">
+          <div class="faq-answer-inner">Absolutely not! Buildr AI is designed for everyone, regardless of technical background. Simply describe what you want in plain English, and our AI handles all the coding, design, and deployment. Think of it like having a full development team at your fingertips.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Can I really publish apps directly to the App Store?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Yes! With our Pro and Business plans, you can publish directly to the Apple App Store and Google Play Store. We handle the build process, code signing, and submission. You just need an Apple Developer account ($99/year) or Google Play Developer account ($25 one-time fee).</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          How does social media auto-publishing work?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Connect your social media accounts (TikTok, Instagram, X, Facebook, LinkedIn) by securely linking them in your Buildr AI dashboard. Create content using AI, schedule posts, and publish directly to all platforms simultaneously — no switching between apps.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What AI agents are available?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Our AI agents include: Build Agent (creates your apps/sites), Design Agent (handles aesthetics and UI), Debug Agent (finds and fixes issues), Content Agent (generates social media content), and Support Agent (answers your questions 24/7). Pro and Business users get priority access with faster response times.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Is there a free plan?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Yes! Our Starter plan is completely free and lets you build up to 3 projects with basic templates and community support. When you're ready for more power — unlimited projects, app store publishing, and social media integration — upgrade to Pro or Business.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          How secure is my data?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">We take security seriously. All data is encrypted at rest and in transit using AES-256 and TLS 1.3. We comply with GDPR, the Australian Privacy Act 1988, CCPA, and international data protection standards. Social media credentials are stored using OAuth 2.0 — we never see your passwords.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Can I cancel my subscription anytime?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Absolutely. You can cancel your subscription at any time from your dashboard. There are no contracts, no cancellation fees, and no questions asked. Your projects remain accessible even after cancellation, though publishing features will revert to Starter plan limits.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What payment methods do you accept?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">We offer flexible payment options to suit everyone. You can pay with credit or debit cards (Visa, Mastercard, American Express, Discover) processed via Stripe, or use PayPal for a familiar checkout experience. We also support Klarna — choose to pay now, pay in 30 days, or split into 4 interest-free instalments. Apple Pay and Google Pay are available for instant mobile and desktop checkout. For Business plans, we additionally offer bank transfer and invoicing options. All payment methods are secured with industry-standard encryption.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-badge">✦ Testimonials</div>
+      <h2>Loved by Creators Worldwide</h2>
+      <p>Join thousands of people who are building amazing things with Buildr AI.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>"I built a complete e-commerce app in 20 minutes and published it to the App Store the same day. This is genuinely unbelievable."</blockquote>
+        <div class="testimonial-author">
+          <div class="author-avatar">SK</div>
+          <div class="author-info">
+            <h4>Sarah Kim</h4>
+            <p>Entrepreneur, Seoul</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>"As a social media manager, the auto-publishing feature saves me 15+ hours per week. I create content and it goes live everywhere instantly."</blockquote>
+        <div class="testimonial-author">
+          <div class="author-avatar">MJ</div>
+          <div class="author-info">
+            <h4>Marcus Johnson</h4>
+            <p>Social Media Manager, Sydney</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The AI agents are incredibly helpful. I asked it to add a payment system and it set up the entire Stripe integration in seconds."</blockquote>
+        <div class="testimonial-author">
+          <div class="author-avatar">LP</div>
+          <div class="author-info">
+            <h4>Lisa Park</h4>
+            <p>Freelance Designer, LA</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow cta-glow-1"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="section-badge">✦ Get Started</div>
+    <h2>Ready to Build<br><span class="gradient-text">Something Amazing?</span></h2>
+    <p>Join 50,000+ creators who are already building the future with Buildr AI. Start free — no credit card required.</p>
+    <div class="hero-buttons" style="justify-content:center;">
+      <a href="#pricing" class="btn-primary">Start Building Free →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <div class="logo-icon">⚡</div>
+          Buildr<span>AI</span>
+        </a>
+        <p>Build apps, websites, dashboards, and social media content with the power of AI. No code needed.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#" onclick="openLegal('privacy');return false;">Privacy Policy</a>
+        <a href="#" onclick="openLegal('terms');return false;">Terms of Service</a>
+        <a href="#" onclick="openLegal('cookies');return false;">Cookie Policy</a>
+        <a href="#" onclick="openLegal('refund');return false;">Refund Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="#">support@buildr-ai.io</a>
+        <a href="#">TikTok</a>
+        <a href="#">Instagram</a>
+        <a href="#">X / Twitter</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Buildr AI. All rights reserved.</span>
+      <div class="footer-socials">
+        <a href="#" title="TikTok">♪</a>
+        <a href="#" title="Instagram">◎</a>
+        <a href="#" title="X">𝕏</a>
+        <a href="#" title="Facebook">f</a>
+        <a href="#" title="LinkedIn">in</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Payment Modal — Plan Selector -->
+<div class="payment-modal" id="paymentModal">
+  <div class="payment-card">
+    <button class="legal-close" onclick="closePayment()" style="float:right;margin-bottom:12px;">&times;</button>
+    <h3>Choose Your Plan</h3>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;">You'll be taken to our secure Stripe checkout where you can pay with Card, PayPal, Klarna, Apple Pay, or Google Pay.</p>
+
+    <!-- Plan Selection Cards -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+      <a href="https://buy.stripe.com/6oU8wPcEigPGgssesreIw00" class="plan-select-card" style="display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:rgba(0,212,255,0.04);text-decoration:none;color:var(--text);transition:all 0.2s;position:relative;">
+        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">⚡</div>
+        <div style="flex:1;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">Pro Creator</div>
+          <div style="color:var(--text-muted);font-size:0.85rem;">Unlimited projects, app store publishing, no watermark</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;color:var(--accent);">$29</div>
+          <div style="color:var(--text-muted);font-size:0.75rem;">/month</div>
+        </div>
+        <div style="position:absolute;top:-8px;right:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--base);padding:2px 12px;border-radius:50px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Popular</div>
+      </a>
+
+      <a href="https://buy.stripe.com/28E00j8o28jafoo5VVeIw01" class="plan-select-card" style="display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);text-decoration:none;color:var(--text);transition:all 0.2s;">
+        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🚀</div>
+        <div style="flex:1;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;">Business</div>
+          <div style="color:var(--text-muted);font-size:0.85rem;">Team collab, white-label, API, dedicated AI agent</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;color:var(--accent2);">$99</div>
+          <div style="color:var(--text-muted);font-size:0.75rem;">/month</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Payment Methods Accepted -->
+    <div style="text-align:center;padding-top:16px;border-top:1px solid var(--border);">
+      <div style="color:var(--text-muted);font-size:0.75rem;margin-bottom:10px;">All payment methods accepted</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <span class="card-badge">VISA</span>
+        <span class="card-badge">MASTERCARD</span>
+        <span class="card-badge">AMEX</span>
+        <span class="card-badge" style="color:#0070BA;">PAYPAL</span>
+        <span class="card-badge" style="color:#FFB3C7;">KLARNA</span>
+        <span class="card-badge">APPLE PAY</span>
+        <span class="card-badge">GOOGLE PAY</span>
+      </div>
+      <div class="payment-secure" style="justify-content:center;margin-top:12px;">Secured by Stripe. 256-bit SSL encryption.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div class="legal-modal" id="privacyModal">
+  <div class="legal-content">
+    <button class="legal-close" onclick="closeLegal('privacy')">&times;</button>
+    <h2>Privacy Policy</h2>
+    <p class="legal-date">Effective Date: April 17, 2026 | Last Updated: April 17, 2026</p>
+
+    <h3>1. Introduction</h3>
+    <p>Buildr AI ("we", "us", "our") is committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform, in compliance with applicable laws including the General Data Protection Regulation (GDPR), the California Consumer Privacy Act (CCPA), the Australian Privacy Act 1988 (Cth), and the Australian Privacy Principles (APPs).</p>
+
+    <h3>2. Information We Collect</h3>
+    <p>We collect the following categories of personal information:</p>
+    <ul>
+      <li><strong>Account Information:</strong> Name, email address, password (hashed), billing address, and payment details (processed via Stripe, PayPal, or Klarna — we do not store full card numbers or bank details).</li>
+      <li><strong>Usage Data:</strong> How you interact with our platform, features used, projects created, and session data.</li>
+      <li><strong>Device Information:</strong> IP address, browser type, operating system, and device identifiers.</li>
+      <li><strong>Content Data:</strong> Projects, apps, websites, and content you create using our tools.</li>
+      <li><strong>Third-Party Account Data:</strong> When you connect social media accounts, we use OAuth 2.0 tokens — we never store your social media passwords.</li>
+    </ul>
+
+    <h3>3. How We Use Your Information</h3>
+    <p>We use your information to: provide and maintain our services; process transactions and send billing-related communications; respond to your inquiries and provide customer support via AI agents; improve and personalise your experience; send marketing communications (with your consent); comply with legal obligations; and detect and prevent fraud or abuse.</p>
+
+    <h3>4. Legal Bases for Processing (GDPR)</h3>
+    <p>We process your data based on: contractual necessity (to provide our services); legitimate interest (to improve our platform and communicate with you); consent (for marketing and optional features); and legal obligation (tax, accounting, and regulatory requirements).</p>
+
+    <h3>5. Data Sharing and Disclosure</h3>
+    <p>We do not sell your personal information. We may share data with: payment processors (Stripe, PayPal, Klarna) to process transactions; cloud hosting providers (for data storage and processing); analytics providers (in anonymised/aggregated form); law enforcement when legally required; and business partners only with your explicit consent.</p>
+
+    <h3>6. International Data Transfers</h3>
+    <p>Your data may be transferred to and processed in countries outside your country of residence, including the United States and Australia. We ensure appropriate safeguards are in place, including Standard Contractual Clauses (SCCs) for EU data transfers and compliance with the Australian Privacy Principles for cross-border disclosures.</p>
+
+    <h3>7. Your Rights</h3>
+    <p><strong>Under GDPR (EU/EEA/UK):</strong> You have the right to access, rectify, erase, restrict processing, data portability, and object to processing of your personal data. You may also withdraw consent at any time.</p>
+    <p><strong>Under CCPA (California):</strong> You have the right to know what personal information is collected, request deletion, opt-out of sale (we do not sell data), and non-discrimination for exercising your rights.</p>
+    <p><strong>Under Australian Privacy Act:</strong> You have the right to access and correct your personal information, make a complaint about privacy breaches, and opt-out of direct marketing communications.</p>
+
+    <h3>8. Data Security</h3>
+    <p>We implement industry-standard security measures including: AES-256 encryption at rest; TLS 1.3 encryption in transit; regular security audits and penetration testing; access controls and employee training; and incident response procedures.</p>
+
+    <h3>9. Data Retention</h3>
+    <p>We retain your personal information for as long as your account is active or as needed to provide our services. Upon account deletion, we will delete or anonymise your data within 30 days, except where retention is required by law.</p>
+
+    <h3>10. Children's Privacy</h3>
+    <p>Our service is not directed to children under 16 (or 13 in the US under COPPA). We do not knowingly collect personal information from children. If we become aware that we have collected data from a child, we will delete it promptly.</p>
+
+    <h3>11. Contact Us</h3>
+    <p>For privacy inquiries, data requests, or complaints: Email: privacy@buildr-ai.io. For Australian users, you may also lodge a complaint with the Office of the Australian Information Commissioner (OAIC) at oaic.gov.au.</p>
+  </div>
+</div>
+
+<!-- Terms of Service Modal -->
+<div class="legal-modal" id="termsModal">
+  <div class="legal-content">
+    <button class="legal-close" onclick="closeLegal('terms')">&times;</button>
+    <h2>Terms of Service</h2>
+    <p class="legal-date">Effective Date: April 17, 2026 | Last Updated: April 17, 2026</p>
+
+    <h3>1. Acceptance of Terms</h3>
+    <p>By accessing or using Buildr AI ("the Platform"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree, do not use the Platform. These Terms constitute a legally binding agreement between you and Buildr AI Pty Ltd.</p>
+
+    <h3>2. Eligibility</h3>
+    <p>You must be at least 18 years old (or the age of majority in your jurisdiction) to use our Platform. By using the Platform, you represent and warrant that you meet this requirement.</p>
+
+    <h3>3. Account Registration</h3>
+    <p>You are responsible for maintaining the confidentiality of your account credentials. You agree to provide accurate information and promptly update it if it changes. You are liable for all activities that occur under your account.</p>
+
+    <h3>4. Services</h3>
+    <p>Buildr AI provides AI-powered tools for creating applications, websites, dashboards, and social media content. We reserve the right to modify, suspend, or discontinue any feature at any time with reasonable notice.</p>
+
+    <h3>5. Intellectual Property</h3>
+    <p>You retain ownership of content you create using our Platform. By using the Platform, you grant us a limited, non-exclusive licence to host, display, and process your content solely to provide our services. We retain all rights to our Platform, technology, branding, and AI models.</p>
+
+    <h3>6. Acceptable Use</h3>
+    <p>You agree not to: use the Platform for any unlawful purpose; create content that is harmful, abusive, or infringes on others' rights; attempt to reverse-engineer or interfere with the Platform's functionality; use the Platform to build competing products; or share your account credentials with unauthorised third parties.</p>
+
+    <h3>7. Payments and Billing</h3>
+    <p>Paid plans are billed on a recurring monthly basis. Prices are in USD unless otherwise stated. You authorise us to charge your payment method on file. Failed payments may result in service suspension. All fees are non-refundable except as stated in our Refund Policy.</p>
+
+    <h3>8. Cancellation</h3>
+    <p>You may cancel your subscription at any time through your account dashboard. Cancellation takes effect at the end of the current billing period. No partial refunds are provided for unused portions of a billing period.</p>
+
+    <h3>9. App Store Publishing</h3>
+    <p>Publishing to third-party app stores (Apple App Store, Google Play) is subject to their respective terms and review processes. Buildr AI does not guarantee approval by any third-party platform. You are responsible for maintaining valid developer accounts with these platforms.</p>
+
+    <h3>10. Social Media Integration</h3>
+    <p>When connecting social media accounts, you authorise Buildr AI to publish content on your behalf. You are solely responsible for all content published through our Platform to your social media accounts. We use OAuth 2.0 for authentication and do not store your social media passwords.</p>
+
+    <h3>11. Limitation of Liability</h3>
+    <p>To the maximum extent permitted by law, Buildr AI shall not be liable for any indirect, incidental, special, consequential, or punitive damages. Our total liability shall not exceed the amount you paid us in the 12 months preceding the claim. Nothing in these Terms excludes liability that cannot be excluded under applicable law, including Australian Consumer Law.</p>
+
+    <h3>12. Indemnification</h3>
+    <p>You agree to indemnify and hold harmless Buildr AI from any claims, damages, or expenses arising from your use of the Platform, your violation of these Terms, or your violation of any third-party rights.</p>
+
+    <h3>13. Governing Law</h3>
+    <p>These Terms are governed by the laws of New South Wales, Australia, without regard to conflict of law principles. For users in the United States, disputes may be resolved in the courts of the State of Delaware. For users in Australia, nothing in these Terms limits your rights under the Australian Consumer Law.</p>
+
+    <h3>14. Dispute Resolution</h3>
+    <p>We encourage resolution through our support channels first. If a dispute cannot be resolved informally, it shall be submitted to binding arbitration, except where prohibited by law. Australian consumers retain the right to bring claims in Australian courts.</p>
+
+    <h3>15. Changes to Terms</h3>
+    <p>We may update these Terms from time to time. We will notify you of material changes via email or in-app notification at least 30 days before they take effect. Continued use of the Platform after changes constitutes acceptance.</p>
+
+    <h3>16. Contact</h3>
+    <p>For questions about these Terms: legal@buildr-ai.io</p>
+  </div>
+</div>
+
+<!-- Cookie Policy Modal -->
+<div class="legal-modal" id="cookiesModal">
+  <div class="legal-content">
+    <button class="legal-close" onclick="closeLegal('cookies')">&times;</button>
+    <h2>Cookie Policy</h2>
+    <p class="legal-date">Effective Date: April 17, 2026</p>
+
+    <h3>1. What Are Cookies</h3>
+    <p>Cookies are small text files stored on your device when you visit our website. They help us provide and improve our services.</p>
+
+    <h3>2. Types of Cookies We Use</h3>
+    <p><strong>Essential Cookies:</strong> Required for the Platform to function (authentication, security, load balancing). Cannot be disabled.</p>
+    <p><strong>Analytics Cookies:</strong> Help us understand how users interact with our Platform (page views, feature usage). Used in anonymised/aggregated form.</p>
+    <p><strong>Preference Cookies:</strong> Remember your settings and preferences (theme, language, layout).</p>
+    <p><strong>Marketing Cookies:</strong> Used to deliver relevant advertisements and track campaign performance. Only set with your consent.</p>
+
+    <h3>3. Managing Cookies</h3>
+    <p>You can manage cookie preferences through your browser settings or our cookie consent banner. Disabling essential cookies may affect Platform functionality.</p>
+
+    <h3>4. Third-Party Cookies</h3>
+    <p>We use cookies from: Stripe (payment processing), Google Analytics (usage analytics), and social media platforms (for sharing and publishing features). These third parties have their own privacy policies.</p>
+  </div>
+</div>
+
+<!-- Refund Policy Modal -->
+<div class="legal-modal" id="refundModal">
+  <div class="legal-content">
+    <button class="legal-close" onclick="closeLegal('refund')">&times;</button>
+    <h2>Refund Policy</h2>
+    <p class="legal-date">Effective Date: April 17, 2026</p>
+
+    <h3>1. Free Trial</h3>
+    <p>Pro and Business plans include a 14-day free trial. You will not be charged during the trial period. Cancel before the trial ends and you will not be billed.</p>
+
+    <h3>2. Refund Eligibility</h3>
+    <p>If you are dissatisfied with our service within the first 30 days of your paid subscription, you may request a full refund. Refund requests after 30 days will be considered on a case-by-case basis.</p>
+
+    <h3>3. How to Request a Refund</h3>
+    <p>Contact us at billing@buildr-ai.io with your account email and reason for the refund. Refunds are typically processed within 5-10 business days to your original payment method.</p>
+
+    <h3>4. Australian Consumer Guarantees</h3>
+    <p>For Australian consumers: Our services come with guarantees that cannot be excluded under the Australian Consumer Law. You are entitled to a refund or replacement for a major failure and for compensation for any other reasonably foreseeable loss or damage. You are also entitled to have the services remedied if they fail to be of acceptable quality and the failure does not amount to a major failure.</p>
+
+    <h3>5. Non-Refundable Items</h3>
+    <p>Third-party fees (such as Apple Developer Program or Google Play Developer fees) are not refundable by Buildr AI, as they are paid directly to those third parties.</p>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+// ══════════════════════════════════════════════
+// STRIPE PAYMENT LINKS
+// ══════════════════════════════════════════════
+const STRIPE_LINKS = {
+  pro: 'https://buy.stripe.com/6oU8wPcEigPGgssesreIw00',
+  business: 'https://buy.stripe.com/28E00j8o28jafoo5VVeIw01'
+};
+
+// Welcome banner for returning customers after Stripe checkout
+(function checkWelcome() {
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get('welcome');
+  if (plan) {
+    // Show welcome toast
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;box-shadow:0 8px 40px rgba(0,212,255,0.4);animation:slideDown 0.5s ease;';
+    const planName = plan === 'pro' ? 'Pro Creator' : plan === 'business' ? 'Business' : 'Buildr AI';
+    toast.textContent = '🎉 Welcome to ' + planName + '! Your account is being set up...';
+    document.body.appendChild(toast);
+
+    // Remove after 6 seconds
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.5s, transform 0.5s';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(-20px)';
+      setTimeout(() => toast.remove(), 500);
+    }, 6000);
+
+    // Clean URL
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+})();
+
+// ── Particles ──
+(function() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 4 + 2;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (Math.random() * 20 + 15) + 's';
+    p.style.animationDelay = (Math.random() * 15) + 's';
+    container.appendChild(p);
+  }
+})();
+
+// ── Navbar Scroll ──
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ── Mobile Menu ──
+function toggleMobileMenu() {
+  const links = document.querySelector('.nav-links');
+  links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+  if (links.style.display === 'flex') {
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '100%';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'rgba(9,9,11,0.95)';
+    links.style.backdropFilter = 'blur(20px)';
+    links.style.padding = '24px';
+    links.style.borderBottom = '1px solid var(--border)';
+  }
+}
+
+// ── FAQ Toggle ──
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const answer = item.querySelector('.faq-answer');
+  const isActive = item.classList.contains('active');
+
+  document.querySelectorAll('.faq-item').forEach(i => {
+    i.classList.remove('active');
+    i.querySelector('.faq-answer').style.maxHeight = '0';
+  });
+
+  if (!isActive) {
+    item.classList.add('active');
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+  }
+}
+
+// ── Scroll Animations ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ── Counter Animation ──
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.target === '99' ? '.9%' : '+';
+      let current = 0;
+      const increment = target / 60;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        el.textContent = Math.floor(current).toLocaleString() + suffix;
+      }, 30);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
+
+// ── Payment Modal ──
+const plans = {
+  free: { name: 'Starter — Free', price: '$0/mo' },
+  starter: { name: 'Starter — Free', price: '$0/mo' },
+  pro: { name: 'Pro Creator — 14 Day Free Trial', price: '$29/mo after trial' },
+  business: { name: 'Business — 14 Day Free Trial', price: '$99/mo after trial' }
+};
+
+function openPayment(plan) {
+  if (plan === 'pro') {
+    window.location.href = STRIPE_LINKS.pro;
+    return;
+  }
+  if (plan === 'business') {
+    window.location.href = STRIPE_LINKS.business;
+    return;
+  }
+  // Free/starter plan — show modal with upsell options
+  document.getElementById('paymentModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePayment() {
+  document.getElementById('paymentModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ── Direct Stripe Checkout ──
+// Pro and Business buttons link directly to Stripe Payment Links
+// Starter plan opens the modal for upsell
+
+// ── Legal Modals ──
+function openLegal(type) {
+  const modals = { privacy: 'privacyModal', terms: 'termsModal', cookies: 'cookiesModal', refund: 'refundModal' };
+  document.getElementById(modals[type]).classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLegal(type) {
+  const modals = { privacy: 'privacyModal', terms: 'termsModal', cookies: 'cookiesModal', refund: 'refundModal' };
+  document.getElementById(modals[type]).classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Close modals on backdrop click
+document.querySelectorAll('.legal-modal, .payment-modal').forEach(modal => {
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "buildr-ai",
+  "version": "1.0.0",
+  "description": "Buildr AI — Build apps, websites & dashboards with AI",
+  "scripts": {
+    "build": "echo 'Static site — no build needed'",
+    "start": "npx serve public"
+  }
+}
