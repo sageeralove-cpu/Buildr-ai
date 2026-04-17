@@ -126,6 +126,27 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
 .history-empty { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 0.95rem; background: var(--card); border: 1px dashed var(--border); border-radius: var(--radius); }
 .history-empty span { display: block; font-size: 2.5rem; margin-bottom: 12px; }
 
+/* AI Wizard */
+.wiz-step-bar { flex:1;height:4px;border-radius:4px;background:var(--border);transition:background 0.3s; }
+.wiz-step-bar.active { background:linear-gradient(135deg,var(--accent),var(--accent2)); }
+.wiz-step-bar.done { background:var(--accent3); }
+.wiz-option { display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.25s;position:relative; }
+.wiz-option:hover { border-color:var(--accent);background:rgba(0,212,255,0.04);transform:translateY(-1px); }
+.wiz-option.selected { border-color:var(--accent);background:rgba(0,212,255,0.06);box-shadow:0 0 20px rgba(0,212,255,0.1); }
+.wiz-check { display:none;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--base);font-size:0.7rem;font-weight:700;align-items:center;justify-content:center;flex-shrink:0; }
+.wiz-option.selected .wiz-check { display:flex; }
+.wiz-theme { display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:12px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.25s;text-align:center; }
+.wiz-theme:hover { border-color:var(--accent);transform:translateY(-2px); }
+.wiz-theme.selected { border-color:var(--accent);background:rgba(0,212,255,0.06);box-shadow:0 0 16px rgba(0,212,255,0.12); }
+.wiz-theme-bar { width:100%;height:28px;border-radius:8px;position:relative;overflow:hidden; }
+.wiz-theme-bar::after { content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 30%,rgba(255,255,255,0.25),transparent 60%); }
+.wiz-theme span { font-size:0.78rem;font-weight:600;color:var(--text-muted); }
+.wiz-theme.selected span { color:var(--accent); }
+.wiz-page { animation:wizFadeIn 0.3s ease; }
+@keyframes wizFadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+.wiz-wm-pos { transition:border-color 0.2s; }
+.wiz-wm-pos:has(input:checked) { border-color:var(--accent) !important;color:var(--accent) !important; }
+
 /* Responsive */
 @media (max-width: 768px) {
   .project-grid { grid-template-columns: repeat(2, 1fr); }
@@ -136,10 +157,12 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
   .history-card { flex-direction: column; align-items: flex-start; gap: 12px; }
   .history-actions { width: 100%; }
   .history-btn { flex: 1; text-align: center; }
+  #wizThemeGrid { grid-template-columns: repeat(2, 1fr) !important; }
 }
 @media (max-width: 480px) {
   .project-grid { grid-template-columns: 1fr; }
   .result-actions { flex-direction: column; }
+  #wizThemeGrid { grid-template-columns: repeat(2, 1fr) !important; }
 }
 </style>
 </head>
@@ -229,9 +252,157 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     <p>Tell us what you want in plain English. Be as detailed as you like — our AI understands natural language.</p>
     <textarea class="describe-textarea" id="projectDescription" placeholder="Example: A modern portfolio website for a photographer with a dark theme, gallery grid, about page, contact form, and Instagram feed integration..." oninput="updateCharCount()"></textarea>
     <div class="char-count"><span id="charCount">0</span> characters</div>
-    <button class="build-btn" id="buildBtn" onclick="startBuilding()" disabled>
+    <button class="build-btn" id="buildBtn" onclick="openAIWizard()" disabled>
       <span>&#9889;</span> Build My <span id="buildTypeLabel">Project</span>
     </button>
+  </div>
+
+  <!-- AI Wizard: Multi-step guided prompts -->
+  <div class="describe-section" id="aiWizard" style="display:none;">
+    <!-- Progress bar -->
+    <div style="display:flex;gap:4px;margin-bottom:28px;" id="wizardProgress">
+      <div class="wiz-step-bar active" data-step="1"></div>
+      <div class="wiz-step-bar" data-step="2"></div>
+      <div class="wiz-step-bar" data-step="3"></div>
+      <div class="wiz-step-bar" data-step="4"></div>
+      <div class="wiz-step-bar" data-step="5"></div>
+    </div>
+
+    <!-- Step 1: Content Source -->
+    <div class="wiz-page" id="wizStep1">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9zm0 16c-3.9 0-7-3.1-7-7s3.1-7 7-7 7 3.1 7 7-3.1 7-7 7z" fill="#fff" opacity="0.3"/><path d="M12 8v4l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h2 style="margin:0 0 4px;font-size:1.2rem;">How would you like to create your content?</h2>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Choose how the AI should generate your <span class="wiz-type-label">project</span>.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="wiz-option" onclick="selectWizOption(this,'contentSource','ai_generate')" data-val="ai_generate">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(99,102,241,0.1));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="3" stroke="#00D4FF" stroke-width="1.5"/><circle cx="9" cy="10" r="1" fill="#00D4FF"/><circle cx="15" cy="10" r="1" fill="#00D4FF"/><path d="M10 14c0 0 1 1 2 1s2-1 2-1" stroke="#00D4FF" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div style="flex:1;"><div style="font-weight:600;font-size:0.95rem;">AI Research &amp; Generate</div><div style="color:var(--text-muted);font-size:0.8rem;">AI creates optimised content, copy, and layout based on your description</div></div>
+          <span class="wiz-check">&#10003;</span>
+        </div>
+        <div class="wiz-option" onclick="selectWizOption(this,'contentSource','manual')" data-val="manual">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10-10a2 2 0 00-3-3L5 17v3z" stroke="#10B981" stroke-width="1.5"/><path d="M14 6l3 3" stroke="#10B981" stroke-width="1.5"/></svg></div>
+          <div style="flex:1;"><div style="font-weight:600;font-size:0.95rem;">I'll Write My Own Content</div><div style="color:var(--text-muted);font-size:0.8rem;">Use the description you entered — AI handles the design and layout only</div></div>
+          <span class="wiz-check">&#10003;</span>
+        </div>
+        <div class="wiz-option" onclick="selectWizOption(this,'contentSource','hybrid')" data-val="hybrid">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(168,85,247,0.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3L4 9v12h16V9l-8-6z" stroke="#A855F7" stroke-width="1.5"/><rect x="9" y="13" width="6" height="8" stroke="#A855F7" stroke-width="1.2"/></svg></div>
+          <div style="flex:1;"><div style="font-weight:600;font-size:0.95rem;">Hybrid — AI + My Input</div><div style="color:var(--text-muted);font-size:0.8rem;">AI generates a draft, then you can customise specific sections</div></div>
+          <span class="wiz-check">&#10003;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Colour Scheme & Theme -->
+    <div class="wiz-page" id="wizStep2" style="display:none;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#E8A0BF,#6366F1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.5"/><circle cx="9" cy="10" r="2.5" fill="#FF9ECD"/><circle cx="15" cy="10" r="2.5" fill="#06B6D4"/><circle cx="12" cy="15" r="2.5" fill="#10B981"/></svg></div>
+        <h2 style="margin:0 0 4px;font-size:1.2rem;">Choose your colour scheme &amp; theme</h2>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Select a visual style or describe your own.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;" id="wizThemeGrid">
+        <div class="wiz-theme" onclick="selectWizTheme(this,'default')" data-theme="default"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#00D4FF,#6366F1,#10B981);"></div><span>K-Tech Dark</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'korean')" data-theme="korean"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#E8A0BF,#B68ECE,#7EB8DA);"></div><span>Korean</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'sakura')" data-theme="sakura"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#F9A8D4,#C4B5FD,#FDE68A);"></div><span>Sakura</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'aurora')" data-theme="aurora"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#A855F7,#06B6D4,#EC4899);"></div><span>Aurora</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'ocean')" data-theme="ocean"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#0EA5E9,#06B6D4,#2DD4BF);"></div><span>Ocean</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'midnight')" data-theme="midnight"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#F59E0B,#3B82F6,#EAB308);"></div><span>Midnight</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'minimal')" data-theme="minimal"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#888,#EEE,#fff);"></div><span>Minimal</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'citrus')" data-theme="citrus"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#F97316,#EAB308,#EF4444);"></div><span>Citrus</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'nature')" data-theme="nature"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#4A7C59,#8DB48E,#D4A574);"></div><span>Nature</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'luxury')" data-theme="luxury"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#D4AF37,#8B7355,#C9A96E);"></div><span>Luxury</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'retro')" data-theme="retro"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#FF6EC7,#7B68EE,#00FFFF);"></div><span>Retro</span></div>
+        <div class="wiz-theme" onclick="selectWizTheme(this,'cute')" data-theme="cute"><div class="wiz-theme-bar" style="background:linear-gradient(135deg,#FF9ECD,#B8A9E8,#97E8D5);"></div><span>Cute</span></div>
+      </div>
+      <div style="margin-top:12px;">
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;">Or describe your own style:</p>
+        <input type="text" id="wizCustomTheme" placeholder="e.g. pastel pink with gold accents, glass morphism..." style="width:100%;padding:12px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+    </div>
+
+    <!-- Step 3: Photos & Media -->
+    <div class="wiz-page" id="wizStep3" style="display:none;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#10B981,#06B6D4);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#fff" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="2" stroke="#fff" stroke-width="1.2"/><path d="M3 16l5-5 4 4 3-3 6 6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h2 style="margin:0 0 4px;font-size:1.2rem;">Add photos &amp; media</h2>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Choose how to source images for your <span class="wiz-type-label">project</span>.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="wiz-option" onclick="selectWizOption(this,'mediaSource','ai_search')" data-val="ai_search">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#00D4FF" stroke-width="1.5"/><path d="M16 16l5 5" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div style="flex:1;"><div style="font-weight:600;font-size:0.95rem;">AI Finds Images for Me</div><div style="color:var(--text-muted);font-size:0.8rem;">AI searches for relevant stock photos and graphics that match your project</div></div>
+          <span class="wiz-check">&#10003;</span>
+        </div>
+        <div class="wiz-option" onclick="selectWizOption(this,'mediaSource','upload')" data-val="upload">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0l-4 4m4-4l4 4" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="#10B981" stroke-width="1.5"/></svg></div>
+          <div style="flex:1;"><div style="font-weight:600;font-size:0.95rem;">Upload My Own Photos</div><div style="color:var(--text-muted);font-size:0.8rem;">Use your own images — upload from your device</div></div>
+          <span class="wiz-check">&#10003;</span>
+        </div>
+        <div class="wiz-option" onclick="selectWizOption(this,'mediaSource','none')" data-val="none">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(161,161,170,0.15),rgba(161,161,170,0.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M9 9l6 6" stroke="#A1A1AA" stroke-width="1.5" stroke-linecap="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#A1A1AA" stroke-width="1.2"/></svg></div>
+          <div style="flex:1;"><div style="font-weight:600;font-size:0.95rem;">No Images — Text Only</div><div style="color:var(--text-muted);font-size:0.8rem;">Use gradient backgrounds and icons instead of photos</div></div>
+          <span class="wiz-check">&#10003;</span>
+        </div>
+      </div>
+      <!-- Upload area (hidden until selected) -->
+      <div id="wizUploadArea" style="display:none;margin-top:16px;padding:24px;border:2px dashed var(--border);border-radius:12px;text-align:center;cursor:pointer;transition:border-color 0.2s;" onclick="document.getElementById('wizFileInput').click()" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style="margin-bottom:8px;"><path d="M12 16V4m0 0l-4 4m4-4l4 4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="var(--accent)" stroke-width="1.5"/></svg>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Tap to upload images<br><span style="font-size:0.75rem;">JPG, PNG, SVG — up to 5 files</span></p>
+        <input type="file" id="wizFileInput" accept="image/*" multiple style="display:none;" onchange="handleWizUpload(this)">
+      </div>
+      <div id="wizUploadPreview" style="display:none;margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;"></div>
+    </div>
+
+    <!-- Step 4: Watermark -->
+    <div class="wiz-page" id="wizStep4" style="display:none;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#EF4444);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h2 style="margin:0 0 4px;font-size:1.2rem;">Add your personal watermark</h2>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Brand your build with your name, logo, or tagline.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="wiz-option" onclick="selectWizOption(this,'watermark','custom')" data-val="custom">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(245,158,11,0.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 12h8M12 8v8" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div style="flex:1;"><div style="font-weight:600;font-size:0.95rem;">Yes — Add My Watermark</div><div style="color:var(--text-muted);font-size:0.8rem;">Add your name, brand, or tagline to the build</div></div>
+          <span class="wiz-check">&#10003;</span>
+        </div>
+        <div class="wiz-option" onclick="selectWizOption(this,'watermark','none')" data-val="none">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(161,161,170,0.15),rgba(161,161,170,0.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="#A1A1AA" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div style="flex:1;"><div style="font-weight:600;font-size:0.95rem;">No Watermark</div><div style="color:var(--text-muted);font-size:0.8rem;">Keep the build clean without personal branding</div></div>
+          <span class="wiz-check">&#10003;</span>
+        </div>
+      </div>
+      <!-- Custom watermark input (shown when selected) -->
+      <div id="wizWatermarkInput" style="display:none;margin-top:16px;">
+        <input type="text" id="wizWatermarkText" placeholder="Your name, brand, or tagline..." style="width:100%;padding:12px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;margin-bottom:10px;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1;display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);" class="wiz-wm-pos" onclick="selectWmPosition('bottom-right')"><input type="radio" name="wmpos" checked style="accent-color:var(--accent);"> Bottom Right</label>
+          <label style="flex:1;display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);" class="wiz-wm-pos" onclick="selectWmPosition('bottom-left')"><input type="radio" name="wmpos" style="accent-color:var(--accent);"> Bottom Left</label>
+          <label style="flex:1;display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:0.8rem;color:var(--text-muted);" class="wiz-wm-pos" onclick="selectWmPosition('top-right')"><input type="radio" name="wmpos" style="accent-color:var(--accent);"> Top Right</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: Review & Build -->
+    <div class="wiz-page" id="wizStep5" style="display:none;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.5"/></svg></div>
+        <h2 style="margin:0 0 4px;font-size:1.2rem;">Review your build settings</h2>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Everything looks good? Hit build to bring it to life.</p>
+      </div>
+      <div id="wizReviewContent" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:left;margin-bottom:8px;">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div style="display:flex;gap:12px;justify-content:space-between;margin-top:24px;">
+      <button id="wizBackBtn" onclick="wizardBack()" style="padding:14px 24px;border-radius:12px;border:1px solid var(--border);background:none;color:var(--text);font-size:0.95rem;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">&#8592; Back</button>
+      <button id="wizNextBtn" onclick="wizardNext()" class="build-btn" style="flex:1;max-width:320px;margin:0;opacity:0.4;pointer-events:none;" disabled>
+        Next &#8594;
+      </button>
+    </div>
   </div>
 
   <!-- AI Suggestion Step -->
@@ -541,6 +712,259 @@ function updateBuildBtn() {
   var desc = document.getElementById('projectDescription').value.trim();
   document.getElementById('buildBtn').disabled = !(selectedType && desc.length >= 10);
 }
+
+// ── AI Wizard ──
+var wizardStep = 1;
+var wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right' };
+
+function openAIWizard() {
+  if (projectsUsed >= projectLimit) { showLimitReached(); return; }
+  var desc = document.getElementById('projectDescription').value.trim();
+  if (desc.length < 10) return;
+
+  // Reset wizard state
+  wizardStep = 1;
+  wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right' };
+
+  // Update type labels in wizard
+  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content' };
+  var typeLabel = labels[selectedType] || 'project';
+  document.querySelectorAll('.wiz-type-label').forEach(function(el) { el.textContent = typeLabel; });
+
+  // Reset all options
+  document.querySelectorAll('.wiz-option').forEach(function(o) { o.classList.remove('selected'); });
+  document.querySelectorAll('.wiz-theme').forEach(function(t) { t.classList.remove('selected'); });
+  document.getElementById('wizCustomTheme').value = '';
+  document.getElementById('wizWatermarkInput').style.display = 'none';
+  document.getElementById('wizWatermarkText').value = '';
+  document.getElementById('wizUploadArea').style.display = 'none';
+  var uploadPreview = document.getElementById('wizUploadPreview');
+  uploadPreview.innerHTML = '';
+  uploadPreview.style.display = 'none';
+
+  // Show step 1, hide others
+  for (var s = 1; s <= 5; s++) {
+    document.getElementById('wizStep' + s).style.display = s === 1 ? 'block' : 'none';
+  }
+
+  // Update progress
+  updateWizProgress();
+
+  // Update nav buttons
+  updateWizNav();
+
+  // Show wizard, hide describe
+  document.getElementById('describeSection').classList.remove('active');
+  document.getElementById('aiWizard').style.display = 'block';
+  document.getElementById('aiWizard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  history.pushState({ page: 'wizard' }, '');
+}
+
+function selectWizOption(el, key, value) {
+  // Deselect siblings
+  el.parentElement.querySelectorAll('.wiz-option').forEach(function(o) { o.classList.remove('selected'); });
+  el.classList.add('selected');
+  wizardData[key] = value;
+
+  // Show/hide conditional inputs
+  if (key === 'mediaSource') {
+    document.getElementById('wizUploadArea').style.display = value === 'upload' ? 'block' : 'none';
+    if (value !== 'upload') {
+      document.getElementById('wizUploadPreview').style.display = 'none';
+      document.getElementById('wizUploadPreview').innerHTML = '';
+      wizardData.uploadedFiles = [];
+    }
+  }
+  if (key === 'watermark') {
+    document.getElementById('wizWatermarkInput').style.display = value === 'custom' ? 'block' : 'none';
+  }
+
+  updateWizNav();
+}
+
+function selectWizTheme(el, theme) {
+  document.querySelectorAll('.wiz-theme').forEach(function(t) { t.classList.remove('selected'); });
+  el.classList.add('selected');
+  wizardData.theme = theme;
+  document.getElementById('wizCustomTheme').value = '';
+  wizardData.customTheme = '';
+  updateWizNav();
+}
+
+function handleWizUpload(input) {
+  var files = input.files;
+  if (!files || files.length === 0) return;
+  var preview = document.getElementById('wizUploadPreview');
+  preview.style.display = 'flex';
+  preview.innerHTML = '';
+  wizardData.uploadedFiles = [];
+  var max = Math.min(files.length, 5);
+  for (var i = 0; i < max; i++) {
+    (function(file) {
+      wizardData.uploadedFiles.push(file.name);
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var div = document.createElement('div');
+        div.style.cssText = 'width:64px;height:64px;border-radius:10px;overflow:hidden;border:1px solid var(--border);position:relative;flex-shrink:0;';
+        div.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;">';
+        preview.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    })(files[i]);
+  }
+  updateWizNav();
+}
+
+function selectWmPosition(pos) {
+  wizardData.watermarkPosition = pos;
+}
+
+function updateWizProgress() {
+  var bars = document.querySelectorAll('.wiz-step-bar');
+  bars.forEach(function(bar) {
+    var s = parseInt(bar.getAttribute('data-step'));
+    bar.classList.remove('active', 'done');
+    if (s < wizardStep) bar.classList.add('done');
+    else if (s === wizardStep) bar.classList.add('active');
+  });
+}
+
+function updateWizNav() {
+  var nextBtn = document.getElementById('wizNextBtn');
+  var backBtn = document.getElementById('wizBackBtn');
+
+  // Back button visibility
+  backBtn.style.visibility = wizardStep === 1 ? 'hidden' : 'visible';
+
+  // Check if current step has a valid selection
+  var canProceed = false;
+  if (wizardStep === 1) {
+    canProceed = wizardData.contentSource !== '';
+  } else if (wizardStep === 2) {
+    var customVal = document.getElementById('wizCustomTheme').value.trim();
+    canProceed = wizardData.theme !== '' || customVal.length > 2;
+  } else if (wizardStep === 3) {
+    canProceed = wizardData.mediaSource !== '';
+  } else if (wizardStep === 4) {
+    canProceed = wizardData.watermark !== '';
+  } else if (wizardStep === 5) {
+    canProceed = true;
+  }
+
+  nextBtn.disabled = !canProceed;
+  nextBtn.style.opacity = canProceed ? '1' : '0.4';
+  nextBtn.style.pointerEvents = canProceed ? 'auto' : 'none';
+
+  // Update button text for last step
+  if (wizardStep === 5) {
+    nextBtn.innerHTML = '&#9889; Build My ' + (selectedType === 'website' ? 'Website' : selectedType === 'app' ? 'App' : selectedType === 'dashboard' ? 'Dashboard' : selectedType === 'social' ? 'Content' : 'Project');
+  } else {
+    nextBtn.innerHTML = 'Next &#8594;';
+  }
+}
+
+function buildWizReview() {
+  var labels = { ai_generate: 'AI Research & Generate', manual: 'My Own Content', hybrid: 'Hybrid — AI + My Input' };
+  var mediaLabels = { ai_search: 'AI Finds Images', upload: 'My Uploaded Photos', none: 'No Images — Text Only' };
+  var themeLabel = wizardData.theme ? (wizardData.theme === 'default' ? 'K-Tech Dark' : wizardData.theme.charAt(0).toUpperCase() + wizardData.theme.slice(1)) : 'Custom';
+
+  var customTheme = document.getElementById('wizCustomTheme').value.trim();
+  if (customTheme) {
+    themeLabel = customTheme;
+    wizardData.customTheme = customTheme;
+  }
+
+  var desc = document.getElementById('projectDescription').value.trim();
+  var shortDesc = desc.length > 120 ? desc.substring(0, 120) + '...' : desc;
+
+  var html = '';
+  html += '<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);">';
+  html += '<span style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:600;">Description</span>';
+  html += '<p style="margin:4px 0 0;font-size:0.9rem;color:var(--text-muted);">' + shortDesc + '</p></div>';
+
+  var items = [
+    { label: 'Content Mode', value: labels[wizardData.contentSource] || '—', icon: '&#128196;' },
+    { label: 'Theme', value: themeLabel, icon: '&#127912;' },
+    { label: 'Media', value: mediaLabels[wizardData.mediaSource] || '—', icon: '&#128247;' },
+    { label: 'Watermark', value: wizardData.watermark === 'custom' ? (document.getElementById('wizWatermarkText').value || 'Custom') + ' (' + wizardData.watermarkPosition + ')' : 'None', icon: '&#128394;' }
+  ];
+
+  items.forEach(function(item) {
+    html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);">';
+    html += '<span style="font-size:1.1rem;">' + item.icon + '</span>';
+    html += '<div style="flex:1;"><span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">' + item.label + '</span>';
+    html += '<p style="margin:2px 0 0;font-size:0.95rem;color:var(--text);font-weight:500;">' + item.value + '</p></div></div>';
+  });
+
+  if (wizardData.uploadedFiles.length > 0) {
+    html += '<div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">Uploaded: ' + wizardData.uploadedFiles.join(', ') + '</div>';
+  }
+
+  document.getElementById('wizReviewContent').innerHTML = html;
+}
+
+function wizardNext() {
+  if (wizardStep === 2) {
+    var customVal = document.getElementById('wizCustomTheme').value.trim();
+    if (!wizardData.theme && customVal.length > 2) {
+      wizardData.customTheme = customVal;
+      wizardData.theme = 'custom';
+    }
+  }
+
+  if (wizardStep === 4) {
+    if (wizardData.watermark === 'custom') {
+      wizardData.watermarkText = document.getElementById('wizWatermarkText').value.trim();
+    }
+  }
+
+  if (wizardStep === 5) {
+    // Final step — execute build
+    document.getElementById('aiWizard').style.display = 'none';
+    startBuilding();
+    return;
+  }
+
+  // Advance
+  document.getElementById('wizStep' + wizardStep).style.display = 'none';
+  wizardStep++;
+  document.getElementById('wizStep' + wizardStep).style.display = 'block';
+  updateWizProgress();
+
+  // Build review content on step 5
+  if (wizardStep === 5) {
+    buildWizReview();
+  }
+
+  updateWizNav();
+  document.getElementById('aiWizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function wizardBack() {
+  if (wizardStep === 1) {
+    // Go back to describe section
+    document.getElementById('aiWizard').style.display = 'none';
+    document.getElementById('describeSection').classList.add('active');
+    document.getElementById('describeSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  document.getElementById('wizStep' + wizardStep).style.display = 'none';
+  wizardStep--;
+  document.getElementById('wizStep' + wizardStep).style.display = 'block';
+  updateWizProgress();
+  updateWizNav();
+}
+
+// Listen for custom theme input to enable Next on step 2
+document.getElementById('wizCustomTheme').addEventListener('input', function() {
+  if (wizardStep === 2) {
+    if (this.value.trim().length > 2) {
+      document.querySelectorAll('.wiz-theme').forEach(function(t) { t.classList.remove('selected'); });
+      wizardData.theme = '';
+    }
+    updateWizNav();
+  }
+});
 
 function startBuilding() {
   if (projectsUsed >= projectLimit) { showLimitReached(); return; }
@@ -855,14 +1279,23 @@ function analyzeDescription(dl, desc, title) {
     if (score > bestStyleScore) { bestStyleScore = score; bestStyle = key; }
   });
 
-  // Apply style overrides if detected
-  if (bestStyle && bestStyleScore > 0) {
+  // Apply wizard theme override if set, otherwise use auto-detected style
+  var wizTheme = wizardData && wizardData.theme && wizardData.theme !== '' && wizardData.theme !== 'custom' ? wizardData.theme : null;
+  if (wizTheme && wizTheme !== 'default' && styles[wizTheme]) {
+    var ws = styles[wizTheme];
+    result.style = { name: wizTheme, colors: ws.colors, font: ws.font, fontUrl: ws.fontUrl, borderRadius: ws.borderRadius, fluid: ws.fluid };
+  } else if (wizTheme === 'default') {
+    result.style = { name: 'default', colors: { primary:'#00D4FF', secondary:'#6366F1', accent:'#10B981', bg:'#09090B', surface:'#18181B', card:'#1E1E22', text:'#FAFAFA', muted:'#A1A1AA', border:'#27272A' }, font:'Inter', fontUrl:'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap', borderRadius:'16px' };
+  } else if (bestStyle && bestStyleScore > 0) {
     var s = styles[bestStyle];
-    result.style = { name: bestStyle, colors: s.colors, font: s.font, fontUrl: s.fontUrl, borderRadius: s.borderRadius };
+    result.style = { name: bestStyle, colors: s.colors, font: s.font, fontUrl: s.fontUrl, borderRadius: s.borderRadius, fluid: s.fluid };
   } else {
     // Default dark K-tech style
     result.style = { name: 'default', colors: { primary:'#00D4FF', secondary:'#6366F1', accent:'#10B981', bg:'#09090B', surface:'#18181B', card:'#1E1E22', text:'#FAFAFA', muted:'#A1A1AA', border:'#27272A' }, font:'Inter', fontUrl:'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap', borderRadius:'16px' };
   }
+
+  // Store wizard content source preference
+  result.wizardData = wizardData;
 
   // ── UI Feature Detection ──
   result.uiFeatures = {
@@ -911,6 +1344,19 @@ function generatePreview(type, desc, title) {
 
   var wm = (userPlan === 'pro' || userPlan === 'business') ? '' : '<div style="position:fixed;bottom:12px;right:16px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);padding:6px 14px;border-radius:50px;font-size:0.7rem;color:' + colors.primary + ';z-index:999;">Built with Buildr AI</div>';
 
+  // User custom watermark from wizard
+  var userWm = '';
+  if (wizardData && wizardData.watermark === 'custom' && wizardData.watermarkText) {
+    var wmPos = wizardData.watermarkPosition || 'bottom-right';
+    var posStyle = 'position:fixed;z-index:998;padding:8px 18px;border-radius:50px;font-size:0.75rem;font-weight:600;letter-spacing:0.5px;';
+    posStyle += 'background:rgba(' + (ai.style.name === 'default' || ai.style.name === 'retro' || ai.style.name === 'luxury' || ai.style.name === 'aurora' || ai.style.name === 'midnight' ? '255,255,255,0.08' : '0,0,0,0.06') + ');';
+    posStyle += 'color:' + colors.muted + ';backdrop-filter:blur(8px);';
+    if (wmPos === 'bottom-right') posStyle += 'bottom:12px;right:16px;';
+    else if (wmPos === 'bottom-left') posStyle += 'bottom:12px;left:16px;';
+    else if (wmPos === 'top-right') posStyle += 'top:12px;right:16px;';
+    userWm = '<div style="' + posStyle + '">' + wizardData.watermarkText.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
+  }
+
   // Use Build upgrade overlay for free users (shown inside preview)
   var upgradeOverlay = '';
   if (userPlan !== 'pro' && userPlan !== 'business') {
@@ -932,7 +1378,7 @@ function generatePreview(type, desc, title) {
 
   // Helper: replace default hardcoded colors with style colors in generated HTML
   function applyStyle(html) {
-    if (ai.style.name === 'default') return html + upgradeOverlay;
+    if (ai.style.name === 'default') return html + userWm + upgradeOverlay;
     // 3D Fluid blob decoration CSS
     var fluidCSS = '';
     if (ai.style.fluid) {
@@ -960,7 +1406,7 @@ function generatePreview(type, desc, title) {
       .replace(/Space Grotesk/g, stFont)
       .replace('</head>', fluidCSS + '</head>')
       .replace(/<body([^>]*)>/, '<body$1 style="position:relative;overflow-x:hidden;">' + fluidBlobs)
-      + upgradeOverlay;
+      + userWm + upgradeOverlay;
   }
 
   // Build features HTML
@@ -1508,6 +1954,7 @@ function goToDashboard() {
   // Reset all sections and go back to the main dashboard view
   document.getElementById('resultSection').classList.remove('active');
   document.getElementById('suggestionSection').style.display = 'none';
+  document.getElementById('aiWizard').style.display = 'none';
   document.getElementById('describeSection').classList.remove('active');
   document.getElementById('typeSection').style.display = '';
   document.getElementById('historySection').style.display = '';
@@ -1535,6 +1982,16 @@ window.addEventListener('popstate', function(e) {
   var suggestionSection = document.getElementById('suggestionSection');
   if (suggestionSection && suggestionSection.style.display === 'block') {
     editDescription();
+    return;
+  }
+  var aiWizard = document.getElementById('aiWizard');
+  if (aiWizard && aiWizard.style.display === 'block') {
+    if (wizardStep > 1) {
+      wizardBack();
+    } else {
+      aiWizard.style.display = 'none';
+      document.getElementById('describeSection').classList.add('active');
+    }
     return;
   }
   var describeSection = document.getElementById('describeSection');
