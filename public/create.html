@@ -161,6 +161,26 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
 .wiz-emoji-style span { font-size:0.72rem;font-weight:600;color:var(--text-muted); }
 .wiz-emoji-style.selected span { color:var(--accent); }
 
+/* Purpose Prompt */
+.purpose-option { display:flex;align-items:center;gap:16px;padding:22px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.25s; }
+.purpose-option:hover { border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,212,255,0.1); }
+.purpose-icon { width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0; }
+.purpose-title { font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem; }
+.purpose-desc { color:var(--text-muted);font-size:0.8rem;margin-top:2px; }
+
+/* Publish Paywall */
+.pub-tier { display:flex;align-items:center;gap:16px;padding:22px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);text-decoration:none;color:var(--text);transition:all 0.25s;position:relative; }
+.pub-tier:hover { border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,212,255,0.1); }
+.pub-tier-icon { width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0; }
+.pub-tier-price { font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.4rem;text-align:right;flex-shrink:0; }
+.pub-assist-opt { display:flex;align-items:center;gap:14px;padding:18px;border-radius:12px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.25s; }
+.pub-assist-opt:hover { border-color:var(--accent);background:rgba(0,212,255,0.04); }
+
+/* Backend Picker */
+.backend-option { display:flex;align-items:center;gap:14px;padding:18px;border-radius:12px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.25s; }
+.backend-option:hover { border-color:var(--accent); }
+.backend-option.selected { border-color:var(--accent);background:rgba(0,212,255,0.06);box-shadow:0 0 20px rgba(0,212,255,0.08); }
+
 /* Responsive */
 @media (max-width: 768px) {
   .project-grid { grid-template-columns: repeat(2, 1fr); }
@@ -240,10 +260,10 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
         <h3>Dashboard</h3>
         <p>Analytics &amp; data panels</p>
       </div>
-      <div class="project-card" onclick="selectType(this, 'social')" data-type="social">
-        <span class="project-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="url(#ps1)" stroke-width="1.5"/><circle cx="12" cy="12" r="4.5" stroke="url(#ps1)" stroke-width="1.3"/><circle cx="18" cy="6" r="1.5" fill="url(#ps1)"/><defs><linearGradient id="ps1" x1="3" y1="3" x2="21" y2="21"><stop stop-color="#EC4899"/><stop offset="0.5" stop-color="#A855F7"/><stop offset="1" stop-color="#6366F1"/></linearGradient></defs></svg></span>
-        <h3>Social Content</h3>
-        <p>Posts, stories, carousels</p>
+      <div class="project-card" onclick="selectType(this, 'personal')" data-type="personal">
+        <span class="project-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12z" stroke="url(#pp1)" stroke-width="1.5"/><path d="M20 21c0-3.3-3.6-6-8-6s-8 2.7-8 6" stroke="url(#pp1)" stroke-width="1.5" stroke-linecap="round"/><defs><linearGradient id="pp1" x1="4" y1="3" x2="20" y2="21"><stop stop-color="#A855F7"/><stop offset="1" stop-color="#EC4899"/></linearGradient></defs></svg></span>
+        <h3>Personal Use</h3>
+        <p>Live site with storage</p>
       </div>
       <div class="project-card locked" onclick="showProNeeded('ecommerce')">
         <span class="project-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M3 3h2l3 12h10l2-7H8" stroke="url(#pe1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="19" r="1.5" fill="url(#pe1)"/><circle cx="17" cy="19" r="1.5" fill="url(#pe1)"/><defs><linearGradient id="pe1" x1="3" y1="3" x2="21" y2="19"><stop stop-color="#A1A1AA"/><stop offset="1" stop-color="#71717A"/></linearGradient></defs></svg></span>
@@ -445,6 +465,40 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
               <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#FF9ECD,#B8A9E8);display:flex;align-items:center;justify-content:center;"><span style="font-size:0.9rem;">&#127808;</span></div>
               <span>Kawaii</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backend Storage Picker (visible for personal use / website / app) -->
+      <div id="wizBackendPicker" style="display:none;margin-top:20px;padding-top:18px;border-top:1px solid var(--border);">
+        <div style="text-align:center;margin-bottom:16px;">
+          <p style="font-size:0.95rem;font-weight:600;color:var(--text);margin:0 0 4px;">Choose your backend storage</p>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0;">Where should your app's data be stored?</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="wizBackendOptions">
+          <div class="backend-option" onclick="selectBackend(this,'firebase')" data-backend="firebase">
+            <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#FFCA28,#FF6F00);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">&#128293;</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:0.9rem;">Firebase</div>
+              <div style="color:var(--text-muted);font-size:0.75rem;">Google's real-time database with auth &amp; hosting — generous free tier</div>
+            </div>
+            <div class="wiz-check" style="display:none;width:22px;height:22px;border-radius:50%;background:var(--accent);align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#09090B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="backend-option" onclick="selectBackend(this,'supabase')" data-backend="supabase">
+            <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#3ECF8E,#1C8656);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:0.9rem;">Supabase</div>
+              <div style="color:var(--text-muted);font-size:0.75rem;">Open-source Postgres database with auth &amp; storage — SQL-based</div>
+            </div>
+            <div class="wiz-check" style="display:none;width:22px;height:22px;border-radius:50%;background:var(--accent);align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#09090B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="backend-option selected" onclick="selectBackend(this,'localstorage')" data-backend="localstorage">
+            <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#6366F1,#A855F7);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3" stroke="#fff" stroke-width="1.5"/><path d="M4 9h16" stroke="#fff" stroke-width="1.2"/><circle cx="7" cy="6.5" r="0.8" fill="#fff"/></svg></div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:0.9rem;">Browser Storage</div>
+              <div style="color:var(--text-muted);font-size:0.75rem;">Client-side localStorage — no setup needed, perfect for personal use</div>
+            </div>
+            <div class="wiz-check" style="display:flex;width:22px;height:22px;border-radius:50%;background:var(--accent);align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#09090B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           </div>
         </div>
       </div>
@@ -728,6 +782,174 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     </div>
   </div>
 
+  <!-- Purpose Prompt Modal — asks if project is for social media -->
+  <div id="purposeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.92);z-index:400;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:520px;width:100%;position:relative;">
+      <button onclick="closePurposeModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#A855F7,#EC4899);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#127919;</div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:8px;">What's the purpose?</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">Is this project for social media content or personal/business use?</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="purpose-option" onclick="choosePurpose('social_pro')">
+          <div class="purpose-icon" style="background:linear-gradient(135deg,#EC4899,#A855F7);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.3"/><circle cx="18" cy="6" r="1.5" fill="#fff"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div class="purpose-title">Social Media Content</div>
+            <div class="purpose-desc">Auto-generate daily posts with AI — $10/mo subscription</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:1.2rem;">&#8250;</span>
+        </div>
+        <div class="purpose-option" onclick="choosePurpose('social_app')">
+          <div class="purpose-icon" style="background:linear-gradient(135deg,#6366F1,#A855F7);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v12H4z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 20h8M12 16v4" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div class="purpose-title">Social Media App</div>
+            <div class="purpose-desc">Build a social-focused app with scheduling, analytics &amp; post tools</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:1.2rem;">&#8250;</span>
+        </div>
+        <div class="purpose-option" onclick="choosePurpose('personal')">
+          <div class="purpose-icon" style="background:linear-gradient(135deg,#10B981,#00D4FF);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12z" stroke="#fff" stroke-width="1.5"/><path d="M20 21c0-3.3-3.6-6-8-6s-8 2.7-8 6" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div class="purpose-title">Personal / Business Use</div>
+            <div class="purpose-desc">Live website with backend storage — use privately or publish</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:1.2rem;">&#8250;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Publish Paywall Modal — tiered pricing -->
+  <div id="publishPaywall" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.92);z-index:400;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:520px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">
+      <button onclick="document.getElementById('publishPaywall').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#128640;</div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:8px;">Publish Your Project</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">Choose how you want to share your project with the world.</p>
+      </div>
+
+      <!-- Web Publish — $5 -->
+      <a id="webPublishLink" href="#" target="_blank" rel="noopener" class="pub-tier" style="margin-bottom:12px;">
+        <div class="pub-tier-icon" style="background:linear-gradient(135deg,#00D4FF,#6366F1);">&#127760;</div>
+        <div style="flex:1;">
+          <div class="purpose-title">Publish to Web</div>
+          <div class="purpose-desc">Get a live shareable link — hosted &amp; always online</div>
+        </div>
+        <div>
+          <div class="pub-tier-price" style="color:var(--accent);">$5</div>
+          <div style="color:var(--text-muted);font-size:0.65rem;text-align:right;">one-time</div>
+        </div>
+        <div style="position:absolute;top:-8px;right:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--base);padding:2px 12px;border-radius:50px;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Popular</div>
+      </a>
+
+      <!-- App Store Publish — $15 -->
+      <a id="appPublishLink" href="#" target="_blank" rel="noopener" class="pub-tier" style="margin-bottom:16px;">
+        <div class="pub-tier-icon" style="background:linear-gradient(135deg,#A855F7,#EC4899);">&#128241;</div>
+        <div style="flex:1;">
+          <div class="purpose-title">Publish to App Stores</div>
+          <div class="purpose-desc">Apple App Store &amp; Google Play — reach millions</div>
+        </div>
+        <div>
+          <div class="pub-tier-price" style="color:#A855F7;">$15</div>
+          <div style="color:var(--text-muted);font-size:0.65rem;text-align:right;">one-time</div>
+        </div>
+      </a>
+
+      <!-- What you get -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 22px;margin-bottom:16px;">
+        <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Included with publish</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Shareable live link</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; No watermark</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Custom domain ready</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; AI publish assistant</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Step-by-step guide</div>
+          <div style="font-size:0.8rem;color:var(--text);">&#10003; Download project files</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding-top:4px;border-top:1px solid var(--border);">
+        <p style="color:var(--text-muted);font-size:0.78rem;margin-top:12px;">Unpublished projects remain private — link sharing requires a publish purchase.</p>
+        <p style="color:#52525B;font-size:0.7rem;margin-top:6px;">Pay with Card, Apple Pay, Google Pay, or PayPal.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Publish Help Modal — AI Agent or PDF instructions -->
+  <div id="publishHelpModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.92);z-index:400;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:520px;width:100%;position:relative;">
+      <button onclick="document.getElementById('publishHelpModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#10B981,#00D4FF);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#129302;</div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:8px;">Need help publishing?</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">Choose how you'd like to be guided through the publishing process.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="pub-assist-opt" onclick="startPublishAgent()">
+          <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#129302;</div>
+          <div style="flex:1;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;">AI Publishing Agent</div>
+            <div style="color:var(--text-muted);font-size:0.8rem;margin-top:2px;">Live step-by-step walkthrough with an AI assistant</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:1.2rem;">&#8250;</span>
+        </div>
+        <div class="pub-assist-opt" onclick="sendPublishPDF()">
+          <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#A855F7,#EC4899);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#128231;</div>
+          <div style="flex:1;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;">Email PDF Guide</div>
+            <div style="color:var(--text-muted);font-size:0.8rem;margin-top:2px;">Get detailed instructions with screenshots sent to your email</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:1.2rem;">&#8250;</span>
+        </div>
+        <div class="pub-assist-opt" onclick="document.getElementById('publishHelpModal').style.display='none'">
+          <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#10003;</div>
+          <div style="flex:1;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;">I'll do it myself</div>
+            <div style="color:var(--text-muted);font-size:0.8rem;margin-top:2px;">Skip — I know how to publish</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:1.2rem;">&#8250;</span>
+        </div>
+      </div>
+      <!-- Next steps -->
+      <div style="margin-top:20px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;">
+        <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Next steps after publishing</div>
+        <div style="font-size:0.82rem;color:var(--text);line-height:1.7;">
+          1. Share your link or submit to app stores<br>
+          2. Set up analytics to track visitors<br>
+          3. Connect your custom domain ($0 with Vercel)<br>
+          4. Consider a subscription for ongoing updates
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Publishing Agent Chat -->
+  <div id="publishAgentChat" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.92);z-index:500;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:0;max-width:560px;width:100%;height:80vh;max-height:700px;position:relative;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">&#129302;</div>
+        <div style="flex:1;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;">Buildr AI Publish Agent</div>
+          <div style="color:var(--accent3);font-size:0.75rem;">Online</div>
+        </div>
+        <button onclick="document.getElementById('publishAgentChat').style.display='none'" style="background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>
+      </div>
+      <div id="agentMessages" style="flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:14px;"></div>
+      <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;">
+        <input id="agentInput" type="text" placeholder="Ask about publishing..." style="flex:1;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.9rem;outline:none;" onkeydown="if(event.key==='Enter')sendAgentMsg()">
+        <button onclick="sendAgentMsg()" style="padding:12px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--base);font-weight:700;cursor:pointer;font-size:0.9rem;">Send</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Upgrade Prompt Modal -->
   <div id="upgradeModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.9);z-index:400;align-items:center;justify-content:center;padding:24px;">
     <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:480px;width:100%;position:relative;">
@@ -869,6 +1091,37 @@ var projectLimit = planLimits[userPlan] || 3;
     projectLimit = planLimits[userPlan];
   }
 
+  // Check for publish activation from Stripe redirect
+  if (params.get('web_publish') === 'activated') {
+    var pid = localStorage.getItem('buildr_pending_publish_project');
+    if (pid) {
+      var pubData = JSON.parse(localStorage.getItem('buildr_publish_status') || '{}');
+      if (!pubData[pid]) pubData[pid] = { web: false, app: false };
+      pubData[pid].web = true;
+      localStorage.setItem('buildr_publish_status', JSON.stringify(pubData));
+      localStorage.removeItem('buildr_pending_publish_project');
+    }
+    // Clean URL
+    window.history.replaceState({}, '', window.location.pathname);
+    setTimeout(function() {
+      document.getElementById('publishHelpModal').style.display = 'flex';
+    }, 500);
+  }
+  if (params.get('app_publish') === 'activated') {
+    var pid2 = localStorage.getItem('buildr_pending_publish_project');
+    if (pid2) {
+      var pubData2 = JSON.parse(localStorage.getItem('buildr_publish_status') || '{}');
+      if (!pubData2[pid2]) pubData2[pid2] = { web: false, app: false };
+      pubData2[pid2].app = true;
+      localStorage.setItem('buildr_publish_status', JSON.stringify(pubData2));
+      localStorage.removeItem('buildr_pending_publish_project');
+    }
+    window.history.replaceState({}, '', window.location.pathname);
+    setTimeout(function() {
+      document.getElementById('publishHelpModal').style.display = 'flex';
+    }, 500);
+  }
+
   document.getElementById('projectsUsed').textContent = projectsUsed;
 
   // Update plan badge
@@ -913,20 +1166,78 @@ var projectLimit = planLimits[userPlan] || 3;
   renderHistory();
 })();
 
+var projectPurpose = ''; // 'personal', 'social_pro', 'social_app'
+var selectedBackend = 'localstorage'; // 'firebase', 'supabase', 'localstorage'
+
 function selectType(card, type) {
   if (card.classList.contains('locked')) return;
-  // Deselect all
   document.querySelectorAll('.project-card').forEach(function(c) { c.classList.remove('selected'); });
   card.classList.add('selected');
   selectedType = type;
 
-  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content' };
+  // If personal or any type that could be social, show purpose prompt
+  if (type === 'personal') {
+    document.getElementById('purposeModal').style.display = 'flex';
+    return;
+  }
+
+  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', personal: 'personal project', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
   document.getElementById('projectTypeLabel').textContent = labels[type] || 'project';
   document.getElementById('buildTypeLabel').textContent = labels[type] || 'Project';
   document.getElementById('describeSection').classList.add('active');
   document.getElementById('describeSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
   history.pushState({ page: 'describe' }, '');
   updateBuildBtn();
+}
+
+function closePurposeModal() {
+  document.getElementById('purposeModal').style.display = 'none';
+}
+
+function choosePurpose(purpose) {
+  projectPurpose = purpose;
+  document.getElementById('purposeModal').style.display = 'none';
+
+  if (purpose === 'social_pro') {
+    // Show Social Content Pro modal ($10/mo subscription)
+    document.getElementById('socialProModal').style.display = 'flex';
+    return;
+  }
+
+  if (purpose === 'social_app') {
+    // Build a social-focused app — set type to app with social features pre-selected
+    selectedType = 'app';
+    var labels = { app: 'social media app' };
+    document.getElementById('projectTypeLabel').textContent = 'social media app';
+    document.getElementById('buildTypeLabel').textContent = 'Social Media App';
+    document.getElementById('describeSection').classList.add('active');
+    document.getElementById('describeSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    history.pushState({ page: 'describe' }, '');
+    updateBuildBtn();
+    return;
+  }
+
+  // Personal use — live website with backend storage
+  selectedType = 'personal';
+  document.getElementById('projectTypeLabel').textContent = 'personal project';
+  document.getElementById('buildTypeLabel').textContent = 'Personal Project';
+  document.getElementById('describeSection').classList.add('active');
+  document.getElementById('describeSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  history.pushState({ page: 'describe' }, '');
+  updateBuildBtn();
+}
+
+function selectBackend(el, backend) {
+  document.querySelectorAll('.backend-option').forEach(function(o) {
+    o.classList.remove('selected');
+    var chk = o.querySelector('.wiz-check');
+    if (chk) chk.style.display = 'none';
+  });
+  el.classList.add('selected');
+  var chk = el.querySelector('.wiz-check');
+  if (chk) chk.style.display = 'flex';
+  selectedBackend = backend;
+  wizardData.backend = backend;
 }
 
 function showProNeeded(type) {
@@ -953,7 +1264,7 @@ function updateBuildBtn() {
 
 // ── AI Wizard ──
 var wizardStep = 1;
-var wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right' };
+var wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right', backend: 'localstorage' };
 
 function openAIWizard() {
   if (projectsUsed >= projectLimit) { showLimitReached(); return; }
@@ -962,10 +1273,10 @@ function openAIWizard() {
 
   // Reset wizard state
   wizardStep = 1;
-  wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right', socialTopic: '', socialPlatforms: [], socialCalendar: [], socialSmartDetect: false, appFeatures: [], appCustomFeats: '', appEmojiStyle: '3d_fluid' };
+  wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right', socialTopic: '', socialPlatforms: [], socialCalendar: [], socialSmartDetect: false, appFeatures: [], appCustomFeats: '', appEmojiStyle: '3d_fluid', backend: 'localstorage' };
 
   // Update type labels in wizard
-  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content' };
+  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', personal: 'personal project', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
   var typeLabel = labels[selectedType] || 'project';
   document.querySelectorAll('.wiz-type-label').forEach(function(el) { el.textContent = typeLabel; });
 
@@ -980,9 +1291,9 @@ function openAIWizard() {
   uploadPreview.innerHTML = '';
   uploadPreview.style.display = 'none';
 
-  // Show/hide social strategy section
+  // Show/hide social strategy section (only for social_app purpose)
   var socialStrategy = document.getElementById('wizSocialStrategy');
-  if (selectedType === 'social') {
+  if (projectPurpose === 'social_app') {
     socialStrategy.style.display = 'block';
     document.getElementById('wizSocialTopic').value = '';
     document.querySelectorAll('#wizPlatformPicks input').forEach(function(cb) { cb.checked = false; });
@@ -999,7 +1310,6 @@ function openAIWizard() {
   var appFeatures = document.getElementById('wizAppFeatures');
   if (selectedType === 'app') {
     appFeatures.style.display = 'block';
-    // Reset app fields
     document.querySelectorAll('.wiz-app-feat').forEach(function(f) { f.classList.remove('active'); });
     document.getElementById('wizCustomAppFeats').value = '';
     wizardData.appFeatures = [];
@@ -1007,8 +1317,36 @@ function openAIWizard() {
     wizardData.appEmojiStyle = '3d_fluid';
     document.querySelectorAll('.wiz-emoji-style').forEach(function(e) { e.classList.remove('selected'); });
     document.querySelector('.wiz-emoji-style[data-style="3d_fluid"]').classList.add('selected');
+    // Pre-select social features if coming from social_app purpose
+    if (projectPurpose === 'social_app') {
+      ['social_sharing','analytics','push_notifications','camera_photo'].forEach(function(feat) {
+        var el = document.querySelector('.wiz-app-feat[data-feat="'+feat+'"]');
+        if (el) { el.classList.add('active'); wizardData.appFeatures.push(feat); }
+      });
+    }
   } else {
     appFeatures.style.display = 'none';
+  }
+
+  // Show/hide backend storage picker
+  var backendPicker = document.getElementById('wizBackendPicker');
+  if (selectedType === 'personal' || selectedType === 'website' || selectedType === 'app') {
+    backendPicker.style.display = 'block';
+    selectedBackend = 'localstorage';
+    wizardData.backend = 'localstorage';
+    document.querySelectorAll('.backend-option').forEach(function(o) {
+      o.classList.remove('selected');
+      var chk = o.querySelector('.wiz-check');
+      if (chk) chk.style.display = 'none';
+    });
+    var defaultBackend = document.querySelector('.backend-option[data-backend="localstorage"]');
+    if (defaultBackend) {
+      defaultBackend.classList.add('selected');
+      var chk = defaultBackend.querySelector('.wiz-check');
+      if (chk) chk.style.display = 'flex';
+    }
+  } else {
+    backendPicker.style.display = 'none';
   }
 
   // Show step 1, hide others
@@ -1126,7 +1464,7 @@ function updateWizNav() {
 
   // Update button text for last step
   if (wizardStep === 5) {
-    nextBtn.innerHTML = '&#9889; Build My ' + (selectedType === 'website' ? 'Website' : selectedType === 'app' ? 'App' : selectedType === 'dashboard' ? 'Dashboard' : selectedType === 'social' ? 'Content' : 'Project');
+    nextBtn.innerHTML = '&#9889; Build My ' + (selectedType === 'website' ? 'Website' : selectedType === 'app' ? 'App' : selectedType === 'dashboard' ? 'Dashboard' : selectedType === 'personal' ? 'Project' : 'Project');
   } else {
     nextBtn.innerHTML = 'Next &#8594;';
   }
@@ -1192,8 +1530,17 @@ function buildWizReview() {
     html += '</div>';
   }
 
+  // Backend storage summary
+  if (wizardData.backend && (selectedType === 'personal' || selectedType === 'website' || selectedType === 'app')) {
+    var backendLabels = { firebase: 'Firebase (Google)', supabase: 'Supabase (Postgres)', localstorage: 'Browser Storage (Local)' };
+    html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);">';
+    html += '<span style="font-size:1.1rem;">&#128451;</span>';
+    html += '<div style="flex:1;"><span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Backend Storage</span>';
+    html += '<p style="margin:2px 0 0;font-size:0.95rem;color:var(--text);font-weight:500;">' + (backendLabels[wizardData.backend] || wizardData.backend) + '</p></div></div>';
+  }
+
   // Social content strategy summary
-  if (selectedType === 'social') {
+  if (projectPurpose === 'social_app') {
     collectSocialData();
     html += '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">';
     html += '<span style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#EC4899;font-weight:600;">Daily Content Strategy</span>';
@@ -1346,8 +1693,9 @@ function startBuilding() {
   if (projectsUsed >= projectLimit) { showLimitReached(); return; }
 
   // Collect type-specific data
-  if (selectedType === 'social') { collectSocialData(); }
+  if (projectPurpose === 'social_app') { collectSocialData(); }
   if (selectedType === 'app') { collectAppData(); }
+  wizardData.backend = selectedBackend;
 
   // Show the suggestion step first
   var desc = document.getElementById('projectDescription').value.trim();
@@ -1356,7 +1704,7 @@ function startBuilding() {
   var ai = analyzeDescription(dl, desc, titleWords);
 
   // Build suggestion content
-  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content' };
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', personal: 'Personal Project', social: 'Social Content', ecommerce: 'E-Commerce', saas: 'SaaS' };
   var typeLabel = labels[selectedType] || 'Project';
 
   var html = '';
@@ -1469,7 +1817,7 @@ function confirmBuild() {
   document.getElementById('suggestionSection').style.display = 'none';
 
   var overlay = document.getElementById('buildingOverlay');
-  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content' };
+  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', personal: 'personal project', social: 'social content', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
   document.getElementById('buildingType').textContent = labels[selectedType] || 'project';
   overlay.classList.add('active');
 
@@ -1509,7 +1857,7 @@ function showResult() {
   }
 
   var desc = document.getElementById('projectDescription').value.trim();
-  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content', ecommerce: 'E-Commerce Store', saas: 'SaaS Platform' };
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', personal: 'Personal Project', social: 'Social Content', ecommerce: 'E-Commerce Store', saas: 'SaaS Platform' };
 
   if (editingProjectId) {
     // Update existing project
@@ -1561,17 +1909,17 @@ function showResult() {
     document.getElementById('upgradeBanner').style.display = 'flex';
   }
 
-  // Show social-specific share buttons & upsell
-  var isSocial = selectedType === 'social';
-  document.getElementById('socialShareBtns').style.display = isSocial ? 'block' : 'none';
-  document.getElementById('socialProUpsell').style.display = isSocial ? 'block' : 'none';
-  if (isSocial) applySocialProState();
+  // Show social-specific share buttons & upsell only for social_app purpose
+  var isSocialApp = projectPurpose === 'social_app';
+  document.getElementById('socialShareBtns').style.display = isSocialApp ? 'block' : 'none';
+  document.getElementById('socialProUpsell').style.display = isSocialApp ? 'block' : 'none';
+  if (isSocialApp) applySocialProState();
 }
 
 function previewProject() {
   var desc = document.getElementById('projectDescription').value.trim();
   var type = selectedType;
-  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content' };
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', personal: 'Personal Project', social: 'Social Content', ecommerce: 'E-Commerce', saas: 'SaaS' };
   var typeLabel = labels[type] || 'Project';
 
   // Extract keywords from description for personalization
@@ -1814,7 +2162,7 @@ function generatePreview(type, desc, title) {
   // Build sidebar HTML
   var sideHtml = ''; ai.sidebarItems.forEach(function(s,i){ sideHtml += '<div class="nav-item' + (i===0?' active':'') + '">' + s + '</div>'; });
 
-  if (type === 'website') {
+  if (type === 'website' || type === 'personal') {
     return applyStyle(head + ' nav{padding:16px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #27272A;background:rgba(9,9,11,0.9);backdrop-filter:blur(20px);position:sticky;top:0;z-index:10;} .logo{font-family:Space Grotesk,sans-serif;font-weight:700;font-size:1.3rem;} .logo span{color:#00D4FF;} .nav-links{display:flex;gap:24px;list-style:none;} .nav-links a{color:#A1A1AA;font-size:0.9rem;} .hero{padding:100px 0 80px;text-align:center;} .hero h1{font-family:Space Grotesk,sans-serif;font-size:3rem;font-weight:800;margin-bottom:20px;line-height:1.1;} .hero h1 span{background:linear-gradient(135deg,#00D4FF,#6366F1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;} .hero p{color:#A1A1AA;font-size:1.15rem;max-width:600px;margin:0 auto 32px;} .btn{display:inline-block;padding:14px 32px;border-radius:10px;font-weight:600;} .btn-primary{background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;} .btn-outline{border:1px solid #27272A;color:#FAFAFA;margin-left:12px;} .features{padding:80px 0;} .features h2{font-family:Space Grotesk,sans-serif;font-size:2rem;text-align:center;margin-bottom:48px;} .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;} .feature-card{background:#1E1E22;border:1px solid #27272A;border-radius:16px;padding:32px;} .feature-icon{font-size:2rem;margin-bottom:16px;} .feature-card h3{font-family:Space Grotesk,sans-serif;margin-bottom:8px;} .feature-card p{color:#A1A1AA;font-size:0.9rem;} .cta{padding:80px 0;text-align:center;} .cta h2{font-family:Space Grotesk,sans-serif;font-size:2rem;margin-bottom:16px;} .cta p{color:#A1A1AA;margin-bottom:32px;} footer{padding:40px 0;border-top:1px solid #27272A;text-align:center;color:#A1A1AA;font-size:0.85rem;} @media(max-width:768px){.hero h1{font-size:2rem;}.feature-grid{grid-template-columns:1fr;}.nav-links{display:none;}}</style></head><body><nav><div class="logo"><span>' + ai.icon + '</span> ' + ai.projectName + '</div><ul class="nav-links">' + navHtml + '</ul></nav><div class="container"><section class="hero"><h1>Welcome to <span>' + ai.projectName + '</span></h1><p>' + ai.heroSub + '</p><a class="btn btn-primary" href="#">Get Started</a><a class="btn btn-outline" href="#">Learn More</a></section><section class="features"><h2>Features</h2><div class="feature-grid">' + featuresHtml + '</div></section><section class="cta"><h2>Ready to get started?</h2><p>Join thousands of happy users today.</p><a class="btn btn-primary" href="#">Start Now</a></section><footer><p>&copy; 2026 ' + ai.projectName + '. All rights reserved.</p></footer></div>' + wm + '</body></html>');
 
   } else if (type === 'app') {
@@ -2563,7 +2911,7 @@ function editProject(id) {
   });
 
   // Fill in description
-  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
+  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', personal: 'personal project', social: 'social content', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
   document.getElementById('projectTypeLabel').textContent = labels[proj.type] || 'project';
   document.getElementById('buildTypeLabel').textContent = labels[proj.type] || 'Project';
   document.getElementById('projectDescription').value = proj.description;
@@ -2592,27 +2940,29 @@ function deleteProject(id) {
 // ── Use Build (interactive mode) ──
 function useBuild() {
   if (userPlan === 'pro' || userPlan === 'business') {
-    // Pro/Business: open the full interactive build in a new tab
-    var desc = document.getElementById('projectDescription').value.trim();
-    var type = selectedType;
-    var titleWords = desc.split(/[.,!?\n]/)[0].substring(0, 60);
-    var previewHTML = generatePreview(type, desc, titleWords);
-    var blob = new Blob([previewHTML], { type: 'text/html' });
-    var url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
-    var toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#10B981,#00D4FF);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;box-shadow:0 8px 40px rgba(16,185,129,0.4);';
-    toast.textContent = 'Your build is live! Use it in the new tab.';
-    document.body.appendChild(toast);
-    setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 3000);
+    openLiveBuild();
   } else {
-    // Free users: show appropriate paywall modal
-    if (selectedType === 'social' && !socialProActive) {
-      document.getElementById('socialProModal').style.display = 'flex';
-    } else {
-      document.getElementById('useBuildModal').style.display = 'flex';
-    }
+    document.getElementById('useBuildModal').style.display = 'flex';
   }
+}
+
+function openLiveBuild() {
+  var desc = document.getElementById('projectDescription').value.trim();
+  var type = selectedType;
+  var titleWords = desc.split(/[.,!?\n]/)[0].substring(0, 60);
+  var previewHTML = generatePreview(type, desc, titleWords);
+  var blob = new Blob([previewHTML], { type: 'text/html' });
+  var url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  showToast('Your build is live! Use it in the new tab.');
+}
+
+function showToast(msg) {
+  var toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#10B981,#00D4FF);color:#09090B;padding:16px 32px;border-radius:50px;font-weight:700;font-size:1rem;box-shadow:0 8px 40px rgba(16,185,129,0.4);';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function() { toast.style.transition='opacity 0.5s';toast.style.opacity='0';setTimeout(function(){toast.remove();},500); }, 3000);
 }
 
 // Close Use Build modal on backdrop click
@@ -2621,18 +2971,170 @@ document.addEventListener('click', function(e) {
   if (e.target === modal) { modal.style.display = 'none'; }
 });
 
-// ── Publish & Watermark Upgrade Prompts ──
+// ── Publish Paywall System ──
+// Track publish status per project
+function getPublishStatus(projectId) {
+  var data = JSON.parse(localStorage.getItem('buildr_publish_status') || '{}');
+  return data[projectId] || { web: false, app: false };
+}
+function setPublishStatus(projectId, type) {
+  var data = JSON.parse(localStorage.getItem('buildr_publish_status') || '{}');
+  if (!data[projectId]) data[projectId] = { web: false, app: false };
+  data[projectId][type] = true;
+  localStorage.setItem('buildr_publish_status', JSON.stringify(data));
+}
+
 function publishProject() {
-  if (userPlan === 'pro' || userPlan === 'business') {
-    // Pro/Business users can publish
-    showPublishFlow();
-  } else {
-    // Free users see upgrade prompt
-    document.getElementById('upgradeIcon').innerHTML = '&#128640;';
-    document.getElementById('upgradeTitle').textContent = 'Upgrade to Publish';
-    document.getElementById('upgradeDesc').textContent = 'Publishing to the web, App Store, and Google Play is available on Pro and Business plans. Upgrade now to share your project with the world.';
-    document.getElementById('upgradeModal').style.display = 'flex';
+  // Check URL params for publish activation
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('web_publish') === 'activated') {
+    var pid = localStorage.getItem('buildr_pending_publish_project');
+    if (pid) { setPublishStatus(pid, 'web'); localStorage.removeItem('buildr_pending_publish_project'); }
+    showToast('Web publish activated! Your project is now live.');
+    showPublishHelp('web');
+    return;
   }
+  if (params.get('app_publish') === 'activated') {
+    var pid2 = localStorage.getItem('buildr_pending_publish_project');
+    if (pid2) { setPublishStatus(pid2, 'app'); localStorage.removeItem('buildr_pending_publish_project'); }
+    showToast('App Store publish activated!');
+    showPublishHelp('app');
+    return;
+  }
+
+  // Pro/Business users can publish freely
+  if (userPlan === 'pro' || userPlan === 'business') {
+    showPublishHelp('all');
+    return;
+  }
+
+  // Find current project
+  var currentProjId = '';
+  if (savedProjects.length > 0) currentProjId = savedProjects[0].id;
+  var pubStatus = getPublishStatus(currentProjId);
+
+  // If already published, go straight to help
+  if (pubStatus.web || pubStatus.app) {
+    showPublishHelp(pubStatus.web ? 'web' : 'app');
+    return;
+  }
+
+  // Store pending project for post-payment activation
+  localStorage.setItem('buildr_pending_publish_project', currentProjId);
+
+  // Show publish paywall
+  document.getElementById('publishPaywall').style.display = 'flex';
+}
+
+function showPublishHelp(publishType) {
+  document.getElementById('publishPaywall').style.display = 'none';
+  document.getElementById('publishHelpModal').style.display = 'flex';
+}
+
+// AI Publishing Agent
+function startPublishAgent() {
+  document.getElementById('publishHelpModal').style.display = 'none';
+  document.getElementById('publishAgentChat').style.display = 'flex';
+  var msgs = document.getElementById('agentMessages');
+  msgs.innerHTML = '';
+
+  var type = selectedType;
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', personal: 'Personal Project' };
+  var typeLabel = labels[type] || 'Project';
+
+  addAgentMsg('bot', 'Hi! I\'m your Buildr AI Publishing Agent. I\'ll walk you through publishing your ' + typeLabel.toLowerCase() + ' step by step.');
+
+  setTimeout(function() {
+    if (type === 'app') {
+      addAgentMsg('bot', 'For app store publishing, you\'ll need:\\n\\n1. Apple Developer Account ($99/year) for iOS\\n2. Google Play Console ($25 one-time) for Android\\n\\nWhich platform would you like to start with?');
+    } else {
+      addAgentMsg('bot', 'I recommend deploying to Vercel — it\'s free and gives you a live URL instantly.\\n\\n1. Download your project files\\n2. Push to GitHub\\n3. Import into Vercel\\n\\nWant me to walk you through each step?');
+    }
+  }, 1200);
+}
+
+function addAgentMsg(sender, text) {
+  var msgs = document.getElementById('agentMessages');
+  var div = document.createElement('div');
+  div.style.cssText = sender === 'bot'
+    ? 'background:var(--surface);border:1px solid var(--border);border-radius:14px 14px 14px 4px;padding:14px 18px;max-width:85%;font-size:0.9rem;line-height:1.6;color:var(--text);white-space:pre-wrap;'
+    : 'background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--base);border-radius:14px 14px 4px 14px;padding:14px 18px;max-width:85%;font-size:0.9rem;line-height:1.6;align-self:flex-end;font-weight:500;';
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function sendAgentMsg() {
+  var input = document.getElementById('agentInput');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addAgentMsg('user', text);
+
+  // Simple AI responses based on keywords
+  setTimeout(function() {
+    var lower = text.toLowerCase();
+    if (lower.includes('vercel') || lower.includes('deploy') || lower.includes('web')) {
+      addAgentMsg('bot', 'Here\'s how to deploy on Vercel:\\n\\n1. Click "Download Project Files" in the publish menu\\n2. Create a free account at vercel.com\\n3. Push your files to a GitHub repository\\n4. In Vercel, click "New Project" and import from GitHub\\n5. Vercel will auto-detect and deploy — you\'ll get a live URL!\\n\\nWant help with any of these steps?');
+    } else if (lower.includes('apple') || lower.includes('ios') || lower.includes('app store')) {
+      addAgentMsg('bot', 'For iOS App Store:\\n\\n1. Enrol at developer.apple.com ($99/year)\\n2. Download your project files and use Capacitor to wrap as a native app\\n3. Open in Xcode, set your signing team\\n4. Archive and upload to App Store Connect\\n5. Fill in metadata, screenshots, and submit for review\\n\\nReview typically takes 24-48 hours.');
+    } else if (lower.includes('google') || lower.includes('android') || lower.includes('play')) {
+      addAgentMsg('bot', 'For Google Play Store:\\n\\n1. Sign up at play.google.com/console ($25 one-time)\\n2. Download your project and use Capacitor to generate an AAB file\\n3. Create a new app in Play Console\\n4. Upload your AAB under "Production"\\n5. Fill in the store listing and submit for review\\n\\nGoogle review usually takes a few hours to a few days.');
+    } else if (lower.includes('domain') || lower.includes('custom')) {
+      addAgentMsg('bot', 'To add a custom domain:\\n\\n1. Buy a domain from Namecheap, Google Domains, or GoDaddy\\n2. In Vercel, go to your project settings > Domains\\n3. Add your domain and follow the DNS instructions\\n4. It\'s free on Vercel — no extra charge!');
+    } else if (lower.includes('pdf') || lower.includes('email') || lower.includes('guide')) {
+      addAgentMsg('bot', 'I can send you a detailed PDF guide instead! Close this chat and select "Email PDF Guide" from the help menu. We\'ll send comprehensive instructions with screenshots to your email.');
+    } else {
+      addAgentMsg('bot', 'I can help with that! For your project type, I\'d recommend starting with web deployment via Vercel (free), then adding a custom domain. Would you like step-by-step instructions for any specific platform?');
+    }
+  }, 800);
+}
+
+// Email PDF Guide
+function sendPublishPDF() {
+  var type = selectedType;
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', personal: 'Personal Project' };
+  var typeLabel = labels[type] || 'Project';
+
+  // Show email confirmation
+  document.getElementById('publishHelpModal').style.display = 'none';
+
+  var emailModal = document.createElement('div');
+  emailModal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.92);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;';
+  emailModal.onclick = function(e) { if(e.target === emailModal) emailModal.remove(); };
+
+  var userEmail = localStorage.getItem('buildr_user_email') || '';
+
+  emailModal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:460px;width:100%;position:relative;text-align:center;">' +
+    '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>' +
+    '<div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#A855F7,#EC4899);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#128231;</div>' +
+    '<h3 style="font-family:Space Grotesk,sans-serif;font-size:1.3rem;margin-bottom:8px;">Send Publishing Guide</h3>' +
+    '<p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:20px;">We\'ll email you a detailed PDF with step-by-step instructions for publishing your ' + typeLabel.toLowerCase() + '.</p>' +
+    '<input id="publishEmailInput" type="email" value="' + userEmail + '" placeholder="your@email.com" style="width:100%;padding:14px 18px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem;outline:none;margin-bottom:12px;text-align:center;" onfocus="this.style.borderColor=\'var(--accent)\'" onblur="this.style.borderColor=\'var(--border)\'">' +
+    '<button onclick="confirmSendPDF(this)" style="width:100%;padding:16px;border:none;border-radius:10px;background:linear-gradient(135deg,#A855F7,#EC4899);color:#fff;font-family:Space Grotesk,sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.2s;">Send PDF Guide</button>' +
+    '<p style="color:#52525B;font-size:0.72rem;margin-top:12px;">Includes: deployment steps, app store submission, custom domain setup, analytics, and subscription management tips.</p>' +
+    '</div>';
+  document.body.appendChild(emailModal);
+}
+
+function confirmSendPDF(btn) {
+  var emailInput = document.getElementById('publishEmailInput');
+  var email = emailInput.value.trim();
+  if (!email || !email.includes('@')) {
+    emailInput.style.borderColor = '#EF4444';
+    return;
+  }
+  localStorage.setItem('buildr_user_email', email);
+  btn.textContent = 'Sent!';
+  btn.style.background = 'linear-gradient(135deg,#10B981,#00D4FF)';
+  btn.disabled = true;
+  showToast('Publishing guide sent to ' + email + '!');
+  setTimeout(function() { btn.closest('div[style*="fixed"]').remove(); }, 1500);
+}
+
+function publishProjectOld() {
+  // Kept for Pro/Business users direct publish flow
+  showPublishFlow();
 }
 
 function removeWatermark() {
@@ -2667,7 +3169,7 @@ function showPublishFlow() {
   publishModal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.9);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;';
   publishModal.onclick = function(e) { if(e.target === publishModal) publishModal.remove(); };
 
-  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content', ecommerce: 'E-Commerce', saas: 'SaaS' };
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', personal: 'Personal Project', social: 'Social Content', ecommerce: 'E-Commerce', saas: 'SaaS' };
   var typeLabel = labels[type] || 'Project';
 
   // Platform configs with real links, instructions, costs
