@@ -3366,6 +3366,296 @@ function applySocialProState() {
   }
 })();
 
+// ══════════════════════════════════════════════
+// ── Claude AI Integration ──
+// ══════════════════════════════════════════════
+
+var AI_API_URL = '/api/ai';
+var aiGeneratedHTML = ''; // Store Claude-generated build
+var useClaudeForBuilds = true; // Feature flag
+
+// ── AI-Powered Project Generation ──
+async function generateWithClaude(type, description) {
+  try {
+    var themeLabel = wizardData.theme || 'default';
+    var resp = await fetch(AI_API_URL + '?action=generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: type,
+        description: description,
+        theme: themeLabel,
+        wizardData: wizardData
+      })
+    });
+    if (!resp.ok) {
+      console.warn('Claude API error, falling back to template:', resp.status);
+      return null;
+    }
+    var data = await resp.json();
+    if (data.content) {
+      // Clean up — ensure it starts with <!DOCTYPE or <html
+      var html = data.content.trim();
+      if (html.indexOf('```') === 0) {
+        html = html.replace(/^```html?\n?/, '').replace(/\n?```$/, '');
+      }
+      return html;
+    }
+    return null;
+  } catch (err) {
+    console.warn('Claude API unreachable, falling back to template:', err);
+    return null;
+  }
+}
+
+// Override confirmBuild to use Claude when available
+var _originalConfirmBuild = confirmBuild;
+confirmBuild = async function() {
+  document.getElementById('suggestionSection').style.display = 'none';
+
+  var overlay = document.getElementById('buildingOverlay');
+  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
+  document.getElementById('buildingType').textContent = labels[selectedType] || 'project';
+  overlay.classList.add('active');
+
+  var steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+  var stepIdx = 0;
+  var buildDone = false;
+
+  // Advance steps animation
+  function advanceStep() {
+    if (stepIdx > 0) {
+      document.getElementById(steps[stepIdx - 1]).classList.remove('active');
+      document.getElementById(steps[stepIdx - 1]).classList.add('done');
+      document.getElementById(steps[stepIdx - 1]).querySelector('.step-icon').innerHTML = '\u2713';
+    }
+    if (stepIdx < steps.length) {
+      document.getElementById(steps[stepIdx]).classList.add('active');
+      stepIdx++;
+      if (!buildDone || stepIdx < steps.length) {
+        setTimeout(advanceStep, 1800 + Math.random() * 1500);
+      } else {
+        setTimeout(showResult, 800);
+      }
+    } else if (buildDone) {
+      setTimeout(showResult, 800);
+    } else {
+      // Wait for build to finish
+      var waitInterval = setInterval(function() {
+        if (buildDone) {
+          clearInterval(waitInterval);
+          setTimeout(showResult, 800);
+        }
+      }, 500);
+    }
+  }
+  advanceStep();
+
+  // Start AI generation in parallel
+  if (useClaudeForBuilds) {
+    var desc = document.getElementById('projectDescription').value.trim();
+    var result = await generateWithClaude(selectedType, desc);
+    if (result) {
+      aiGeneratedHTML = result;
+    }
+  }
+  buildDone = true;
+};
+
+// Override previewProject to use Claude-generated HTML when available
+var _originalPreviewProject = previewProject;
+previewProject = function() {
+  var desc = document.getElementById('projectDescription').value.trim();
+  var type = selectedType;
+  var titleWords = desc.split(/[.,!?\n]/)[0].substring(0, 60);
+
+  var previewHTML = '';
+  if (aiGeneratedHTML) {
+    previewHTML = aiGeneratedHTML;
+  } else {
+    previewHTML = generatePreview(type, desc, titleWords);
+  }
+
+  document.getElementById('previewOverlay').style.display = 'flex';
+  var frame = document.getElementById('previewFrame');
+  frame.srcdoc = previewHTML;
+};
+
+// Override useBuild (for paid/pro) to use Claude HTML
+var _originalOpenLiveBuild = typeof openLiveBuild === 'function' ? openLiveBuild : null;
+openLiveBuild = function() {
+  var desc = document.getElementById('projectDescription').value.trim();
+  var type = selectedType;
+  var titleWords = desc.split(/[.,!?\n]/)[0].substring(0, 60);
+
+  var html = aiGeneratedHTML || generatePreview(type, desc, titleWords);
+  var blob = new Blob([html], { type: 'text/html' });
+  var url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  showToast('Your build is live! Use it in the new tab.');
+};
+
+
+// ── Floating AI Chat Assistant ──
+(function initChatWidget() {
+  // Create chat bubble
+  var bubble = document.createElement('div');
+  bubble.id = 'aiChatBubble';
+  bubble.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#09090B" stroke-width="2" fill="none"/><path d="M8 10h.01M12 10h.01M16 10h.01" stroke="#09090B" stroke-width="2" stroke-linecap="round"/></svg>';
+  bubble.style.cssText = 'position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#00D4FF,#6366F1);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:300;box-shadow:0 8px 30px rgba(0,212,255,0.4);transition:all 0.3s;';
+  bubble.onmouseover = function() { this.style.transform='scale(1.1)'; };
+  bubble.onmouseout = function() { this.style.transform='scale(1)'; };
+  bubble.onclick = function() { toggleChatWidget(); };
+  document.body.appendChild(bubble);
+
+  // Create chat panel
+  var panel = document.createElement('div');
+  panel.id = 'aiChatPanel';
+  panel.style.cssText = 'position:fixed;bottom:92px;right:24px;width:380px;max-height:500px;background:#1E1E22;border:1px solid #27272A;border-radius:16px;z-index:300;display:none;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);';
+  panel.innerHTML = '<div style="padding:16px 20px;border-bottom:1px solid #27272A;display:flex;align-items:center;gap:10px;">' +
+    '<div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00D4FF,#6366F1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2a4 4 0 014 4v1h2a2 2 0 012 2v2a2 2 0 01-2 2h-1v3a4 4 0 01-4 4h-2a4 4 0 01-4-4v-3H6a2 2 0 01-2-2V9a2 2 0 012-2h2V6a4 4 0 014-4z" stroke="#fff" stroke-width="1.3"/><circle cx="10" cy="10" r="1" fill="#fff"/><circle cx="14" cy="10" r="1" fill="#fff"/></svg></div>' +
+    '<div style="flex:1;"><div style="font-family:Space Grotesk,sans-serif;font-weight:700;font-size:0.95rem;color:#FAFAFA;">Buildr AI Assistant</div><div style="font-size:0.7rem;color:#10B981;">Online</div></div>' +
+    '<button onclick="toggleChatWidget()" style="background:none;border:none;color:#A1A1AA;font-size:1.3rem;cursor:pointer;">&times;</button></div>' +
+    '<div id="chatMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:340px;"></div>' +
+    '<div style="padding:12px 16px;border-top:1px solid #27272A;display:flex;gap:8px;">' +
+    '<input id="chatInput" type="text" placeholder="Ask me anything..." style="flex:1;padding:10px 14px;border-radius:10px;border:1px solid #27272A;background:#18181B;color:#FAFAFA;font-size:0.85rem;outline:none;" onkeydown="if(event.key===\'Enter\')sendChatMsg()">' +
+    '<button onclick="sendChatMsg()" style="padding:10px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;font-weight:700;cursor:pointer;font-size:0.85rem;">Send</button></div>';
+  document.body.appendChild(panel);
+
+  // Add welcome message
+  setTimeout(function() {
+    addChatMessage('bot', 'Hey! I\'m your Buildr AI assistant. Need help choosing a project type, describing your idea, or understanding pricing? Just ask!');
+  }, 100);
+})();
+
+var chatHistory = [];
+
+function toggleChatWidget() {
+  var panel = document.getElementById('aiChatPanel');
+  var isOpen = panel.style.display === 'flex';
+  panel.style.display = isOpen ? 'none' : 'flex';
+}
+
+function addChatMessage(sender, text) {
+  var container = document.getElementById('chatMessages');
+  var div = document.createElement('div');
+  div.style.cssText = sender === 'bot'
+    ? 'background:#18181B;border:1px solid #27272A;border-radius:12px 12px 12px 4px;padding:12px 16px;max-width:85%;font-size:0.85rem;line-height:1.5;color:#FAFAFA;white-space:pre-wrap;'
+    : 'background:linear-gradient(135deg,#00D4FF,#6366F1);color:#09090B;border-radius:12px 12px 4px 12px;padding:12px 16px;max-width:85%;font-size:0.85rem;line-height:1.5;align-self:flex-end;font-weight:500;';
+  div.textContent = text;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+async function sendChatMsg() {
+  var input = document.getElementById('chatInput');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addChatMessage('user', text);
+  chatHistory.push({ role: 'user', content: text });
+
+  // Show typing indicator
+  var typing = document.createElement('div');
+  typing.id = 'chatTyping';
+  typing.style.cssText = 'background:#18181B;border:1px solid #27272A;border-radius:12px 12px 12px 4px;padding:12px 16px;max-width:85%;font-size:0.85rem;color:#A1A1AA;';
+  typing.textContent = 'Thinking...';
+  document.getElementById('chatMessages').appendChild(typing);
+
+  try {
+    var resp = await fetch(AI_API_URL + '?action=chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: text,
+        history: chatHistory.slice(-10) // Last 10 messages for context
+      })
+    });
+    var typingEl = document.getElementById('chatTyping');
+    if (typingEl) typingEl.remove();
+
+    if (resp.ok) {
+      var data = await resp.json();
+      var reply = data.content || 'Sorry, I had trouble understanding that. Could you try again?';
+      addChatMessage('bot', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+    } else {
+      addChatMessage('bot', 'I\'m having a moment — try again in a sec! If it keeps happening, check that your project is deployed with the API key configured.');
+    }
+  } catch (err) {
+    var typingEl2 = document.getElementById('chatTyping');
+    if (typingEl2) typingEl2.remove();
+    addChatMessage('bot', 'Looks like I can\'t reach my brain right now. Make sure the site is deployed to Vercel with the ANTHROPIC_API_KEY environment variable set.');
+  }
+}
+
+
+// ── Live Claude Publish Agent (replace simulated responses) ──
+var publishAgentHistory = [];
+
+// Override the existing sendAgentMsg with Claude-powered version
+sendAgentMsg = async function() {
+  var input = document.getElementById('agentInput');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addAgentMsg('user', text);
+  publishAgentHistory.push({ role: 'user', content: text });
+
+  // Show typing
+  var typing = document.createElement('div');
+  typing.id = 'agentTyping';
+  typing.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:14px 14px 14px 4px;padding:14px 18px;max-width:85%;font-size:0.9rem;color:var(--text-muted);';
+  typing.textContent = 'Thinking...';
+  document.getElementById('agentMessages').appendChild(typing);
+  document.getElementById('agentMessages').scrollTop = document.getElementById('agentMessages').scrollHeight;
+
+  try {
+    var resp = await fetch(AI_API_URL + '?action=publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: text,
+        projectType: selectedType,
+        history: publishAgentHistory.slice(-10)
+      })
+    });
+    var typingEl = document.getElementById('agentTyping');
+    if (typingEl) typingEl.remove();
+
+    if (resp.ok) {
+      var data = await resp.json();
+      var reply = data.content || 'Let me try that again — could you rephrase your question?';
+      addAgentMsg('bot', reply);
+      publishAgentHistory.push({ role: 'assistant', content: reply });
+    } else {
+      addAgentMsg('bot', 'I\'m having trouble connecting right now. In the meantime, you can deploy to Vercel for free at vercel.com — push your project to GitHub first, then import it.');
+    }
+  } catch (err) {
+    var typingEl2 = document.getElementById('agentTyping');
+    if (typingEl2) typingEl2.remove();
+    addAgentMsg('bot', 'Can\'t reach the AI service right now. Make sure the site is deployed with the ANTHROPIC_API_KEY configured in Vercel environment variables.');
+  }
+};
+
+// Override startPublishAgent to use Claude and reset history
+var _origStartPublishAgent = startPublishAgent;
+startPublishAgent = function() {
+  publishAgentHistory = [];
+  document.getElementById('publishHelpModal').style.display = 'none';
+  document.getElementById('publishAgentChat').style.display = 'flex';
+  var msgs = document.getElementById('agentMessages');
+  msgs.innerHTML = '';
+
+  // Send initial greeting via Claude
+  var type = selectedType;
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content' };
+  var typeLabel = labels[type] || 'Project';
+
+  addAgentMsg('bot', 'Hi! I\'m your Buildr AI Publishing Agent. I\'ll help you publish your ' + typeLabel.toLowerCase() + ' step by step. What platform are you targeting — web (Vercel), Apple App Store, or Google Play?');
+  publishAgentHistory.push({ role: 'assistant', content: 'Hi! I\'m your Buildr AI Publishing Agent. I\'ll help you publish your ' + typeLabel.toLowerCase() + ' step by step. What platform are you targeting — web (Vercel), Apple App Store, or Google Play?' });
+};
+
 </script>
 </body>
 </html>
