@@ -4,7 +4,7 @@
   "public": true,
   "rewrites": [
     { "source": "/create", "destination": "/create.html" },
-    { "source": "/((?!create\\.html).*)", "destination": "/index.html" }
+    { "source": "/((?!api|create\\.html).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
