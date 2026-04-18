@@ -3476,9 +3476,12 @@ previewProject = function() {
     previewHTML = generatePreview(type, desc, titleWords);
   }
 
-  document.getElementById('previewOverlay').style.display = 'flex';
-  var frame = document.getElementById('previewFrame');
-  frame.srcdoc = previewHTML;
+  document.getElementById('previewFrame').srcdoc = previewHTML;
+  var labels = { website: 'Website', app: 'Mobile App', dashboard: 'Dashboard', social: 'Social Content', ecommerce: 'E-Commerce', saas: 'SaaS' };
+  document.getElementById('previewTitle').textContent = (labels[type] || 'Project') + ' Preview';
+  document.getElementById('previewModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  history.pushState({ preview: true }, '');
 };
 
 // Override useBuild (for paid/pro) to use Claude HTML
