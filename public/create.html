@@ -6,6 +6,7 @@
 <title>Create New Project — Buildr AI</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6396064829325191" crossorigin="anonymous"></script>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -240,6 +241,17 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
         No projects yet. Create your first one below!
       </div>
     </div>
+  </div>
+
+  <!-- AdSense — Dashboard Banner (hidden for Pro/Business) -->
+  <div id="adBannerDashboard" class="ad-container" style="margin:20px auto;max-width:728px;min-height:90px;text-align:center;overflow:hidden;border-radius:12px;">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-6396064829325191"
+         data-ad-slot="auto"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 
   <!-- Project Type Selection -->
@@ -1140,6 +1152,14 @@ var projectLimit = planLimits[userPlan] || 3;
   var countEl = document.querySelector('.projects-count');
   if (userPlan !== 'starter') {
     countEl.innerHTML = 'Projects created: <strong>' + projectsUsed + '</strong> (unlimited)';
+  }
+
+  // Hide ads for Pro/Business users
+  if (userPlan === 'pro' || userPlan === 'business') {
+    var adContainers = document.querySelectorAll('.ad-container');
+    for (var a = 0; a < adContainers.length; a++) {
+      adContainers[a].style.display = 'none';
+    }
   }
 
   if (userName) {
