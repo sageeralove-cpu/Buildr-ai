@@ -733,6 +733,26 @@ section { position: relative; z-index: 1; }
   justify-content: center;
 }
 
+/* ── AI PDF Maker ── */
+.pdf-maker { padding: 120px 0; background: var(--base); position: relative; overflow: hidden; }
+.pdf-maker::before { content:''; position:absolute; top:-100px; right:-100px; width:400px; height:400px; background:radial-gradient(circle, rgba(99,102,241,0.12), transparent 70%); pointer-events:none; }
+.pdf-maker-grid { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; margin-top:48px; }
+.pdf-preview-stack { position:relative; height:380px; }
+.pdf-page { position:absolute; background:#fff; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,0.4); padding:32px; width:280px; }
+.pdf-page-1 { top:0; left:0; transform:rotate(-3deg); z-index:1; }
+.pdf-page-2 { top:30px; left:60px; transform:rotate(2deg); z-index:2; }
+.pdf-page-3 { top:15px; left:120px; transform:rotate(-1deg); z-index:3; }
+.pdf-page .pdf-line { height:8px; background:#E5E7EB; border-radius:4px; margin-bottom:10px; }
+.pdf-page .pdf-line.short { width:60%; }
+.pdf-page .pdf-line.med { width:85%; }
+.pdf-page .pdf-title-line { height:14px; background:linear-gradient(135deg,#6366F1,#00D4FF); border-radius:4px; margin-bottom:14px; width:70%; }
+.pdf-types { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+.pdf-type-tag { padding:8px 16px; border-radius:50px; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); color:var(--accent2); font-size:0.8rem; font-weight:500; }
+@media (max-width:768px) {
+  .pdf-maker-grid { grid-template-columns:1fr; }
+  .pdf-preview-stack { height:300px; margin:0 auto; max-width:400px; }
+}
+
 /* ── How It Works ── */
 .how-it-works { padding: 120px 0; background: var(--surface); }
 
@@ -1785,6 +1805,66 @@ footer {
       <div class="chat-input">
         <input type="text" placeholder="Ask your AI agent anything...">
         <button>→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI PDF Maker -->
+<section class="pdf-maker" id="pdf-maker">
+  <div class="container">
+    <div class="pdf-maker-grid">
+      <div class="fade-in">
+        <div class="section-badge">✦ New Feature</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:2.8rem;font-weight:700;margin-bottom:16px;letter-spacing:-1px;">Make Any PDF<br>with AI</h2>
+        <p style="color:var(--text-muted);font-size:1.1rem;max-width:480px;line-height:1.7;margin-bottom:24px;">Describe the document you need and AI creates it instantly. Resumes, invoices, proposals, reports, menus, certificates — any PDF, beautifully designed.</p>
+        <div class="pdf-types">
+          <span class="pdf-type-tag">Resumes</span>
+          <span class="pdf-type-tag">Invoices</span>
+          <span class="pdf-type-tag">Proposals</span>
+          <span class="pdf-type-tag">Reports</span>
+          <span class="pdf-type-tag">Menus</span>
+          <span class="pdf-type-tag">Certificates</span>
+          <span class="pdf-type-tag">Contracts</span>
+          <span class="pdf-type-tag">Checklists</span>
+        </div>
+        <a href="/create?type=pdf" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;margin-top:32px;">Create a PDF Free <span style="font-size:1.1rem;">→</span></a>
+      </div>
+      <div class="pdf-preview-stack fade-in">
+        <div class="pdf-page pdf-page-1">
+          <div class="pdf-title-line"></div>
+          <div class="pdf-line"></div>
+          <div class="pdf-line med"></div>
+          <div class="pdf-line short"></div>
+          <div class="pdf-line"></div>
+          <div class="pdf-line med"></div>
+          <div style="height:12px;"></div>
+          <div class="pdf-line short"></div>
+          <div class="pdf-line"></div>
+        </div>
+        <div class="pdf-page pdf-page-2">
+          <div class="pdf-title-line" style="width:50%;background:linear-gradient(135deg,#00D4FF,#10B981);"></div>
+          <div class="pdf-line med"></div>
+          <div class="pdf-line"></div>
+          <div class="pdf-line short"></div>
+          <div style="height:8px;"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div class="pdf-line" style="margin:0;"></div>
+            <div class="pdf-line" style="margin:0;"></div>
+            <div class="pdf-line" style="margin:0;"></div>
+            <div class="pdf-line" style="margin:0;"></div>
+          </div>
+        </div>
+        <div class="pdf-page pdf-page-3">
+          <div class="pdf-title-line" style="width:45%;background:linear-gradient(135deg,#EC4899,#6366F1);"></div>
+          <div class="pdf-line"></div>
+          <div class="pdf-line med"></div>
+          <div class="pdf-line"></div>
+          <div class="pdf-line short"></div>
+          <div style="height:12px;"></div>
+          <div class="pdf-line med"></div>
+          <div class="pdf-line short"></div>
+        </div>
       </div>
     </div>
   </div>

@@ -278,6 +278,11 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
         <h3>Social Content</h3>
         <p>Posts, stories, carousels</p>
       </div>
+      <div class="project-card" onclick="selectType(this, 'pdf')" data-type="pdf">
+        <span class="project-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M6 2h8l6 6v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" stroke="url(#ppdf1)" stroke-width="1.5"/><path d="M14 2v6h6" stroke="url(#ppdf1)" stroke-width="1.5" stroke-linecap="round"/><path d="M8 14h8M8 18h5" stroke="url(#ppdf1)" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/><defs><linearGradient id="ppdf1" x1="4" y1="2" x2="20" y2="22"><stop stop-color="#EF4444"/><stop offset="1" stop-color="#6366F1"/></linearGradient></defs></svg></span>
+        <h3>PDF Document</h3>
+        <p>Resumes, invoices, reports</p>
+      </div>
       <div class="project-card locked" onclick="showProNeeded('ecommerce')">
         <span class="project-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M3 3h2l3 12h10l2-7H8" stroke="url(#pe1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="19" r="1.5" fill="url(#pe1)"/><circle cx="17" cy="19" r="1.5" fill="url(#pe1)"/><defs><linearGradient id="pe1" x1="3" y1="3" x2="21" y2="19"><stop stop-color="#A1A1AA"/><stop offset="1" stop-color="#71717A"/></linearGradient></defs></svg></span>
         <h3>E-Commerce Store</h3>
@@ -656,6 +661,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     <p id="resultMessage">Your website has been generated. You can preview it, edit with AI, or start a new project.</p>
     <div class="result-actions">
       <button class="result-btn result-btn-primary" onclick="previewProject()">&#128065; Preview Project</button>
+      <button class="result-btn result-btn-primary" id="downloadPdfBtn" onclick="downloadAsPDF()" style="background:linear-gradient(135deg,#EF4444,#6366F1);display:none;">&#128196; Download PDF</button>
       <button class="result-btn result-btn-primary" onclick="useBuild()" style="background:linear-gradient(135deg,#10B981,#00D4FF);">&#9889; Use Build</button>
       <button class="result-btn result-btn-outline" onclick="publishProject()">&#128640; Publish</button>
       <button class="result-btn result-btn-outline" onclick="removeWatermark()">&#10024; Remove Watermark</button>
@@ -1135,6 +1141,15 @@ var projectLimit = planLimits[userPlan] || 3;
     }, 500);
   }
 
+  // Auto-select type from URL param (e.g. /create?type=pdf)
+  var autoType = params.get('type');
+  if (autoType && ['website','app','dashboard','social','pdf'].indexOf(autoType) !== -1) {
+    var autoCard = document.querySelector('[data-type="' + autoType + '"]');
+    if (autoCard) {
+      setTimeout(function() { selectType(autoCard, autoType); }, 300);
+    }
+  }
+
   document.getElementById('projectsUsed').textContent = projectsUsed;
 
   // Update AI credits display
@@ -1205,9 +1220,13 @@ function selectType(card, type) {
     return;
   }
 
-  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
+  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content', pdf: 'PDF document', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
   document.getElementById('projectTypeLabel').textContent = labels[type] || 'project';
   document.getElementById('buildTypeLabel').textContent = labels[type] || 'Project';
+  // Update placeholder for PDF type
+  if (type === 'pdf') {
+    document.getElementById('projectDescription').placeholder = 'Example: A professional resume for a graphic designer with 5 years of experience, clean modern layout, skills section, portfolio highlights, and contact info...';
+  }
   document.getElementById('describeSection').classList.add('active');
   document.getElementById('describeSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
   history.pushState({ page: 'describe' }, '');
@@ -1937,6 +1956,9 @@ function showResult() {
   if (!hasAICredits() && userPlan === 'starter') {
     setTimeout(function() { showAIUpgradeModal(); }, 600);
   }
+
+  // Show/hide PDF download button
+  document.getElementById('downloadPdfBtn').style.display = (selectedType === 'pdf') ? 'inline-flex' : 'none';
 
   // Show social-specific share buttons & upsell only for social_app purpose
   var isSocialApp = projectPurpose === 'social_app';
@@ -3465,15 +3487,15 @@ var useClaudeForBuilds = true; // Feature flag
 async function generateWithClaude(type, description) {
   try {
     var themeLabel = wizardData.theme || 'default';
-    var resp = await fetch(AI_API_URL + '?action=generate', {
+    // Use PDF-specific endpoint for PDF documents
+    var endpoint = (type === 'pdf') ? '?action=pdf' : '?action=generate';
+    var payload = (type === 'pdf')
+      ? { description: description, docType: description.split(/[.,!?\n]/)[0] }
+      : { type: type, description: description, theme: themeLabel, wizardData: wizardData };
+    var resp = await fetch(AI_API_URL + endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: type,
-        description: description,
-        theme: themeLabel,
-        wizardData: wizardData
-      })
+      body: JSON.stringify(payload)
     });
     if (!resp.ok) {
       console.warn('Claude API error, falling back to template:', resp.status);
@@ -3589,6 +3611,27 @@ openLiveBuild = function() {
   showToast('Your build is live! Use it in the new tab.');
 };
 
+
+// ── PDF Download (uses browser print-to-PDF) ──
+function downloadAsPDF() {
+  var html = aiGeneratedHTML || '';
+  if (!html) {
+    var desc = document.getElementById('projectDescription').value.trim();
+    var titleWords = desc.split(/[.,!?\n]/)[0].substring(0, 60);
+    html = generatePreview('pdf', desc, titleWords);
+  }
+  // Add print-optimized styles
+  var printStyles = '<style>@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } @page { margin: 0.5in; size: A4; } }</style>';
+  html = html.replace('</head>', printStyles + '</head>');
+  // Open in new window and trigger print (Save as PDF)
+  var printWin = window.open('', '_blank');
+  printWin.document.write(html);
+  printWin.document.close();
+  setTimeout(function() {
+    printWin.print();
+  }, 800);
+  showToast('Use "Save as PDF" in the print dialog to download your PDF.');
+}
 
 // ── Floating AI Chat Assistant ──
 (function initChatWidget() {

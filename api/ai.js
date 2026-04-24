@@ -115,8 +115,34 @@ Give step-by-step instructions. If the user seems stuck, offer to explain in mor
         userMessage = `Previous conversation:\n${historyText}\n\nUser: ${message}`;
       }
 
+    } else if (action === 'pdf') {
+      // ── PDF Document Generation ──
+      const { description, docType } = body;
+      maxTokens = 8000;
+      systemPrompt = `You are Buildr AI, an expert document designer that generates beautiful, print-ready HTML documents styled for PDF output.
+
+RULES:
+- Output ONLY valid HTML. No markdown, no explanation, no code fences.
+- Include all CSS in a <style> tag. No JavaScript needed.
+- Design for A4 paper (210mm x 297mm). Use @page { size: A4; margin: 0.6in; }.
+- Use print-color-adjust: exact for colors and backgrounds.
+- Use professional, clean typography — Inter or system fonts.
+- Include realistic placeholder content that matches the description.
+- Use proper document structure: headers, sections, tables where appropriate.
+- Make it visually stunning — use subtle color accents, clean spacing, and modern layout.
+- For resumes: include name header, contact info, experience, education, skills sections.
+- For invoices: include company header, bill-to, line items table, totals, payment terms.
+- For reports: include title page, table of contents, sections with headings, charts/data.
+- For proposals: include cover, executive summary, scope, timeline, pricing, terms.
+- For menus: include restaurant name, categories, items with descriptions and prices.
+- For certificates: include decorative borders, recipient name, achievement, date, signature line.
+
+DOCUMENT TYPE: ${docType || 'general document'}`;
+
+      userMessage = `Create a PDF document: ${description}`;
+
     } else {
-      return res.status(400).json({ error: 'Invalid action. Use: generate, chat, or publish' });
+      return res.status(400).json({ error: 'Invalid action. Use: generate, chat, publish, or pdf' });
     }
 
     // Call Anthropic API
