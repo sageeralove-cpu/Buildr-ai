@@ -117,29 +117,47 @@ Give step-by-step instructions. If the user seems stuck, offer to explain in mor
 
     } else if (action === 'pdf') {
       // ── PDF Document Generation ──
-      const { description, docType } = body;
-      maxTokens = 8000;
-      systemPrompt = `You are Buildr AI, an expert document designer that generates beautiful, print-ready HTML documents styled for PDF output.
+      const { description, docType, pages } = body;
+      const pageCount = parseInt(pages) || 1;
+      // Scale tokens based on page count (roughly 800 tokens per page of content)
+      maxTokens = Math.min(16000, Math.max(4000, pageCount * 2000));
+      systemPrompt = `You are Buildr AI, an expert document writer and designer. You RESEARCH topics thoroughly and generate complete, content-rich, print-ready HTML documents.
 
-RULES:
+CRITICAL — CONTENT RULES:
+- You are a RESEARCHER and WRITER, not just a designer. Write REAL, detailed, substantive content.
+- DO NOT use placeholder text like "Lorem ipsum" or "[Insert here]" or "Company Name".
+- Based on the user's description, use your knowledge to write factual, well-researched content.
+- Include real statistics, data points, industry insights, and specific details where relevant.
+- Write in a professional, authoritative tone appropriate to the document type.
+- The document should be ${pageCount} page(s) long when printed on A4 paper.
+- For ${pageCount} pages, write approximately ${pageCount * 400} words of actual content.
+
+DESIGN RULES:
 - Output ONLY valid HTML. No markdown, no explanation, no code fences.
 - Include all CSS in a <style> tag. No JavaScript needed.
-- Design for A4 paper (210mm x 297mm). Use @page { size: A4; margin: 0.6in; }.
+- Design for A4 paper: @page { size: A4; margin: 0.6in; }
 - Use print-color-adjust: exact for colors and backgrounds.
-- Use professional, clean typography — Inter or system fonts.
-- Include realistic placeholder content that matches the description.
-- Use proper document structure: headers, sections, tables where appropriate.
-- Make it visually stunning — use subtle color accents, clean spacing, and modern layout.
-- For resumes: include name header, contact info, experience, education, skills sections.
-- For invoices: include company header, bill-to, line items table, totals, payment terms.
-- For reports: include title page, table of contents, sections with headings, charts/data.
-- For proposals: include cover, executive summary, scope, timeline, pricing, terms.
-- For menus: include restaurant name, categories, items with descriptions and prices.
-- For certificates: include decorative borders, recipient name, achievement, date, signature line.
+- Use professional typography — Inter font from Google Fonts.
+- Make it visually polished — clean spacing, subtle color accents, modern layout.
+- Use CSS page-break-after/before to control multi-page layout.
+${pageCount > 1 ? '- Add a table of contents for documents with multiple sections.' : ''}
 
-DOCUMENT TYPE: ${docType || 'general document'}`;
+DOCUMENT TYPE GUIDANCE:
+- Report/Research: Title page, executive summary, detailed sections with data and analysis, conclusions, references.
+- Resume/CV: Professional header, contact info, experience with achievements, education, skills, certifications.
+- Proposal: Cover page, executive summary, problem statement, proposed solution, timeline, pricing, terms.
+- Invoice: Company branding, bill-to/ship-to, itemized line items with quantities and prices, subtotals, tax, total due, payment terms.
+- Guide/Tutorial: Introduction, numbered steps with detailed explanations, tips, troubleshooting, summary.
+- Business Plan: Executive summary, market analysis, business model, marketing strategy, financial projections, team.
+- Menu: Restaurant branding, categorized sections, items with descriptions and prices, specials.
+- Certificate: Decorative border, institution name, recipient, achievement description, date, signature lines.
+- Contract: Parties, recitals, terms and conditions, obligations, termination, signatures.
+- Newsletter: Header banner, featured article, sections, sidebar content, call-to-action, footer.
 
-      userMessage = `Create a PDF document: ${description}`;
+DOCUMENT TYPE: ${docType || 'general document'}
+TARGET LENGTH: ${pageCount} page(s)`;
+
+      userMessage = `Research and write a complete ${pageCount}-page ${docType || 'document'}: ${description}`;
 
     } else {
       return res.status(400).json({ error: 'Invalid action. Use: generate, chat, publish, or pdf' });

@@ -845,6 +845,46 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: var(--base);
     </div>
   </div>
 
+  <!-- PDF Options Modal -->
+  <div id="pdfOptionsModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.92);z-index:400;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:520px;width:100%;position:relative;">
+      <button onclick="document.getElementById('pdfOptionsModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#EF4444,#6366F1);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">&#128196;</div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:8px;">PDF Document Settings</h3>
+        <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.6;">AI will research your topic and write a complete document with real content.</p>
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="display:block;color:var(--text-muted);font-size:0.85rem;margin-bottom:8px;font-weight:500;">Document Type</label>
+        <select id="pdfDocType" style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.9rem;outline:none;cursor:pointer;">
+          <option value="report">Report / Research Paper</option>
+          <option value="resume">Resume / CV</option>
+          <option value="proposal">Business Proposal</option>
+          <option value="invoice">Invoice</option>
+          <option value="guide">How-To Guide / Tutorial</option>
+          <option value="plan">Business Plan</option>
+          <option value="menu">Restaurant Menu</option>
+          <option value="certificate">Certificate</option>
+          <option value="contract">Contract / Agreement</option>
+          <option value="newsletter">Newsletter</option>
+          <option value="checklist">Checklist</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div style="margin-bottom:24px;">
+        <label style="display:block;color:var(--text-muted);font-size:0.85rem;margin-bottom:8px;font-weight:500;">How many pages?</label>
+        <div style="display:flex;gap:10px;" id="pdfPagePicker">
+          <button class="pdf-page-btn selected" onclick="selectPdfPages(this,1)" data-pages="1" style="flex:1;padding:14px;border-radius:10px;border:1px solid var(--accent);background:rgba(0,212,255,0.08);color:var(--text);font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s;">1</button>
+          <button class="pdf-page-btn" onclick="selectPdfPages(this,3)" data-pages="3" style="flex:1;padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s;">3</button>
+          <button class="pdf-page-btn" onclick="selectPdfPages(this,5)" data-pages="5" style="flex:1;padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s;">5</button>
+          <button class="pdf-page-btn" onclick="selectPdfPages(this,10)" data-pages="10" style="flex:1;padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s;">10</button>
+        </div>
+        <p style="color:var(--text-muted);font-size:0.75rem;margin-top:8px;">More pages = more detailed, research-rich content</p>
+      </div>
+      <button onclick="confirmPdfOptions()" style="width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#EF4444,#6366F1);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.3s;">Continue to Describe Your Document</button>
+    </div>
+  </div>
+
   <!-- Publish Paywall Modal — tiered pricing -->
   <div id="publishPaywall" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(9,9,11,0.92);z-index:400;align-items:center;justify-content:center;padding:24px;">
     <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;max-width:520px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">
@@ -1220,13 +1260,14 @@ function selectType(card, type) {
     return;
   }
 
+  if (type === 'pdf') {
+    document.getElementById('pdfOptionsModal').style.display = 'flex';
+    return;
+  }
+
   var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content', pdf: 'PDF document', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
   document.getElementById('projectTypeLabel').textContent = labels[type] || 'project';
   document.getElementById('buildTypeLabel').textContent = labels[type] || 'Project';
-  // Update placeholder for PDF type
-  if (type === 'pdf') {
-    document.getElementById('projectDescription').placeholder = 'Example: A professional resume for a graphic designer with 5 years of experience, clean modern layout, skills section, portfolio highlights, and contact info...';
-  }
   document.getElementById('describeSection').classList.add('active');
   document.getElementById('describeSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
   history.pushState({ page: 'describe' }, '');
@@ -1264,6 +1305,40 @@ function choosePurpose(purpose) {
   projectPurpose = 'personal';
   document.getElementById('projectTypeLabel').textContent = 'mobile app';
   document.getElementById('buildTypeLabel').textContent = 'Mobile App';
+  document.getElementById('describeSection').classList.add('active');
+  document.getElementById('describeSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  history.pushState({ page: 'describe' }, '');
+  updateBuildBtn();
+}
+
+// ── PDF Options ──
+var pdfPageCount = 1;
+var pdfDocType = 'report';
+
+function selectPdfPages(btn, pages) {
+  pdfPageCount = pages;
+  var allBtns = document.querySelectorAll('#pdfPagePicker .pdf-page-btn');
+  allBtns.forEach(function(b) {
+    b.classList.remove('selected');
+    b.style.borderColor = 'var(--border)';
+    b.style.background = 'var(--surface)';
+  });
+  btn.classList.add('selected');
+  btn.style.borderColor = 'var(--accent)';
+  btn.style.background = 'rgba(0,212,255,0.08)';
+}
+
+function confirmPdfOptions() {
+  pdfDocType = document.getElementById('pdfDocType').value;
+  document.getElementById('pdfOptionsModal').style.display = 'none';
+
+  selectedType = 'pdf';
+  var docLabels = { report:'research report', resume:'resume / CV', proposal:'business proposal', invoice:'invoice', guide:'how-to guide', plan:'business plan', menu:'restaurant menu', certificate:'certificate', contract:'contract', newsletter:'newsletter', checklist:'checklist', other:'document' };
+  var label = docLabels[pdfDocType] || 'PDF document';
+
+  document.getElementById('projectTypeLabel').textContent = label;
+  document.getElementById('buildTypeLabel').textContent = 'PDF Document';
+  document.getElementById('projectDescription').placeholder = 'Describe what this ' + label + ' should contain. Be detailed — AI will research the topic and write real content.\n\nExample: A market research report on the Australian electric vehicle industry in 2026, covering market size, key players, consumer trends, government incentives, and growth projections...';
   document.getElementById('describeSection').classList.add('active');
   document.getElementById('describeSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
   history.pushState({ page: 'describe' }, '');
@@ -3490,7 +3565,7 @@ async function generateWithClaude(type, description) {
     // Use PDF-specific endpoint for PDF documents
     var endpoint = (type === 'pdf') ? '?action=pdf' : '?action=generate';
     var payload = (type === 'pdf')
-      ? { description: description, docType: description.split(/[.,!?\n]/)[0] }
+      ? { description: description, docType: pdfDocType || 'report', pages: pdfPageCount || 1 }
       : { type: type, description: description, theme: themeLabel, wizardData: wizardData };
     var resp = await fetch(AI_API_URL + endpoint, {
       method: 'POST',
