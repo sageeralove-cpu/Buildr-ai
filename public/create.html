@@ -1389,6 +1389,15 @@ function openAIWizard() {
   var desc = document.getElementById('projectDescription').value.trim();
   if (desc.length < 10) return;
 
+  // PDF type skips the wizard — go straight to build
+  if (selectedType === 'pdf') {
+    wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right', backend: 'localstorage' };
+    wizardData.docType = pdfDocType;
+    wizardData.pages = pdfPageCount;
+    confirmBuild();
+    return;
+  }
+
   // Reset wizard state
   wizardStep = 1;
   wizardData = { contentSource: '', theme: '', customTheme: '', mediaSource: '', uploadedFiles: [], watermark: '', watermarkText: '', watermarkPosition: 'bottom-right', socialTopic: '', socialPlatforms: [], socialCalendar: [], socialSmartDetect: false, appFeatures: [], appCustomFeats: '', appEmojiStyle: '3d_fluid', backend: 'localstorage' };
@@ -3598,7 +3607,7 @@ confirmBuild = async function() {
   document.getElementById('suggestionSection').style.display = 'none';
 
   var overlay = document.getElementById('buildingOverlay');
-  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
+  var labels = { website: 'website', app: 'mobile app', dashboard: 'dashboard', social: 'social content', pdf: 'PDF document', ecommerce: 'e-commerce store', saas: 'SaaS platform' };
   document.getElementById('buildingType').textContent = labels[selectedType] || 'project';
   overlay.classList.add('active');
 
