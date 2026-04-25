@@ -74,9 +74,10 @@ ${wizardData && wizardData.backend && wizardData.backend !== 'localstorage' ?
 Keep responses concise (2-4 sentences max). Be warm, encouraging, and use simple language. The user may not know how to code — that's the whole point of Buildr AI.
 
 Platform info:
-- Free plan: 3 projects, Buildr AI watermark
-- Pro Creator: $29/mo, unlimited projects, no watermark, publishing
-- Business: $99/mo, team collab, white-label, API
+- Free plan: 3,000 AI credits, basic templates (unlimited & free), Buildr AI watermark
+- Pro Creator: $19/mo, 20,000 credits/month, no watermark, app store publishing, custom domain
+- Business: $49/mo, 50,000 credits/month, team collab (5 seats), white-label, API access
+- Credit costs: AI website/app/dashboard build = 100 credits, PDF = 50 credits/page, social content = 25 credits, chat = 5 credits, templates = free
 - Web Publish: $5 one-time per project
 - App Store Publish: $15 one-time per project
 - Social Content Pro: $10/mo for daily auto-generated posts`;
